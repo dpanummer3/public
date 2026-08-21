@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#090b0c" />
+<title>UTCA // Utrecht Sport & Spel — 24 oktober 2026</title>
+<style>
+:root{
+  --bg:#090b0c;--panel:#111519;--panel2:#161b20;--line:#29313a;--text:#f6f7f4;--muted:#98a2ad;
+  --lime:#d9ff43;--blue:#79e5ff;--green:#42d66b;--yellow:#d9d83f;--orange:#ffae3d;--orangered:#ff7043;--red:#ff3e4f;
+  --shadow:0 20px 55px rgba(0,0,0,.34);--r:22px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:linear-gradient(180deg,#07090a 0%,#0e1215 50%,#090b0c 100%);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:inherit;text-decoration:none} button,input{font:inherit}.app{max-width:780px;margin:0 auto;padding:14px 14px 34px}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:42px}.brand{font-weight:950;letter-spacing:.13em;font-size:12px;color:var(--lime)}
+.userchip{display:none;align-items:center;gap:8px;border:1px solid var(--line);background:#12171b;border-radius:999px;padding:7px 8px 7px 12px;font-size:12px;font-weight:800}.userchip.show{display:flex}.userchip button{width:24px;height:24px;border:0;border-radius:50%;background:#252d34;color:#c6cdd4;cursor:pointer}
+.hero{padding:22px 4px 12px}.kicker{font-size:12px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--lime)}h1{font-size:clamp(38px,9vw,66px);line-height:.91;letter-spacing:-.06em;margin:10px 0 14px;max-width:720px}.hero p{margin:0;max-width:640px;color:#aab3bc;font-size:15px;line-height:1.55}.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.chip{border:1px solid var(--line);background:#101418;border-radius:999px;padding:9px 11px;font-size:12px;color:#bcc5cd}.chip strong{color:#fff}
+.switcher{position:sticky;top:7px;z-index:30;display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:14px 0 13px;padding:5px;border:1px solid var(--line);background:rgba(9,12,14,.86);backdrop-filter:blur(18px);border-radius:18px;box-shadow:var(--shadow)}.switcher button{border:0;background:transparent;color:#9aa4ad;border-radius:13px;padding:12px 8px;font-weight:900;cursor:pointer}.switcher button.active{background:#f2f4ef;color:#07090a}
+.dashboard{display:grid;grid-template-columns:1.2fr .8fr;gap:9px}.dash{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:13px}.dash .big{font-size:23px;font-weight:950;letter-spacing:-.04em}.dash .small{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:4px}.live{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:900;color:#9ea8b1;text-transform:uppercase;letter-spacing:.08em}.dot{width:7px;height:7px;border-radius:50%;background:#6d7780}.live.ok .dot{background:var(--green);box-shadow:0 0 12px rgba(66,214,107,.55)}
+.meter{margin-top:10px;background:linear-gradient(160deg,#12171a,#0e1215);border:1px solid var(--line);border-radius:22px;padding:15px}.meterhead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}.meterhead h2{font-size:17px;margin:0;letter-spacing:-.02em}.meterhead span{font-size:11px;color:var(--muted)}.meterbuttons{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}.meterbuttons button{min-height:46px;border:1px solid rgba(255,255,255,.12);border-radius:13px;font-weight:950;font-size:16px;color:#061008;cursor:pointer;opacity:.68;transform:scale(.98);transition:.16s}.meterbuttons button:nth-child(1){background:var(--green)}.meterbuttons button:nth-child(2){background:#9bd950}.meterbuttons button:nth-child(3){background:var(--yellow)}.meterbuttons button:nth-child(4){background:var(--orange)}.meterbuttons button:nth-child(5){background:var(--red);color:white}.meterbuttons button.active{opacity:1;transform:scale(1.02);outline:2px solid #fff;outline-offset:1px}.meterline{margin-top:11px;font-size:13px;color:#c7cdd3;line-height:1.4}.meterline strong{color:#fff}
+.section-title{display:flex;justify-content:space-between;align-items:end;margin:25px 2px 11px}.section-title h2{margin:0;font-size:20px;letter-spacing:-.03em}.section-title span{font-size:11px;color:var(--muted)}
+.timeline{display:flex;flex-direction:column;gap:9px}.walk{display:flex;align-items:center;gap:9px;color:#78838c;font-size:11px;padding:3px 2px}.walk .rule{height:1px;background:var(--line);flex:1}.card{position:relative;background:linear-gradient(180deg,var(--panel) 0%,#0f1316 100%);border:1px solid var(--line);border-radius:var(--r);padding:15px;overflow:hidden}.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#303944}.card.current::before{background:var(--lime);box-shadow:0 0 15px rgba(217,255,67,.45)}.card .top{display:flex;align-items:center;justify-content:space-between;gap:12px}.time{font-size:12px;font-weight:950;color:var(--lime);letter-spacing:.07em}.navbtn{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 12px;background:var(--lime);color:#090c08;border:0;border-radius:9px;font-size:10.5px;font-weight:950;letter-spacing:.045em;text-transform:uppercase;white-space:nowrap}.navbtn:active{transform:translateY(1px)}.name{font-size:21px;font-weight:950;letter-spacing:-.035em;margin:8px 0 5px}.desc{font-size:13.5px;line-height:1.48;color:#adb6be;margin:0}.location{margin-top:9px;font-size:11.5px;color:#87929c}.row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:13px}.circles{display:flex;gap:7px}.round{width:40px;height:40px;border-radius:50%;border:1px solid #3a444e;background:#181e23;display:grid;place-items:center;font-weight:950;font-size:13px;color:#f1f4f6}.round.r{background:var(--lime);border-color:var(--lime);color:#0a0d08}.here{flex:1;min-height:40px;border-radius:12px;border:1px solid var(--line);background:#1a2026;color:#edf0f2;font-weight:900;font-size:12px;cursor:pointer}.here.active{background:var(--orange);color:#080a0b;border-color:var(--orange)}.here:disabled{opacity:.45;cursor:not-allowed}
+.stop-meter{margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}.stop-meter-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.stop-meter-title{font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#d8dee3}.stop-meter-state{font-size:10px;color:var(--muted)}.stop-meter-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:9px}.stop-meter-buttons button{height:38px;border:1px solid rgba(255,255,255,.12);border-radius:10px;font-weight:950;font-size:13px;color:#071008;cursor:pointer;opacity:.67;transition:.14s}.stop-meter-buttons button:nth-child(1){background:var(--green)}.stop-meter-buttons button:nth-child(2){background:#9bd950}.stop-meter-buttons button:nth-child(3){background:var(--yellow)}.stop-meter-buttons button:nth-child(4){background:var(--orange)}.stop-meter-buttons button:nth-child(5){background:var(--red);color:#fff}.stop-meter-buttons button.active{opacity:1;outline:2px solid #fff;outline-offset:1px;transform:translateY(-1px)}.stop-meter-copy{margin-top:8px;font-size:11.5px;line-height:1.4;color:#aeb7bf}.stop-meter-copy strong{color:#fff}.dayresult{margin-top:14px;border:1px solid var(--line);background:linear-gradient(155deg,#151a1f,#0d1114);border-radius:22px;padding:16px}.result-kicker{font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:var(--lime)}.result-main{display:flex;align-items:flex-end;gap:8px;margin-top:6px}.result-main strong{font-size:46px;line-height:.9;letter-spacing:-.06em}.result-main span{font-size:13px;font-weight:900;color:#b9c1c8;padding-bottom:5px}.result-bar{height:8px;background:#242c32;border-radius:999px;overflow:hidden;margin-top:14px}.result-bar i{display:block;width:0;height:100%;background:var(--green);border-radius:inherit;transition:.2s}.result-copy{margin-top:11px;font-size:13px;line-height:1.45;color:#d2d8dd}.result-copy strong{color:#fff}.result-meta{margin-top:5px;font-size:10.5px;color:#7e8992}.score.percent{width:44px;border-radius:999px;font-size:10px;color:#071008}
+.group{display:flex;flex-direction:column;gap:8px}.person{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:11px 12px}.person strong{font-size:13px}.person small{display:block;color:var(--muted);margin-top:3px;font-size:11px}.score{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:950;color:#081008;font-size:13px}.empty{border:1px dashed #343d46;border-radius:16px;padding:14px;color:#7f8992;font-size:12px;line-height:1.5}
+.routebox{background:linear-gradient(150deg,#14191e,#0e1215);border:1px solid var(--line);border-radius:22px;padding:15px}.routebox h3{margin:0 0 6px;font-size:17px}.routebox p{margin:0 0 13px;font-size:12.5px;line-height:1.5;color:#9aa4ad}.routepills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}.routepills span{border:1px solid var(--line);border-radius:999px;padding:7px 9px;font-size:10.5px;color:#bcc4cb}.routebtn{display:flex;align-items:center;justify-content:center;min-height:44px;background:var(--lime);border-radius:13px;color:#0a0c08;font-size:12px;font-weight:950}
+.note{margin-top:14px;border:1px solid #3a3322;background:#1b1810;border-radius:16px;padding:13px 14px;color:#d7cba3;font-size:11.5px;line-height:1.5}.note strong{color:#fff3bd}footer{margin:22px 4px 0;color:#65717b;font-size:10.5px;line-height:1.55}
+.overlay{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.72);backdrop-filter:blur(12px);display:none;align-items:flex-end;justify-content:center;padding:12px}.overlay.show{display:flex}.login{width:min(100%,520px);background:#101519;border:1px solid #303a43;border-radius:26px;padding:20px;box-shadow:var(--shadow)}.login .minihead{font-size:11px;font-weight:900;letter-spacing:.14em;color:var(--lime);text-transform:uppercase}.login h2{font-size:32px;line-height:.98;letter-spacing:-.045em;margin:8px 0 9px}.login p{color:#a7b0b8;font-size:13px;line-height:1.45;margin:0 0 14px}.login input{width:100%;height:49px;border-radius:14px;border:1px solid #36404a;background:#0b0f12;color:#fff;padding:0 14px;outline:none}.login input:focus{border-color:var(--lime)}.login button{width:100%;height:48px;margin-top:9px;border:0;border-radius:14px;background:var(--lime);color:#080b06;font-weight:950;cursor:pointer}.login .privacy{margin-top:9px;font-size:10px;color:#68737c}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:90;background:#f1f3ef;color:#090b0c;font-size:11px;font-weight:900;padding:10px 13px;border-radius:999px;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}
+
+.alternatives{margin-top:11px}.alternatives summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;width:auto;background:transparent;color:var(--green);border:0;border-radius:0;padding:0;font-size:11px;font-weight:950;letter-spacing:.025em;line-height:1.25}.alternatives summary::-webkit-details-marker{display:none}.alternatives summary span{color:inherit;font-size:13px;line-height:1;transform-origin:center;transition:.14s}.alternatives[open] summary{color:#eef2f4}.alternatives[open] summary span{transform:rotate(45deg)}.alt-list{display:flex;flex-direction:column;gap:7px;margin-top:9px}.alt-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid rgba(255,255,255,.055)}.alt-row:first-child{border-top:0}.alt-select{appearance:none;-webkit-appearance:none;width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer}.alt-select:active .alt-name{color:var(--lime)}.alt-select:disabled{cursor:not-allowed;opacity:.42}.alt-select:disabled .alt-name{color:#98a2aa}.alt-name{font-size:12.5px;font-weight:900;color:#eef2f4}.alt-walk{font-size:10px;font-weight:850;color:#8e99a2;margin-left:4px;white-space:nowrap}.alt-note{font-size:10.5px;color:#7f8a93;margin-top:2px;line-height:1.35}.alt-actions{display:flex;gap:5px}.mini-round{width:30px;height:30px;border-radius:50%;border:1px solid #3a444e;background:#181e23;display:grid;place-items:center;font-weight:950;font-size:10px;color:#f1f4f6}.mini-round.r{background:var(--lime);border-color:var(--lime);color:#0a0d08}.legend{font-size:10px;color:#7d8891;margin:7px 2px 0}.boot-error{display:none;margin:10px 0;padding:11px;border:1px solid #6a3a3f;background:#241315;color:#ffb8be;font-size:11px;line-height:1.4}.boot-error.show{display:block}
+
+@media(max-width:470px){.app{padding-left:11px;padding-right:11px}.dashboard{grid-template-columns:1fr 1fr}.hero{padding-top:16px}.name{font-size:19px}.row{align-items:stretch}.round{width:38px;height:38px}.here{min-width:105px}.login{border-radius:22px}.overlay{align-items:flex-end}}
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="topline">
+    <div class="brand">UTCA // SPORT & SPEL</div>
+    <div class="userchip" id="userChip"><span id="userName"></span><button id="logout" aria-label="Naam wissen">×</button></div>
+  </div>
+
+  <header class="hero" id="dag">
+    <div class="kicker">Utrecht · zaterdag 24 oktober 2026</div>
+    <h1>Beetje doen.<br>Beetje drinken.<br>Veel ouwehoeren.</h1>
+    <p>Volgens Henny kan er maar één de winnaar zijn, maar Henny is loco. Vandaag zijn er twee winnaars: degene die het meest naar de klote is en degene die het minst naar de klote is. Choose wisely.</p>
+    <div class="meta">
+      <div class="chip"><strong>09:30–00:00</strong></div>
+      <div class="chip"><strong>6 man</strong></div>
+      <div class="chip" id="walkChip"><strong>± 90 min</strong> lopen totaal</div>
+      <div class="chip"><span class="live" id="liveState"><span class="dot"></span><span>lokaal</span></span></div>
+    </div>
+  </header>
+
+  <div class="switcher" aria-label="Weeroptie">
+    <button class="active" data-mode="sun">☀️ Zon</button>
+    <button data-mode="rain">🌧️ Regen</button>
+  </div>
+
+  <section class="dashboard">
+    <div class="dash"><div class="big" id="routeWalk">± 90 min</div><div class="small">hele ronde lopen</div></div>
+    <div class="dash"><div class="big" id="groupAverage">—</div><div class="small">groep gemiddeld</div></div>
+  </section>
+
+
+
+  <div class="boot-error show" id="jsPreviewWarning"><strong>iOS-bestandsweergave:</strong> als je dit bericht blijft zien, wordt JavaScript in deze lokale HTML-weergave niet uitgevoerd. De route blijft zichtbaar; voor login, meters en wisselknoppen open je dezelfde pagina via http:// of https://.</div>
+  <div class="boot-error" id="bootError">De interactieve laag kon niet starten. Open deze pagina rechtstreeks in Safari/Chrome of publiceer hem via Cloudflare Pages.</div>
+  <noscript><div class="boot-error show"><strong>JavaScript staat uit in deze weergave.</strong> Daarom werken login, meters en locatiekeuzes hier niet. De route en directe links hieronder blijven wel bruikbaar.</div></noscript>
+  <div class="section-title"><h2>De dag</h2><span>I = reviews · R = reserveren</span></div>
+  <section class="timeline" id="timeline">
+    <article class="card" data-static-fallback="1"><div class="top"><div class="time">09:30–09:45</div><a class="navbtn" href="https://www.google.com/maps/dir/?api=1&destination=Stationsplein%2C%20Utrecht&travelmode=walking" target="_blank">NAVIGEER</a></div><div class="name">Utrecht Centraal</div><p class="desc">Verzamelen bij Stationsplein. Iedereen binnen, koffie in de hand en om 09:45 weg.</p><div class="location">📍 Stationsplein, Utrecht</div><div class="row"><div class="circles"><a class="round" href="https://www.google.com/maps/search/?api=1&query=Utrecht%20Centraal" target="_blank">I</a></div></div></article>
+    <div class="walk"><span>09:45–10:00</span><div class="rule"></div><span>± 13 min lopen + 2 min speling</span></div>
+    <article class="card" data-static-fallback="1"><div class="top"><div class="time">10:00–11:45</div><a class="navbtn" href="https://www.google.com/maps/dir/?api=1&destination=Oudegracht%20aan%20de%20Werf%20275%2C%20Utrecht&travelmode=walking" target="_blank">NAVIGEER</a></div><div class="name">Kanoverhuur Utrecht</div><p class="desc">Water, de Oudegracht. Drie tweepersoonskano's. Rustig beginnen en koekeloeren.</p><div class="location">📍 Oudegracht aan de Werf 275, Utrecht</div><div class="row"><div class="circles"><a class="round" href="https://www.google.com/maps/search/?api=1&query=Kanoverhuur%20Utrecht%20Oudegracht%20aan%20de%20Werf%20275%20Utrecht" target="_blank">I</a><a class="round r" href="https://kanoverhuurutrecht.nl/reserveren" target="_blank">R</a></div></div></article>
+    <div class="walk"><span>12:00–12:02</span><div class="rule"></div><span>± 2 min lopen</span></div>
+    <article class="card" data-static-fallback="1"><div class="top"><div class="time">12:02–13:41</div><a class="navbtn" href="https://www.google.com/maps/dir/?api=1&destination=Tolsteegbrug%203%2C%20Utrecht&travelmode=walking" target="_blank">NAVIGEER</a></div><div class="name">Café Ledig Erf</div><p class="desc">Lunch zonder reserveringsgedoe. Even zitten, eten en de eerste fijne drankjes nuttigen.</p><div class="location">📍 Tolsteegbrug 3, Utrecht</div><details class="alternatives"><summary>3 andere opties <span>+</span></summary><div class="alt-list"><div class="alt-row"><div><div class="alt-name">Léo Léo</div><div class="alt-note">Franse lunch · Twijnstraat 58</div></div></div><div class="alt-row"><div><div class="alt-name">BROEI</div><div class="alt-note">Plantaardige lunch · Oosterkade 24</div></div></div><div class="alt-row"><div><div class="alt-name">Orloff aan de Kade</div><div class="alt-note">Lunch aan de kade · Oosterkade 18</div></div></div></div></details><div class="row"><div class="circles"><a class="round" href="https://www.google.com/maps/search/?api=1&query=Caf%C3%A9%20Ledig%20Erf%20Tolsteegbrug%203%20Utrecht" target="_blank">I</a></div></div></article>
+    <div class="walk"><span>13:41–14:00</span><div class="rule"></div><span>± 14 min lopen + 5 min speling</span></div>
+    <article class="card" data-static-fallback="1"><div class="top"><div class="time">14:00–15:30</div><a class="navbtn" href="https://www.google.com/maps/dir/?api=1&destination=Ganzenmarkt%2016B%2C%20Utrecht&travelmode=walking" target="_blank">NAVIGEER</a></div><div class="name">Poolcafé Hart van Utrecht</div><p class="desc">Twee tafels, zes personen. Ik weet ook niet hoe dit werkt.</p><div class="location">📍 Ganzenmarkt 16B, Utrecht</div><div class="row"><div class="circles"><a class="round" href="https://www.google.com/maps/search/?api=1&query=Poolcaf%C3%A9%20Hart%20van%20Utrecht%20Ganzenmarkt%2016B%20Utrecht" target="_blank">I</a><a class="round r" href="https://www.poolenutrecht.nl/reserveren/" target="_blank">R</a></div></div></article>
+    <div class="walk"><span>15:30–15:32</span><div class="rule"></div><span>± 2 min lopen</span></div>
+    <article class="card" data-static-fallback="1"><div class="top"><div class="time">15:32–16:16</div><a class="navbtn" href="https://www.google.com/maps/dir/?api=1&destination=Neude%2037-39%2C%20Utrecht&travelmode=walking" target="_blank">NAVIGEER</a></div><div class="name">De Beurs · Neude</div><p class="desc">Terras als het droog is, binnen als het tegenzit. Tijd voor bier en wedstrijdanalyse waar niemand om vroeg.</p><div class="location">📍 Neude 37-39, Utrecht</div><details class="alternatives"><summary>3 andere opties <span>+</span></summary><div class="alt-list"><div class="alt-row"><div><div class="alt-name">Café Le Journal</div><div class="alt-note">Neude 32–34</div></div></div><div class="alt-row"><div><div class="alt-name">Tapperij de Luifel</div><div class="alt-note">Neude 35</div></div></div><div class="alt-row"><div><div class="alt-name">Ubica</div><div class="alt-note">Bier &amp; cocktails · Ganzenmarkt 24</div></div></div></div></details><div class="row"><div class="circles"><a class="round" href="https://www.google.com/maps/search/?api=1&query=De%20Beurs%20Neude%20Utrecht" target="_blank">I</a></div></div></article>
+    <div class="walk"><span>16:16–16:30</span><div class="rule"></div><span>± 9 min lopen + 5 min speling</span></div>
+    <article class="card" data-static-fallback="1"><div class="top"><div class="time">16:30–17:45</div><a class="navbtn" href="https://www.google.com/maps/dir/?api=1&destination=Paardenveld%203%2C%20Utrecht&travelmode=walking" target="_blank">NAVIGEER</a></div><div class="name">JEU de Boules Bar Utrecht</div><p class="desc">Een baan, zes man, veel ballen en weinig hand-oog coördinatie.</p><div class="location">📍 Paardenveld 3, Utrecht</div><div class="row"><div class="circles"><a class="round" href="https://www.google.com/maps/search/?api=1&query=JEU%20de%20boules%20bar%20Utrecht%20Paardenveld%203" target="_blank">I</a><a class="round r" href="https://jeudeboulesbar.nl/reserveren/" target="_blank">R</a></div></div></article>
+    <div class="walk"><span>17:45–17:55</span><div class="rule"></div><span>± 10 min lopen</span></div>
+    <article class="card" data-static-fallback="1"><div class="top"><div class="time">17:55–18:41</div><a class="navbtn" href="https://www.google.com/maps/dir/?api=1&destination=Oudegracht%20aan%20de%20Werf%20111%2C%20Utrecht&travelmode=walking" target="_blank">NAVIGEER</a></div><div class="name">Rum Club · Oudegracht</div><p class="desc">Nog één terras-/borrelblok aan het water voordat er serieus gegeten moet worden.</p><div class="location">📍 Oudegracht aan de Werf 111, Utrecht</div><details class="alternatives"><summary>3 andere opties <span>+</span></summary><div class="alt-list"><div class="alt-row"><div><div class="alt-name">Winkel van Sinkel</div><div class="alt-note">Oudegracht 158</div></div></div><div class="alt-row"><div><div class="alt-name">Beers &amp; Barrels Centrum</div><div class="alt-note">Oudegracht a/d Werf 125</div></div></div><div class="alt-row"><div><div class="alt-name">Kafé België</div><div class="alt-note">Speciaalbier · Oudegracht 196</div></div></div></div></details><div class="row"><div class="circles"><a class="round" href="https://www.google.com/maps/search/?api=1&query=Rum%20Club%20Oudegracht%20aan%20de%20Werf%20111%20Utrecht" target="_blank">I</a></div></div></article>
+    <div class="walk"><span>18:41–19:00</span><div class="rule"></div><span>± 14 min lopen + 5 min speling</span></div>
+    <article class="card" data-static-fallback="1"><div class="top"><div class="time">19:00–21:00</div><a class="navbtn" href="https://www.google.com/maps/dir/?api=1&destination=Tolsteegbarri%C3%A8re%202%2C%20Utrecht&travelmode=walking" target="_blank">NAVIGEER</a></div><div class="name">Eetcafé De Poort</div><p class="desc">Diner aan het Ledig Erf. Gewoon stevig eten voordat de avond zichzelf verder organiseert.</p><div class="location">📍 Tolsteegbarrière 2, Utrecht</div><details class="alternatives"><summary>3 andere opties <span>+</span></summary><div class="alt-list"><div class="alt-row"><div><div class="alt-name">De Utrechter</div><div class="alt-note">Stadsbrasserie · Vredenburg 40</div></div></div><div class="alt-row"><div><div class="alt-name">Beers &amp; Barrels Centrum</div><div class="alt-note">Burgers, vlees &amp; bier · Oudegracht a/d Werf 125</div></div></div><div class="alt-row"><div><div class="alt-name">&#x27;t Taphuys</div><div class="alt-note">Diner + zelf bier/wijn tappen · Mariaplaats 3</div></div></div></div></details><div class="row"><div class="circles"><a class="round" href="https://www.google.com/maps/search/?api=1&query=Eetcaf%C3%A9%20De%20Poort%20Tolsteegbarri%C3%A8re%202%20Utrecht" target="_blank">I</a><a class="round r" href="tel:+31302314572" target="_blank">R</a></div></div></article>
+    <div class="walk"><span>21:00–21:03</span><div class="rule"></div><span>± 3 min lopen</span></div>
+    <article class="card" data-static-fallback="1"><div class="top"><div class="time">21:03–23:18</div><a class="navbtn" href="https://www.google.com/maps/dir/?api=1&destination=Oudegracht%20323%2C%20Utrecht&travelmode=walking" target="_blank">NAVIGEER</a></div><div class="name">Café De Morgenster</div><p class="desc">Eén kroeg als basis in plaats van een hele kroegenroute. Vanaf hier kunnen jullie blijven hangen of één van de drie alternatieven kiezen.</p><div class="location">📍 Oudegracht 323, Utrecht</div><details class="alternatives"><summary>3 andere opties <span>+</span></summary><div class="alt-list"><div class="alt-row"><div><div class="alt-name">Café DeRat</div><div class="alt-note">Bruine kroeg · Lange Smeestraat 37</div></div></div><div class="alt-row"><div><div class="alt-name">Kafé België</div><div class="alt-note">Speciaalbier · Oudegracht 196</div></div></div><div class="alt-row"><div><div class="alt-name">Café de Zaak</div><div class="alt-note">Korte Minrebroederstraat 9</div></div></div></div></details><div class="row"><div class="circles"><a class="round" href="https://www.google.com/maps/search/?api=1&query=Caf%C3%A9%20De%20Morgenster%20Oudegracht%20323%20Utrecht" target="_blank">I</a></div></div></article>
+    <div class="walk"><span>23:18–23:30</span><div class="rule"></div><span>± 12 min lopen</span></div>
+    <article class="card" data-static-fallback="1"><div class="top"><div class="time">23:30–23:48</div><a class="navbtn" href="https://www.google.com/maps/dir/?api=1&destination=Korte%20Jansstraat%206%2C%20Utrecht&travelmode=walking" target="_blank">NAVIGEER</a></div><div class="name">Broodje Bambi</div><p class="desc">Om de hoek van Janskerkhof, overdekt en tot diep in de nacht open. Vanaf hier lopen jullie terug naar Utrecht Centraal.</p><div class="location">📍 Korte Jansstraat 6, Utrecht</div><details class="alternatives"><summary>3 andere opties <span>+</span></summary><div class="alt-list"><div class="alt-row"><div><div class="alt-name">Cafetaria Ten Beste</div><div class="alt-note">Late snack · Predikherenstraat 2</div></div></div><div class="alt-row"><div><div class="alt-name">Grillroom Huzur</div><div class="alt-note">Shoarma &amp; grill · Voorstraat 74</div></div></div><div class="alt-row"><div><div class="alt-name">Polleke Utrecht</div><div class="alt-note">Broodjes &amp; late hap · Korte Jansstraat 12</div></div></div></div></details><div class="row"><div class="circles"><a class="round" href="https://www.google.com/maps/search/?api=1&query=Broodje%20Bambi%20Korte%20Jansstraat%206%20Utrecht" target="_blank">I</a></div></div></article>
+    <div class="walk"><span>23:48–00:00</span><div class="rule"></div><span>± 12 min lopen</span></div>
+    <article class="card" data-static-fallback="1"><div class="top"><div class="time">00:00</div><a class="navbtn" href="https://www.google.com/maps/dir/?api=1&destination=Utrecht%20Centraal%2C%20Utrecht&travelmode=walking" target="_blank">NAVIGEER</a></div><div class="name">Utrecht Centraal</div><p class="desc">Rondje dicht. Succes met het perron.</p><div class="location">📍 Utrecht Centraal, Utrecht</div></article>
+  </section>
+
+  <section class="dayresult" id="dayResult">
+    <div class="result-kicker">Jouw dagstand</div>
+    <div class="result-main"><strong id="dayPercent">—</strong><span>naar de klote</span></div>
+    <div class="result-bar"><i id="dayBar"></i></div>
+    <div class="result-copy" id="dayCopy">Vul onder een onderdeel de meter in. Alleen ingevulde meters tellen mee.</div>
+    <div class="result-meta" id="dayMeta">0 onderdelen ingevuld</div>
+  </section>
+
+  <div class="section-title" id="groep"><h2>Waar is iedereen?</h2><span>gedeeld met de groep</span></div>
+  <section class="group" id="groupList"><div class="empty">Vul bovenaan je naam in. Daarna kan iedereen op een stop op <strong>“Ik ben hier”</strong> tikken.</div></section>
+
+  <div class="section-title" id="route"><h2>Rondje Utrecht</h2><span>Centraal → Centraal</span></div>
+  <section class="routebox">
+    <h3 id="routeTitle">Zonroute · compacte centrumlus</h3>
+    <p id="routeText">De oude UTCA-route, nu weer als zon- en regenvariant en met Utrecht Centraal als begin en eindpunt.</p>
+    <div class="routepills" id="routePills"></div>
+    <a class="routebtn" id="fullRoute" target="_blank" rel="noopener">Open hele ronde in Google Maps</a>
+  </section>
+</main>
+
+
+<div class="overlay" id="loginOverlay">
+  <div class="login">
+    <div class="minihead">Wie ben jij?</div>
+    <h2>Naam erin.<br>Klaar.</h2>
+    <p>Alleen je voornaam is genoeg. Daarmee zien de anderen waar je bent en hoe dramatisch je daggemiddelde ervoor staat.</p>
+    <input id="nameInput" maxlength="24" autocomplete="nickname" placeholder="Voornaam" />
+    <button id="loginBtn">Start de dag</button>
+    <div class="privacy">Geen accountgedoe. × naast je naam = uitloggen en opnieuw beginnen.</div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+var meterBands={1:{label:'Verdacht fris',text:'Iemand drinkt niet mee.',color:'#42d66b'},2:{label:'Keurig op koers',text:'Alles nog onder controle.',color:'#9bd950'},3:{label:'Lekker uit de hand',text:'Precies zoals bedoeld.',color:'#d9d83f'},4:{label:'Zwaar naar de klote',text:'Ik hier?',color:'#ffae3d'},5:{label:'Totaal naar de klote',text:'Wie ben ik?',color:'#ff3e4f'}};
+function maps(q){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)}
+function nav(q){return 'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q)+'&travelmode=walking'}
+var lunchAlts=[
+ {name:'Léo Léo',note:'Franse lunch · Twijnstraat 58',desc:'Franse bistro in de Twijnstraat. Croques, brood, koffie en genoeg om daarna weer verder te kunnen.',addr:'Twijnstraat 58, Utrecht',geo:[52.08245,5.12295],info:maps('Léo Léo Twijnstraat 58 Utrecht')},
+ {name:'BROEI',note:'Plantaardige lunch · Oosterkade 24',desc:'Plantaardige lunch aan de kade. Rustiger alternatief, nog steeds vlak bij het Ledig Erf.',addr:'Oosterkade 24, Utrecht',geo:[52.08005,5.12155],info:maps('BROEI Oosterkade 24 Utrecht')},
+ {name:'Orloff aan de Kade',note:'Lunch aan de kade · Oosterkade 18',desc:'Ruim café-restaurant aan de Oosterkade. Makkelijk met zes en logisch op de route richting de binnenstad.',addr:'Oosterkade 18, Utrecht',geo:[52.08025,5.12130],info:maps('Orloff aan de Kade Oosterkade 18 Utrecht')}
+];
+var neudeAlts=[
+ {name:'Café Le Journal',note:'Neude 32–34',desc:'Klassiek Neude-café met groot terras. Binnen werkt net zo goed als oktober besluit vervelend te doen.',addr:'Neude 32-34, Utrecht',geo:[52.09332,5.11855],info:maps('Café Le Journal Neude Utrecht')},
+ {name:'Tapperij de Luifel',note:'Neude 35',desc:'Rechttoe-rechtaan café aan de Neude. Bier, uitzicht op het plein en weinig reden om ingewikkeld te doen.',addr:'Neude 35, Utrecht',geo:[52.09340,5.11835],info:maps('Tapperij de Luifel Neude 35 Utrecht')},
+ {name:'Ubica',note:'Bier & cocktails · Ganzenmarkt 24',desc:'Historisch pand aan de Ganzenmarkt, vlak naast het poolcafé. Handig als de Neude vol staat.',addr:'Ganzenmarkt 24, Utrecht',geo:[52.09247,5.11938],info:maps('Ubica Ganzenmarkt 24 Utrecht')}
+];
+var oudegrachtAlts=[
+ {name:'Winkel van Sinkel',note:'Oudegracht 158',desc:'Groot grandcafé aan de Oudegracht met terras aan de werf. Handig voor zes man en weinig logistiek gedoe.',addr:'Oudegracht 158, Utrecht',geo:[52.09162,5.11825],info:maps('Winkel van Sinkel Oudegracht 158 Utrecht')},
+ {name:'Beers & Barrels Centrum',note:'Oudegracht a/d Werf 125',desc:'Bier en borrel aan de werf. Net iets steviger dan een gewoon terrasrondje.',addr:'Oudegracht aan de Werf 125, Utrecht',geo:[52.09105,5.11755],info:maps('Beers & Barrels Utrecht Centrum Oudegracht 125')},
+ {name:'Kafé België',note:'Speciaalbier · Oudegracht 196',desc:'Utrechts speciaalbierinstituut. Goede optie als het terrasweer definitief is opgegeven.',addr:'Oudegracht 196, Utrecht',geo:[52.08945,5.12130],info:maps('Kafé België Oudegracht 196 Utrecht')}
+];
+var dinnerAlts=[
+ {name:'De Utrechter',note:'Stadsbrasserie · Vredenburg 40',desc:'Ruime stadsbrasserie tegenover TivoliVredenburg. Goede veilige keuze voor zes man.',addr:'Vredenburg 40, Utrecht',geo:[52.092664,5.111697],info:maps('De Utrechter Vredenburg 40 Utrecht'),reserve:'https://deutrechter.nl/'},
+ {name:'Beers & Barrels Centrum',note:'Burgers, vlees & bier · Oudegracht a/d Werf 125',desc:'Burgers, vlees en veel bier aan de Oudegracht. Goede keuze als niemand nog behoefte heeft aan subtiele porties.',addr:'Oudegracht aan de Werf 125, Utrecht',geo:[52.09105,5.11755],info:maps('Beers & Barrels Utrecht Centrum Oudegracht 125'),reserve:'tel:+31306368744'},
+ {name:"'t Taphuys",note:'Diner + zelf bier/wijn tappen · Mariaplaats 3',desc:'Diner met zelf bier en wijn tappen. Efficiënt systeem, potentieel desastreus voor de meter.',addr:'Mariaplaats 3, Utrecht',geo:[52.09020,5.11462],info:maps("'t Taphuys Utrecht Mariaplaats 3"),reserve:'https://www.taphuys.nl/utrecht/groepen'}
+];
+var barsAlts=[
+ {name:'Café DeRat',note:'Bruine kroeg · Lange Smeestraat 37',desc:'Kleine huiskamerkroeg met veel speciaalbier en precies genoeg ruimte om te doen alsof het nog vroeg is.',addr:'Lange Smeestraat 37, Utrecht',geo:[52.08563,5.12148],info:maps('Café DeRat Lange Smeestraat 37 Utrecht')},
+ {name:'Kafé België',note:'Speciaalbier · Oudegracht 196',desc:'Veel bier, weinig franje. Sterke tussenstop richting Janskerkhof en de afsluiter.',addr:'Oudegracht 196, Utrecht',geo:[52.08945,5.12130],info:maps('Kafé België Oudegracht 196 Utrecht')},
+ {name:'Café de Zaak',note:'Korte Minrebroederstraat 9',desc:'Centraal, druk en ongecompliceerd. Vanaf hier is Bambi praktisch om de hoek.',addr:'Korte Minrebroederstraat 9, Utrecht',geo:[52.09272,5.12055],info:maps('Café de Zaak Korte Minrebroederstraat 9 Utrecht')}
+];
+var finalAlts=[
+ {name:'Cafetaria Ten Beste',note:'Late snack · Predikherenstraat 2',desc:'Kapsalon, döner en snacks. Noordelijk van Bambi, maar nog steeds goed terug te lopen naar Centraal.',addr:'Predikherenstraat 2, Utrecht',geo:[52.09615,5.12055],info:maps('Cafetaria Ten Beste Predikherenstraat 2 Utrecht')},
+ {name:'Grillroom Huzur',note:'Shoarma & grill · Voorstraat 74',desc:'Late grilloptie aan de Voorstraat. Stevig, snel en nog open als de rest al verstandig begint te doen.',addr:'Voorstraat 74, Utrecht',geo:[52.09608,5.12192],info:maps('Grillroom Huzur Voorstraat 74 Utrecht')},
+ {name:'Polleke Utrecht',note:'Broodjes & late hap · Korte Jansstraat 12',desc:'Zelfde straat als Bambi. Minimale omweg, maximale kans dat iemand alsnog een broodje nodig heeft.',addr:'Korte Jansstraat 12, Utrecht',geo:[52.09318,5.12153],info:maps('Polleke Korte Jansstraat 12 Utrecht')}
+];
+var stopsCommon=[
+ {id:'start',time:'09:30–09:45',fixedStart:570,fixedEnd:585,name:'Utrecht Centraal',kind:'finish',meter:false,desc:'Verzamelen bij Stationsplein. Iedereen binnen, koffie in de hand en om 09:45 weg.',addr:'Stationsplein, Utrecht',geo:[52.08944,5.11028],info:maps('Utrecht Centraal')},
+ {id:'lunch',time:'dynamisch',name:'Café Ledig Erf',optionNote:'Lunch · Tolsteegbrug 3',kind:'food',meter:true,desc:'Lunch zonder reserveringsgedoe. Even zitten, eten en de eerste fijne drankjes nuttigen.',addr:'Tolsteegbrug 3, Utrecht',geo:[52.08312,5.12302],info:maps('Café Ledig Erf Tolsteegbrug 3 Utrecht'),alts:lunchAlts},
+ {id:'pool',time:'14:00–15:30',fixedStart:840,fixedEnd:930,reservationAnchor:true,name:'Poolcafé Hart van Utrecht',kind:'play',meter:true,desc:'Twee tafels, zes personen. Ik weet ook niet hoe dit werkt.',addr:'Ganzenmarkt 16B, Utrecht',geo:[52.092330,5.119405],info:maps('Poolcafé Hart van Utrecht Ganzenmarkt 16B Utrecht'),reserve:'https://www.poolenutrecht.nl/reserveren/'},
+ {id:'neude',time:'dynamisch',name:'De Beurs · Neude',optionNote:'Terras / café · Neude 37–39',kind:'food',meter:true,desc:'Terras als het droog is, binnen als het tegenzit. Tijd voor bier en wedstrijdanalyse waar niemand om vroeg.',addr:'Neude 37-39, Utrecht',geo:[52.09345,5.11820],info:maps('De Beurs Neude Utrecht'),alts:neudeAlts},
+ {id:'jeu',time:'16:30–17:45',fixedStart:990,fixedEnd:1065,reservationAnchor:true,name:'JEU de Boules Bar Utrecht',kind:'play',meter:true,desc:'Een baan, zes man, veel ballen en weinig hand-oog coördinatie.',addr:'Paardenveld 3, Utrecht',geo:[52.09505,5.10895],info:maps('JEU de boules bar Utrecht Paardenveld 3'),reserve:'https://jeudeboulesbar.nl/reserveren/'},
+ {id:'oudegracht',time:'dynamisch',name:'Rum Club · Oudegracht',optionNote:'Terras / borrel · Oudegracht a/d Werf 111',kind:'food',meter:true,desc:'Nog één terras-/borrelblok aan het water voordat er serieus gegeten moet worden.',addr:'Oudegracht aan de Werf 111, Utrecht',geo:[52.09177,5.11803],info:maps('Rum Club Oudegracht aan de Werf 111 Utrecht'),alts:oudegrachtAlts},
+ {id:'dinner',time:'19:00–21:00',fixedStart:1140,fixedEnd:1260,reservationAnchor:true,name:'Eetcafé De Poort',optionNote:'Diner · Tolsteegbarrière 2',kind:'food',meter:true,desc:'Diner aan het Ledig Erf. Gewoon stevig eten voordat de avond zichzelf verder organiseert.',addr:'Tolsteegbarrière 2, Utrecht',geo:[52.08303,5.12278],info:maps('Eetcafé De Poort Tolsteegbarrière 2 Utrecht'),reserve:'tel:+31302314572',alts:dinnerAlts},
+ {id:'bars',time:'dynamisch',name:'Café De Morgenster',optionNote:'Eerste kroeg · Oudegracht 323',kind:'food',meter:true,desc:'Eén kroeg als basis in plaats van een hele kroegenroute. Vanaf hier kunnen jullie blijven hangen of één van de drie alternatieven kiezen.',addr:'Oudegracht 323, Utrecht',geo:[52.085012,5.122299],info:maps('Café De Morgenster Oudegracht 323 Utrecht'),alts:barsAlts},
+ {id:'final',time:'23:30–dynamisch',fixedStart:1410,name:'Broodje Bambi',optionNote:'Afsluiter · Korte Jansstraat 6',kind:'food',meter:true,desc:'Om de hoek van Janskerkhof, overdekt en tot diep in de nacht open. Vanaf hier lopen jullie terug naar Utrecht Centraal.',addr:'Korte Jansstraat 6, Utrecht',geo:[52.09324,5.12138],info:maps('Broodje Bambi Korte Jansstraat 6 Utrecht'),alts:finalAlts},
+ {id:'finish',time:'00:00',fixedStart:1440,fixedEnd:1440,name:'Utrecht Centraal',kind:'finish',meter:false,desc:'Rondje dicht. Succes met het perron.',addr:'Utrecht Centraal, Utrecht',geo:[52.08944,5.11028],info:maps('Utrecht Centraal')}
+];
+var rainMorningAlts=[
+ {name:'Barista Cafe Utrecht Neude',note:'Koffie · Neude 1 · eigen kaarten mee',desc:'Koffie aan de Neude. Neem zelf een pak kaarten mee en maak er zonder veel gedoe een rustige regenstart van.',addr:'Neude 1, Utrecht',geo:[52.09310,5.11934],info:maps('Barista Cafe Utrecht Neude 1 Utrecht')},
+ {name:'Noda · Bibliotheek Neude',note:'Koffie / ontbijt · Neude 11 · eigen kaarten mee',desc:'Ruime ochtendplek in Bibliotheek Neude. Koffie erbij, kaarten op tafel en rustig op gang komen.',addr:'Neude 11, Utrecht',geo:[52.09313,5.11816],info:maps('Noda Neude 11 Utrecht')},
+ {name:'Anne&Max Utrecht Domstraat',note:'Koffie · Domstraat 4 · eigen kaarten mee',desc:'Huiskamerachtige koffieplek vlak bij de Dom. Goede tafel, koffie en je eigen kaarten mee.',addr:'Domstraat 4, Utrecht',geo:[52.09087,5.12186],info:maps('Anne&Max Utrecht Domstraat 4 Utrecht')}
+];
+var weatherStop={
+ sun:{id:'weather-sun',time:'10:00–11:45',fixedStart:600,fixedEnd:705,reservationAnchor:true,name:'Kanoverhuur Utrecht',kind:'play',meter:true,desc:'Water, de Oudegracht. Drie tweepersoonskano\'s. Rustig beginnen en koekeloeren.',addr:'Oudegracht aan de Werf 275, Utrecht',geo:[52.08360,5.12155],info:maps('Kanoverhuur Utrecht Oudegracht aan de Werf 275 Utrecht'),reserve:'https://kanoverhuurutrecht.nl/reserveren'},
+ rain:{id:'weather-rain',time:'09:50–11:20',fixedStart:590,fixedEnd:680,name:"Café 't Neutje",optionNote:'Koffie & kaarten · Neude 30',kind:'food',meter:true,desc:'Koffie en kaarten en wellicht een klein drankje.',addr:'Neude 30, Utrecht',geo:[52.0926573,5.1185024],info:maps("Café 't Neutje Neude 30 Utrecht"),alts:rainMorningAlts}
+};
+var routeData={sun:{title:'Zonroute · oud UTCA-programma',text:'Centraal → kano → lunch → pool 14:00 → Neude → JEU 16:30 → Oudegracht → diner 19:00 → eerste kroeg → Bambi → Centraal. Looptijd zit in de tijdlijn.'},rain:{title:'Regenroute · oud UTCA-programma',text:"Centraal → Café 't Neutje / kaartoptie → lunch → pool 14:00 → Neude → JEU 16:30 → Oudegracht → diner 19:00 → eerste kroeg → Bambi → Centraal. Looptijd zit in de tijdlijn."}};
+
+var memoryStore={};
+function storeGet(k){try{return window.localStorage?window.localStorage.getItem(k):null}catch(e){return memoryStore[k]||null}}
+function storeSet(k,v){try{if(window.localStorage)window.localStorage.setItem(k,v);else memoryStore[k]=v}catch(e){memoryStore[k]=v}}
+function storeRemove(k){try{if(window.localStorage)window.localStorage.removeItem(k)}catch(e){} delete memoryStore[k]}
+function safeJson(v,fallback){try{var x=JSON.parse(v);return x&&typeof x==='object'?x:fallback}catch(e){return fallback}}
+function $(s){return document.querySelector(s)}
+function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
+var mode=storeGet('utca-weather')||'sun';
+var user=storeGet('utca-name')||'';
+var currentStop=storeGet('utca-stop')||'start';
+var ratings=safeJson(storeGet('utca-ratings'),{});
+var venueSelections=safeJson(storeGet('utca-venues-v13'),{});
+var shared=false,participants=[];
+var standaloneMode=(window.location.protocol==='file:'||window.location.protocol==='blob:'||window.location.protocol==='data:'||!window.location.hostname);
+function itinerary(){var a=[stopsCommon[0],weatherStop[mode]];return a.concat(stopsCommon.slice(1))}
+function meterStops(){return itinerary().filter(function(x){return x.meter})}
+function toast(msg){var t=$('#toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1700)}
+function bandForScore(v){if(v<1.5)return 1;if(v<2.5)return 2;if(v<3.5)return 3;if(v<4.5)return 4;return 5}
+function bandForValue(v){return meterBands[Math.max(1,Math.min(5,Math.round(Number(v)||1)))]}
+function percentFromAverage(avg){return Math.round(Math.max(0,Math.min(100,((avg-1)/4)*100)))}
+function averageFromRatings(obj){obj=obj||ratings;var allowed={};meterStops().forEach(function(s){allowed[s.id]=true});var vals=[];for(var k in obj){if(Object.prototype.hasOwnProperty.call(obj,k)&&allowed[k]&&Number(obj[k])>=1&&Number(obj[k])<=5)vals.push(Number(obj[k]))}if(!vals.length)return{avg:null,count:0,total:Object.keys(allowed).length};var sum=0;vals.forEach(function(v){sum+=v});return{avg:sum/vals.length,count:vals.length,total:Object.keys(allowed).length}}
+function persistRatings(){storeSet('utca-ratings',JSON.stringify(ratings))}
+function setLive(isShared){shared=isShared;var el=$('#liveState');if(!el)return;el.classList.toggle('ok',isShared);var label=el.querySelector('span:last-child');if(label)label.textContent=isShared?'groep live':'lokaal'}
+function renderUser(){var n=$('#userName'),chip=$('#userChip'),overlay=$('#loginOverlay');if(n)n.textContent=user;if(chip)chip.classList.toggle('show',!!user);if(overlay)overlay.classList.toggle('show',!user)}
+function externalAttrs(url){return url&&url.indexOf('tel:')===0?'':' target="_blank" rel="noopener"'}
+function venueOptions(x){
+  var primary={name:x.optionName||x.name,note:x.optionNote||x.addr,desc:x.desc,addr:x.addr,geo:x.geo,info:x.info,reserve:x.reserve||''};
+  return [primary].concat(x.alts||[]);
+}
+function selectedVenueIndex(x){
+  if(!x.alts||!x.alts.length)return 0;
+  var idx=Number(venueSelections[x.id]||0),max=venueOptions(x).length-1;
+  return isFinite(idx)&&idx>=0&&idx<=max?idx:0;
+}
+function activeVenue(x){return venueOptions(x)[selectedVenueIndex(x)]}
+function sameVenue(a,b){if(!a||!b)return false;return String(a.addr||'').trim().toLowerCase()===String(b.addr||'').trim().toLowerCase()}
+function rad(v){return v*Math.PI/180}
+function walkMinutes(a,b){
+  if(!a||!b)return 0;
+  if(sameVenue(a,b))return 0;
+  if(!a.geo||!b.geo)return 5;
+  var R=6371,dLat=rad(b.geo[0]-a.geo[0]),dLon=rad(b.geo[1]-a.geo[1]);
+  var q=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(rad(a.geo[0]))*Math.cos(rad(b.geo[0]))*Math.sin(dLon/2)*Math.sin(dLon/2);
+  var km=R*2*Math.atan2(Math.sqrt(q),Math.sqrt(1-q));
+  var min=Math.round(km*13.4); // stadsloop: ~5 km/u + kleine routefactor
+  return Math.max(1,min);
+}
+function previousVenueFor(stop){
+  var arr=itinerary(),idx=arr.indexOf(stop);
+  return idx>0?activeVenue(arr[idx-1]):null;
+}
+function totalWalkMinutes(){
+  var arr=itinerary(),sum=0;
+  for(var i=1;i<arr.length;i++)sum+=walkMinutes(activeVenue(arr[i-1]),activeVenue(arr[i]));
+  return sum;
+}
+
+function fmtTime(min){
+  min=Math.max(0,Math.min(1440,Math.round(min)));
+  if(min===1440)return '00:00';
+  var h=Math.floor(min/60),m=min%60;
+  return (h<10?'0':'')+h+':'+(m<10?'0':'')+m;
+}
+function nextFixedIndex(arr,from){
+  for(var i=from+1;i<arr.length;i++)if(typeof arr[i].fixedStart==='number')return i;
+  return -1;
+}
+function computeSchedule(){
+  var arr=itinerary(),sch=[],i;
+  for(i=0;i<arr.length;i++)sch.push({start:null,end:null});
+  // Known fixed anchors first.
+  for(i=0;i<arr.length;i++){
+    if(typeof arr[i].fixedStart==='number')sch[i].start=arr[i].fixedStart;
+    if(typeof arr[i].fixedEnd==='number')sch[i].end=arr[i].fixedEnd;
+  }
+  // Forward: derive flexible starts from the previous stop + walking time.
+  for(i=0;i<arr.length;i++){
+    if(sch[i].start===null){
+      var prev=i>0?sch[i-1]:null;
+      if(prev&&prev.end!==null)sch[i].start=prev.end+walkMinutes(activeVenue(arr[i-1]),activeVenue(arr[i]));
+    }
+    // Flexible end: leave early enough to make the next fixed reservation.
+    if(sch[i].end===null){
+      var nfi=nextFixedIndex(arr,i);
+      if(nfi>i){
+        var next=arr[nfi];
+        // In this itinerary every flexible block sits directly before its next hard anchor,
+        // except the rain morning. When other flexible stops sit in between, preserve their
+        // preferred window first and let the final flexible stop absorb the walking margin.
+        if(nfi===i+1){
+          var w=walkMinutes(activeVenue(arr[i]),activeVenue(next));
+          var margin=next.reservationAnchor?5:0;
+          sch[i].end=sch[nfi].start-w-margin;
+        }
+      }
+    }
+    // Special soft morning for rain: retain the VR block as in the previous version.
+    if(arr[i].id==='weather-rain'){
+      sch[i].start=590; sch[i].end=680;
+    }
+  }
+  // Second forward pass handles starts after flexible ends.
+  for(i=1;i<arr.length;i++){
+    if(sch[i].start===null&&sch[i-1].end!==null)sch[i].start=sch[i-1].end+walkMinutes(activeVenue(arr[i-1]),activeVenue(arr[i]));
+  }
+  // Specific flexible blocks that sit before hard reservations.
+  var idx={};for(i=0;i<arr.length;i++)idx[arr[i].id]=i;
+  function fitBefore(id,nextId,margin){
+    var a=idx[id],b=idx[nextId]; if(a===undefined||b===undefined)return;
+    if(sch[a].start===null&&a>0&&sch[a-1].end!==null)sch[a].start=sch[a-1].end+walkMinutes(activeVenue(arr[a-1]),activeVenue(arr[a]));
+    sch[a].end=sch[b].start-walkMinutes(activeVenue(arr[a]),activeVenue(arr[b]))-(margin||0);
+  }
+  fitBefore('lunch','pool',5);
+  fitBefore('neude','jeu',5);
+  fitBefore('oudegracht','dinner',5);
+  fitBefore('bars','final',0);
+  // Starts after hard blocks and after the morning activity.
+  for(i=1;i<arr.length;i++){
+    if(sch[i].start===null&&sch[i-1].end!==null)sch[i].start=sch[i-1].end+walkMinutes(activeVenue(arr[i-1]),activeVenue(arr[i]));
+  }
+  // Final stop ends in time to walk back to Utrecht Centraal by midnight.
+  if(idx.final!==undefined&&idx.finish!==undefined){
+    sch[idx.final].start=1410;
+    sch[idx.final].end=1440-walkMinutes(activeVenue(arr[idx.final]),activeVenue(arr[idx.finish]));
+  }
+  // Make sure the bars block starts after dinner + walk and ends in time to reach final.
+  if(idx.bars!==undefined){
+    var bi=idx.bars;
+    if(bi>0)sch[bi].start=sch[bi-1].end+walkMinutes(activeVenue(arr[bi-1]),activeVenue(arr[bi]));
+    if(idx.final!==undefined)sch[bi].end=sch[idx.final].start-walkMinutes(activeVenue(arr[bi]),activeVenue(arr[idx.final]));
+  }
+  // Lunch start after weather + walk; applies to both sun and rain.
+  if(idx.lunch!==undefined){
+    var li=idx.lunch;
+    sch[li].start=sch[li-1].end+walkMinutes(activeVenue(arr[li-1]),activeVenue(arr[li]));
+    sch[li].end=sch[idx.pool].start-walkMinutes(activeVenue(arr[li]),activeVenue(arr[idx.pool]))-5;
+  }
+  // Neude and Oudegracht starts after the previous hard activity + walk.
+  if(idx.neude!==undefined){var ni=idx.neude;sch[ni].start=sch[ni-1].end+walkMinutes(activeVenue(arr[ni-1]),activeVenue(arr[ni]));sch[ni].end=sch[idx.jeu].start-walkMinutes(activeVenue(arr[ni]),activeVenue(arr[idx.jeu]))-5;}
+  if(idx.oudegracht!==undefined){var oi=idx.oudegracht;sch[oi].start=sch[oi-1].end+walkMinutes(activeVenue(arr[oi-1]),activeVenue(arr[oi]));sch[oi].end=sch[idx.dinner].start-walkMinutes(activeVenue(arr[oi]),activeVenue(arr[idx.dinner]))-5;}
+  return sch;
+}
+function displayStopTime(stop,s){
+  if(!s||s.start===null)return stop.time||'';
+  if(s.end===null||s.end===s.start)return fmtTime(s.start);
+  return fmtTime(s.start)+'–'+fmtTime(s.end);
+}
+function walkDisplay(arr,sch,i){
+  var prev=arr[i-1],cur=arr[i],w=walkMinutes(activeVenue(prev),activeVenue(cur));
+  var depart=sch[i-1].end,arrive=depart===null?null:depart+w;
+  var start=sch[i].start,slack=(arrive!==null&&start!==null)?Math.max(0,start-arrive):0;
+  var text='± '+w+' min lopen';
+  if(slack>0)text+=' + '+slack+' min speling';
+  return {walk:w,depart:depart,arrive:arrive,start:start,text:text};
+}
+function ensureNoConsecutiveDuplicate(){
+  var arr=itinerary(),changed=false;
+  for(var i=1;i<arr.length;i++){
+    var prev=activeVenue(arr[i-1]),cur=activeVenue(arr[i]);
+    if(sameVenue(prev,cur)&&arr[i].alts&&arr[i].alts.length){
+      var opts=venueOptions(arr[i]);
+      for(var j=0;j<opts.length;j++){
+        if(!sameVenue(prev,opts[j])){venueSelections[arr[i].id]=j;changed=true;break}
+      }
+    }
+  }
+  if(changed)persistVenueSelections();
+}
+function persistVenueSelections(){storeSet('utca-venues-v13',JSON.stringify(venueSelections))}
+function alternativesHtml(x){
+  if(!x.alts||!x.alts.length)return'';
+  var opts=venueOptions(x),selected=selectedVenueIndex(x),rows='',arr=itinerary(),pos=arr.indexOf(x),prev=pos>0?activeVenue(arr[pos-1]):null,next=pos>=0&&pos<arr.length-1?activeVenue(arr[pos+1]):null;
+  opts.forEach(function(a,idx){
+    if(idx===selected)return;
+    var conflictPrev=sameVenue(prev,a),conflictNext=sameVenue(a,next),conflict=conflictPrev||conflictNext;
+    var walkText=conflict?(conflictPrev?'· zelfde tent als hiervoor':'· zelfde tent als hierna'):('· ± '+walkMinutes(prev,a)+' min lopen');
+    rows+='<div class="alt-row"><button type="button" class="alt-select" data-venue-stop="'+x.id+'" data-venue-index="'+idx+'" aria-label="Kies '+escapeHtml(a.name)+'" '+(conflict?'disabled':'')+'><div class="alt-name">'+escapeHtml(a.name)+' <span class="alt-walk">'+walkText+'</span></div><div class="alt-note">'+escapeHtml(a.note||a.addr||'')+'</div></button><div class="alt-actions"><a class="mini-round" href="'+a.info+'" target="_blank" rel="noopener" aria-label="Google Maps reviews van '+escapeHtml(a.name)+'">I</a>'+(a.reserve?'<a class="mini-round r" href="'+a.reserve+'"'+externalAttrs(a.reserve)+' aria-label="Reserveren bij '+escapeHtml(a.name)+'">R</a>':'')+'</div></div>';
+  });
+  return '<details class="alternatives"><summary>'+(opts.length-1)+' andere opties <span>+</span></summary><div class="alt-list">'+rows+'</div></details>';
+}
+function meterHtml(x){if(!x.meter)return'';var v=Number(ratings[x.id]||0),band=v?bandForValue(v):null,buttons='';for(var n=1;n<=5;n++)buttons+='<button data-rate="'+x.id+'" data-value="'+n+'" class="'+(v===n?'active':'')+'" aria-label="Score '+n+'">'+n+'</button>';return '<div class="stop-meter"><div class="stop-meter-head"><div class="stop-meter-title">Naar-de-klote-meter</div><div class="stop-meter-state">'+(v?v+'/5':'nog invullen')+'</div></div><div class="stop-meter-buttons">'+buttons+'</div><div class="stop-meter-copy">'+(band?'<strong>'+band.label+'</strong> · '+band.text:'Tik 1–5 na dit onderdeel.')+'</div></div>'}
+function renderTimeline(){
+  var arr=itinerary(),sch=computeSchedule(),html='';
+  arr.forEach(function(x,i){
+    if(i){
+      var wd=walkDisplay(arr,sch,i),range=(wd.depart!==null&&wd.start!==null)?fmtTime(wd.depart)+'–'+fmtTime(wd.start):'';
+      if(wd.walk>0||(wd.depart!==null&&wd.start!==null&&wd.start>wd.depart))html+='<div class="walk"><span>'+range+'</span><div class="rule"></div><span>'+wd.text+'</span></div>';
+    }
+    var v=activeVenue(x),timeLabel=displayStopTime(x,sch[i]);
+    html+='<article class="card '+(currentStop===x.id?'current':'')+'" data-stop="'+x.id+'"><div class="top"><div class="time">'+timeLabel+'</div><a class="navbtn" href="'+nav(v.addr)+'" target="_blank" rel="noopener">NAVIGEER</a></div><div class="name">'+escapeHtml(v.name)+'</div><p class="desc">'+escapeHtml(v.desc)+'</p><div class="location">📍 '+escapeHtml(v.addr)+'</div>'+alternativesHtml(x)+'<div class="row"><div class="circles"><a class="round" href="'+v.info+'" target="_blank" rel="noopener" aria-label="Google Maps reviews">I</a>'+(v.reserve?'<a class="round r" href="'+v.reserve+'"'+externalAttrs(v.reserve)+' aria-label="Reserveren">R</a>':'')+'</div><button class="here '+(currentStop===x.id?'active':'')+'" data-here="'+x.id+'" '+(user?'':'disabled')+'>'+(currentStop===x.id?'Ik ben hier ✓':'Ik ben hier')+'</button></div>'+meterHtml(x)+'</article>';
+  });
+  $('#timeline').innerHTML=html;
+  $$('[data-here]').forEach(function(b){b.onclick=function(){setHere(b.getAttribute('data-here'))}});
+  $$('[data-rate]').forEach(function(b){b.onclick=function(){setRating(b.getAttribute('data-rate'),Number(b.getAttribute('data-value')))}});
+  $$('[data-venue-stop]').forEach(function(b){b.onclick=function(){selectVenue(b.getAttribute('data-venue-stop'),Number(b.getAttribute('data-venue-index')))}});
+}
+function renderDayResult(){var r=averageFromRatings(),pct=$('#dayPercent'),bar=$('#dayBar'),copy=$('#dayCopy'),meta=$('#dayMeta');if(r.avg===null){pct.textContent='—';bar.style.width='0%';bar.style.background=meterBands[1].color;copy.textContent='Vul onder een onderdeel de meter in. Alleen ingevulde meters tellen mee.';meta.textContent='0 van '+r.total+' onderdelen ingevuld';return}var p=percentFromAverage(r.avg),band=meterBands[bandForScore(r.avg)];pct.textContent=p+'%';bar.style.width=p+'%';bar.style.background=band.color;copy.innerHTML='<strong>'+band.label+'</strong> · '+band.text;meta.textContent='Gemiddeld '+r.avg.toFixed(1)+'/5 · '+r.count+' van '+r.total+' onderdelen ingevuld'}
+function renderRoute(){
+  var d=routeData[mode],mins=totalWalkMinutes(),walkLabel='± '+mins+' min';
+  $('#routeWalk').textContent=walkLabel;
+  $('#walkChip').innerHTML='<strong>'+walkLabel+'</strong> lopen totaal';
+  $('#routeTitle').textContent=d.title;
+  $('#routeText').textContent=d.text;
+  var arr=itinerary(),names=[];
+  arr.forEach(function(s){var n=activeVenue(s).name.replace(/^Terug naar /,'');if(!names.length||names[names.length-1]!==n)names.push(n)});
+  $('#routePills').innerHTML=names.map(function(p){return '<span>'+escapeHtml(p)+'</span>'}).join('');
+  var origin=activeVenue(arr[0]).addr,destination=activeVenue(arr[arr.length-1]).addr,points=[];
+  for(var i=1;i<arr.length-1;i++)points.push(activeVenue(arr[i]).addr);
+  var wp=points.map(encodeURIComponent).join('%7C');
+  $('#fullRoute').href='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(origin)+'&destination='+encodeURIComponent(destination)+'&travelmode=walking&waypoints='+wp;
+}
+function participantResult(p){var r=averageFromRatings(p.ratings||{});return r.avg===null?{pct:null,avg:null}:{pct:percentFromAverage(r.avg),avg:r.avg}}
+function renderGroup(){var list=$('#groupList');if(!participants.length){list.innerHTML='<div class="empty">Nog niemand zichtbaar. Zodra iemand zijn naam invult, verschijnt die hier.</div>';$('#groupAverage').textContent='—';return}var byId={};stopsCommon.concat([weatherStop.sun,weatherStop.rain]).forEach(function(s){byId[s.id]=activeVenue(s).name});var valid=[];participants.forEach(function(p){var rr=participantResult(p);if(rr.pct!==null)valid.push(rr)});var html='';participants.forEach(function(p){var r=participantResult(p),band=r.avg!==null?meterBands[bandForScore(r.avg)]:null;html+='<div class="person"><div><strong>'+escapeHtml(p.name)+(p.name.toLowerCase()===user.toLowerCase()?' · jij':'')+'</strong><small>'+(byId[p.currentStop]||'Ergens tussen twee slechte beslissingen')+(r.pct!==null?' · '+r.pct+'% naar de klote':'')+'</small></div><div class="score percent" style="background:'+(band?band.color:'#6d7780')+'">'+(r.pct!==null?r.pct+'%':'—')+'</div></div>'});list.innerHTML=html;if(valid.length){var sum=0;valid.forEach(function(x){sum+=x.pct});$('#groupAverage').textContent=Math.round(sum/valid.length)+'%'}else $('#groupAverage').textContent='—'}
+function escapeHtml(s){return String(s).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]})}
+function syncState(silent){if(!user)return;if(standaloneMode){setLive(false);participants=[{name:user,currentStop:currentStop,ratings:ratings}];renderGroup();if(!silent)toast('Lokaal opgeslagen');return}var local=averageFromRatings(),payload={name:user,currentStop:currentStop,intox:local.avg===null?1:Math.round(local.avg),ratings:ratings};if(!window.fetch){setLive(false);participants=[{name:user,currentStop:currentStop,ratings:ratings}];renderGroup();return}fetch('/api/state',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}).then(function(r){if(!r.ok)throw new Error('offline');return r.json()}).then(function(data){participants=data.participants||[];setLive(data.shared===true);renderGroup()}).catch(function(){setLive(false);participants=[{name:user,currentStop:currentStop,ratings:ratings}];renderGroup();if(!silent)toast('Lokaal opgeslagen')})}
+function refreshState(){if(!user||!window.fetch||standaloneMode)return;fetch('/api/state',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('offline');return r.json()}).then(function(data){participants=data.participants||[];setLive(data.shared===true);renderGroup()}).catch(function(){setLive(false)})}
+function selectVenue(stopId,index){
+  var stop=null;
+  stopsCommon.forEach(function(s){if(s.id===stopId)stop=s});
+  if(!stop&&weatherStop[mode]&&weatherStop[mode].id===stopId)stop=weatherStop[mode];
+  if(!stop&&weatherStop.sun.id===stopId)stop=weatherStop.sun;
+  if(!stop&&weatherStop.rain.id===stopId)stop=weatherStop.rain;
+  if(!stop||!stop.alts)return;
+  var opts=venueOptions(stop);
+  if(index<0||index>=opts.length)return;
+  var arr=itinerary(),pos=arr.indexOf(stop),candidate=opts[index];
+  var prev=pos>0?activeVenue(arr[pos-1]):null,next=pos>=0&&pos<arr.length-1?activeVenue(arr[pos+1]):null;
+  if(sameVenue(prev,candidate)||sameVenue(candidate,next)){
+    toast('Niet twee keer dezelfde tent achter elkaar.');
+    return;
+  }
+  venueSelections[stopId]=index;
+  persistVenueSelections();
+  renderTimeline();
+  renderRoute();
+  renderGroup();
+  toast('Gekozen: '+opts[index].name);
+}
+function setHere(id){currentStop=id;storeSet('utca-stop',id);renderTimeline();syncState(false);toast('Locatie gedeeld')}
+function setRating(id,value){ratings[id]=value;persistRatings();renderTimeline();renderDayResult();syncState(false);toast(value===5?'Totaal naar de klote. Genoteerd.':'Meter bijgewerkt')}
+function login(){var input=$('#nameInput'),v=input.value.trim().replace(/\s+/g,' ');if(!v)return;user=v.slice(0,24);storeSet('utca-name',user);renderUser();renderTimeline();syncState(false);toast('Hoi '+user+'. Succes ermee.')}
+function bind(){var loginBtn=$('#loginBtn'),nameInput=$('#nameInput'),logout=$('#logout');if(loginBtn)loginBtn.onclick=login;if(nameInput)nameInput.addEventListener('keydown',function(e){if(e.key==='Enter'||e.keyCode===13)login()});if(logout)logout.onclick=function(){storeRemove('utca-name');user='';renderUser();renderTimeline();if(nameInput)nameInput.value='';setTimeout(function(){if(nameInput)nameInput.focus()},50)};$$('.switcher button').forEach(function(b){b.onclick=function(){mode=b.getAttribute('data-mode');storeSet('utca-weather',mode);ensureNoConsecutiveDuplicate();$$('.switcher button').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-mode')===mode)});renderTimeline();renderDayResult();renderRoute();renderGroup()}})}
+function init(){try{var jsw=$('#jsPreviewWarning');if(jsw)jsw.style.display='none';ensureNoConsecutiveDuplicate();$$('.switcher button').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-mode')===mode)});renderTimeline();renderDayResult();renderRoute();renderGroup();bind();renderUser();setLive(false);var boot=$('#bootError');if(boot)boot.classList.remove('show');if(user){setTimeout(function(){syncState(true)},0);if(!standaloneMode)setInterval(refreshState,15000)}}catch(e){var bootErr=$('#bootError');if(bootErr)bootErr.classList.add('show');var overlay=$('#loginOverlay');if(overlay)overlay.classList.remove('show');if(window.console&&console.error)console.error(e)}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+window.addEventListener('focus',refreshState);
+})();
+</script>
+</body>
+</html>
