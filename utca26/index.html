@@ -140,7 +140,7 @@ a{color:inherit;text-decoration:none} button,input{font:inherit}.app{max-width:7
 <script>
 (function(){
 'use strict';
-var meterBands={1:{label:'Verdacht fris',text:'Iemand drinkt niet mee.',color:'#42d66b'},2:{label:'Keurig op koers',text:'Alles nog onder controle.',color:'#9bd950'},3:{label:'Lekker uit de hand',text:'Precies zoals bedoeld.',color:'#d9d83f'},4:{label:'Goed naar de klote',text:'Ik hier?',color:'#ffae3d'},5:{label:'Totaal naar de klote',text:'Wie ben ik?',color:'#ff3e4f'}};
+var meterBands={1:{label:'Verdacht fris',text:'',color:'#42d66b'},2:{label:'Keurig op koers',text:'',color:'#9bd950'},3:{label:'Lekker uit de hand',text:'',color:'#d9d83f'},4:{label:'Ik hier?',text:'',color:'#ffae3d'},5:{label:'Balzak.',text:'',color:'#ff3e4f'}};
 function maps(q){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)}
 function nav(q){return 'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q)+'&travelmode=walking'}
 var lunchAlts=[
@@ -395,7 +395,7 @@ function alternativesHtml(x){
   });
   return '<details class="alternatives"><summary>'+(opts.length-1)+' andere opties <span>+</span></summary><div class="alt-list">'+rows+'</div></details>';
 }
-function meterHtml(x){if(!x.meter)return'';var v=Number(ratings[x.id]||0),band=v?bandForValue(v):null,buttons='';for(var n=1;n<=5;n++)buttons+='<button data-rate="'+x.id+'" data-value="'+n+'" class="'+(v===n?'active':'')+'" aria-label="Score '+n+'">'+n+'</button>';return '<div class="stop-meter"><div class="stop-meter-head"><div class="stop-meter-title">Naar de klote meter</div><div class="stop-meter-state">'+(v?v+'/5':'nog invullen')+'</div></div><div class="stop-meter-buttons">'+buttons+'</div><div class="stop-meter-copy">'+(band?'<strong>'+band.label+'</strong> · '+band.text:'Tik 1–5 na dit onderdeel.')+'</div></div>'}
+function meterHtml(x){if(!x.meter)return'';var v=Number(ratings[x.id]||0),band=v?bandForValue(v):null,buttons='';for(var n=1;n<=5;n++)buttons+='<button data-rate="'+x.id+'" data-value="'+n+'" class="'+(v===n?'active':'')+'" aria-label="Score '+n+'">'+n+'</button>';return '<div class="stop-meter"><div class="stop-meter-head"><div class="stop-meter-title">Naar de klote meter</div><div class="stop-meter-state">'+(v?v+'/5':'nog invullen')+'</div></div><div class="stop-meter-buttons">'+buttons+'</div><div class="stop-meter-copy">'+(band?'<strong>'+band.label+'</strong>':'Tik 1–5 na dit onderdeel.')+'</div></div>'}
 function renderTimeline(){
   var arr=itinerary(),sch=computeSchedule(),html='';
   arr.forEach(function(x,i){
@@ -412,7 +412,7 @@ function renderTimeline(){
   $$('[data-venue-stop]').forEach(function(b){b.onclick=function(){selectVenue(b.getAttribute('data-venue-stop'),Number(b.getAttribute('data-venue-index')))}});
   renderJourneyHeader();
 }
-function renderDayResult(){var r=averageFromRatings(),pct=$('#dayPercent'),bar=$('#dayBar'),copy=$('#dayCopy'),meta=$('#dayMeta');if(r.avg===null){pct.textContent='—';bar.style.width='0%';bar.style.background=meterBands[1].color;copy.textContent='Vul onder een onderdeel de meter in. Alleen ingevulde meters tellen mee.';meta.textContent='0 van '+r.total+' onderdelen ingevuld';return}var p=percentFromAverage(r.avg),band=meterBands[bandForScore(r.avg)];pct.textContent=p+'%';bar.style.width=p+'%';bar.style.background=band.color;copy.innerHTML='<strong>'+band.label+'</strong> · '+band.text;meta.textContent='Gemiddeld '+r.avg.toFixed(1)+'/5 · '+r.count+' van '+r.total+' onderdelen ingevuld'}
+function renderDayResult(){var r=averageFromRatings(),pct=$('#dayPercent'),bar=$('#dayBar'),copy=$('#dayCopy'),meta=$('#dayMeta');if(r.avg===null){pct.textContent='—';bar.style.width='0%';bar.style.background=meterBands[1].color;copy.textContent='Vul onder een onderdeel de meter in. Alleen ingevulde meters tellen mee.';meta.textContent='0 van '+r.total+' onderdelen ingevuld';return}var p=percentFromAverage(r.avg),band=meterBands[bandForScore(r.avg)];pct.textContent=p+'%';bar.style.width=p+'%';bar.style.background=band.color;copy.innerHTML='<strong>'+band.label+'</strong>';meta.textContent='Gemiddeld '+r.avg.toFixed(1)+'/5 · '+r.count+' van '+r.total+' onderdelen ingevuld'}
 function renderRoute(){
   var mins=totalWalkMinutes(),walkLabel='± '+mins+' min';
   var routeWalk=$('#routeWalk'),walkChip=$('#walkChip');
