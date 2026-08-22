@@ -748,6 +748,73 @@ body.live-mode .hero{
   }
 }
 
+
+/* Rain mode: swap the app-wide lime accent for the same blue family as the Regen control.
+   Semantic meter colors remain untouched. */
+body.rain-mode{
+  --lime:#7fd6ee;
+  --limeSoft:rgba(127,214,238,.90);
+  --prim:linear-gradient(180deg,rgba(155,214,233,.84),rgba(119,199,222,.76));
+  --limeLine:rgba(127,214,238,.30);
+  --limeGlow:rgba(127,214,238,.16);
+  --limeTint:rgba(127,214,238,.10);
+  --limeTintStrong:rgba(127,214,238,.18);
+  --primSoft:linear-gradient(180deg,rgba(127,214,238,.18),rgba(127,214,238,.11));
+  --primStroke:rgba(127,214,238,.34);
+  --limeText:rgba(127,214,238,.90);
+  --limeTextHover:rgba(155,222,240,.98);
+
+  background-image:
+    radial-gradient(58% 40% at 6% 0%,rgba(127,214,238,.045),transparent 66%),
+    radial-gradient(52% 34% at 98% 14%,rgba(140,190,215,.045),transparent 68%),
+    radial-gradient(70% 50% at 24% 60%,rgba(255,255,255,.022),transparent 72%),
+    linear-gradient(180deg,#0c0d0e,#050607 62%);
+}
+
+/* Accent borders / glows that previously used literal lime values. */
+body.rain-mode .roster-chip.me{
+  border-color:rgba(127,214,238,.30);
+}
+
+body.rain-mode .journey-nav,
+body.rain-mode .here.active{
+  background:linear-gradient(180deg,rgba(155,214,233,.84),rgba(119,199,222,.76));
+  border-color:rgba(127,214,238,.34);
+  color:#06181f;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 4px 14px rgba(0,0,0,.24);
+}
+
+body.rain-mode .tl-row.done .tl-rail::before,
+body.rain-mode .tl-row.done .tl-rail::after,
+body.rain-mode .tl-row.current .tl-rail::before{
+  background:rgba(127,214,238,.42);
+}
+
+body.rain-mode .tl-row.current .tl-node{
+  background:rgba(127,214,238,.09);
+  border-color:#7fd6ee;
+  box-shadow:0 0 0 4px #050607,0 0 10px rgba(127,214,238,.18);
+}
+
+body.rain-mode .tl-progress-track i{
+  background:linear-gradient(90deg,rgba(127,214,238,.78),rgba(155,222,240,.96));
+}
+
+body.rain-mode .card.current{
+  border-color:rgba(127,214,238,.26);
+  box-shadow:0 10px 30px rgba(0,0,0,.34),var(--edge),0 0 0 1px rgba(127,214,238,.08);
+}
+
+body.rain-mode .round.r:hover,
+body.rain-mode .mini-round.r:hover{
+  background:linear-gradient(180deg,rgba(127,214,238,.22),rgba(127,214,238,.14));
+}
+
+body.rain-mode .login input:focus{
+  border-color:rgba(127,214,238,.50);
+  box-shadow:0 0 0 3px rgba(127,214,238,.10);
+}
+
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -933,6 +1000,9 @@ function safeJson(v,fallback){try{var x=JSON.parse(v);return x&&typeof x==='obje
 function $(s){return document.querySelector(s)}
 function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
 var mode=storeGet('utca-weather')||'sun';
+function applyWeatherTheme(){
+  document.body.classList.toggle('rain-mode',mode==='rain');
+}
 var user=storeGet('utca-name')||'';
 var currentStop=storeGet('utca-stop')||'';
 var ratings=safeJson(storeGet('utca-ratings'),{});
@@ -1295,8 +1365,8 @@ function setRating(id,value){
   toast(value===5?'Totaal naar de klote. Genoteerd.':'Meter bijgewerkt');
 }
 function login(){var input=$('#nameInput'),v=input.value.trim().replace(/\s+/g,' ');if(!v)return;user=v.slice(0,24);storeSet('utca-name',user);currentStop='';storeRemove('utca-stop');renderUser();renderTimeline();syncState(false);toast('Hoi '+user+'. Succes ermee.')}
-function bind(){var loginBtn=$('#loginBtn'),nameInput=$('#nameInput'),logout=$('#logout');if(loginBtn)loginBtn.onclick=login;if(nameInput)nameInput.addEventListener('keydown',function(e){if(e.key==='Enter'||e.keyCode===13)login()});if(logout)logout.onclick=function(){storeRemove('utca-name');user='';renderUser();renderTimeline();if(nameInput)nameInput.value='';setTimeout(function(){if(nameInput)nameInput.focus()},50)};$$('.switcher button').forEach(function(b){b.onclick=function(){var oldMode=mode,oldWeatherId=weatherStop[oldMode].id;mode=b.getAttribute('data-mode');storeSet('utca-weather',mode);if(currentStop===oldWeatherId){currentStop=weatherStop[mode].id;storeSet('utca-stop',currentStop)}ensureNoConsecutiveDuplicate();$$('.switcher button').forEach(function(x){var active=x.getAttribute('data-mode')===mode;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active?'true':'false')});renderTimeline();renderDayResult();renderRoute();renderGroup()}})}
-function init(){try{var jsw=$('#jsPreviewWarning');if(jsw)jsw.style.display='none';ensureNoConsecutiveDuplicate();$$('.switcher button').forEach(function(x){var active=x.getAttribute('data-mode')===mode;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active?'true':'false')});renderTimeline();renderDayResult();renderRoute();renderGroup();bind();renderUser();setLive(false);var boot=$('#bootError');if(boot)boot.classList.remove('show');if(user){setTimeout(function(){syncState(true)},0);if(!standaloneMode)setInterval(refreshState,15000)}}catch(e){var bootErr=$('#bootError');if(bootErr)bootErr.classList.add('show');var overlay=$('#loginOverlay');if(overlay)overlay.classList.remove('show');if(window.console&&console.error)console.error(e)}}
+function bind(){var loginBtn=$('#loginBtn'),nameInput=$('#nameInput'),logout=$('#logout');if(loginBtn)loginBtn.onclick=login;if(nameInput)nameInput.addEventListener('keydown',function(e){if(e.key==='Enter'||e.keyCode===13)login()});if(logout)logout.onclick=function(){storeRemove('utca-name');user='';renderUser();renderTimeline();if(nameInput)nameInput.value='';setTimeout(function(){if(nameInput)nameInput.focus()},50)};$$('.switcher button').forEach(function(b){b.onclick=function(){var oldMode=mode,oldWeatherId=weatherStop[oldMode].id;mode=b.getAttribute('data-mode');storeSet('utca-weather',mode);applyWeatherTheme();if(currentStop===oldWeatherId){currentStop=weatherStop[mode].id;storeSet('utca-stop',currentStop)}ensureNoConsecutiveDuplicate();$$('.switcher button').forEach(function(x){var active=x.getAttribute('data-mode')===mode;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active?'true':'false')});renderTimeline();renderDayResult();renderRoute();renderGroup()}})}
+function init(){try{var jsw=$('#jsPreviewWarning');if(jsw)jsw.style.display='none';applyWeatherTheme();ensureNoConsecutiveDuplicate();$$('.switcher button').forEach(function(x){var active=x.getAttribute('data-mode')===mode;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active?'true':'false')});renderTimeline();renderDayResult();renderRoute();renderGroup();bind();renderUser();setLive(false);var boot=$('#bootError');if(boot)boot.classList.remove('show');if(user){setTimeout(function(){syncState(true)},0);if(!standaloneMode)setInterval(refreshState,15000)}}catch(e){var bootErr=$('#bootError');if(bootErr)bootErr.classList.add('show');var overlay=$('#loginOverlay');if(overlay)overlay.classList.remove('show');if(window.console&&console.error)console.error(e)}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('focus',refreshState);
 })();
