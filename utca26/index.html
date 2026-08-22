@@ -51,6 +51,13 @@ svg{display:block}
 .brand{font-weight:600;letter-spacing:.1em;font-size:12px;color:var(--lime)}
 .userchip{display:none;align-items:center;gap:8px;border:1px solid var(--hair);background:rgba(28,30,30,.5);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:var(--edge);border-radius:999px;padding:6px 6px 6px 13px;font-size:15px;font-weight:600;letter-spacing:-.008em}
 .userchip.show{display:flex}
+.top-user-dot{
+  width:8px;
+  height:8px;
+  flex:none;
+  border-radius:50%;
+  background:rgba(255,255,255,.92);
+}
 .userchip button{width:26px;height:26px;border:0;border-radius:50%;background:rgba(255,255,255,.12);color:#d5dde4;cursor:pointer;line-height:1}
 .userchip button:active{transform:scale(.93)}
 
@@ -63,6 +70,16 @@ svg{display:block}
 .roster-chip button{width:24px;height:24px;border:0;border-radius:50%;background:rgba(255,255,255,.12);color:#b8c1c9;font-weight:700;line-height:1;cursor:pointer}
 .roster-chip button:hover{background:rgba(255,255,255,.2);color:#fff}
 .roster-chip button:active{transform:scale(.93)}
+.self-dot{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  margin-left:8px;
+  border-radius:50%;
+  background:var(--limeText,var(--lime));
+  vertical-align:middle;
+  box-shadow:0 0 0 2px rgba(255,255,255,.04);
+}
 
 .hero{padding:26px 4px 14px}
 .kicker{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--lime)}
@@ -822,7 +839,7 @@ body.rain-mode .login input:focus{
 <main class="app">
   <div class="topline">
     <div class="brand">UTCA // FÜR DIE MÄNNER<br><span class="brand-date">ZATERDAG 26 SEPTEMBER 2026</span></div>
-    <div class="userchip" id="userChip"><span id="userName"></span><button id="logout" aria-label="Naam wissen">×</button></div>
+    <div class="userchip" id="userChip"><span id="userName"></span><i class="top-user-dot" aria-hidden="true"></i><button id="logout" aria-label="Naam wissen">×</button></div>
   </div>
 
   <header class="hero" id="dag">
@@ -1257,7 +1274,7 @@ function renderRoster(){
   if(!box)return;
   if(!participants.length){box.innerHTML='<span class="roster-empty">Nog niemand zichtbaar.</span>';return}
   var html='';
-  participants.forEach(function(p){var isMe=user&&p.name.toLowerCase()===user.toLowerCase();html+='<span class="roster-chip '+(isMe?'me':'')+'"><span>'+escapeHtml(p.name)+(isMe?' · jij':'')+'</span><button type="button" data-remove-person="'+escapeHtml(p.name)+'" aria-label="Verwijder '+escapeHtml(p.name)+'">×</button></span>'});
+  participants.forEach(function(p){var isMe=user&&p.name.toLowerCase()===user.toLowerCase();html+='<span class="roster-chip '+(isMe?'me':'')+'"><span>'+escapeHtml(p.name)+(isMe?'<i class="self-dot" aria-hidden="true"></i>':'')+'</span><button type="button" data-remove-person="'+escapeHtml(p.name)+'" aria-label="Verwijder '+escapeHtml(p.name)+'">×</button></span>'});
   box.innerHTML=html;
   $$('[data-remove-person]').forEach(function(b){b.onclick=function(){removeParticipant(b.getAttribute('data-remove-person'))}});
 }
@@ -1291,7 +1308,7 @@ function renderGroup(){
     var where=byId[p.currentStop]||(p.currentStop?'Ergens tussen twee slechte beslissingen':'Nog niet ingecheckt');
     var age=p.currentStop?relativeAge(p.updatedAt):'';
     var stale=checkinIsStale(p)?' stale':'';
-    html+='<div class="person'+stale+'"><div><strong>'+escapeHtml(p.name)+(p.name.toLowerCase()===user.toLowerCase()?' · jij':'')+'</strong><small>'+where+(age?' · '+age:'')+(r.pct!==null?' · '+r.pct+'% naar de klote':'')+'</small></div><div class="score percent" style="background:'+(band?band.color:'#6d7780')+'">'+(r.pct!==null?r.pct+'%':'—')+'</div></div>'
+    html+='<div class="person'+stale+'"><div><strong>'+escapeHtml(p.name)+(p.name.toLowerCase()===user.toLowerCase()?'<i class="self-dot" aria-hidden="true"></i>':'')+'</strong><small>'+where+(age?' · '+age:'')+(r.pct!==null?' · '+r.pct+'% naar de klote':'')+'</small></div><div class="score percent" style="background:'+(band?band.color:'#6d7780')+'">'+(r.pct!==null?r.pct+'%':'—')+'</div></div>'
   });
   list.innerHTML=html;
   if(valid.length){
