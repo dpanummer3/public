@@ -163,20 +163,92 @@ h1{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system
 .stop-meter-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#dae0e6}
 .stop-meter-state{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 .stop-meter-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
-.stop-meter-buttons button{height:44px;border:1px solid rgba(255,255,255,.12);border-radius:var(--r-pill);font-weight:600;font-size:17px;cursor:pointer;box-shadow:var(--edge);transition:.16s cubic-bezier(.34,1.3,.5,1);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
-.stop-meter-buttons button:nth-child(1){background:rgba(66,214,107,.20);color:#a8ecc0}
-.stop-meter-buttons button:nth-child(2){background:rgba(155,217,80,.20);color:#cfeaa5}
-.stop-meter-buttons button:nth-child(3){background:rgba(230,227,74,.20);color:#eeecac}
-.stop-meter-buttons button:nth-child(4){background:rgba(255,174,61,.20);color:#f6d3a2}
-.stop-meter-buttons button:nth-child(5){background:rgba(255,77,94,.20);color:#f7b3ba}
-.stop-meter-buttons button.active{color:var(--ink);border-color:rgba(255,255,255,.34);box-shadow:var(--primEdge),0 4px 14px rgba(0,0,0,.3),0 0 0 2px rgba(255,255,255,.28);transform:translateY(-1px)}
-.stop-meter-buttons button.active::after{content:"";position:absolute;left:50%;bottom:5px;transform:translateX(-50%);width:12px;height:2px;border-radius:2px;background:rgba(8,10,8,.5)}
-.stop-meter-buttons button{position:relative}
-.stop-meter-buttons button:nth-child(1).active{background:linear-gradient(180deg,#5fe486,var(--green))}
-.stop-meter-buttons button:nth-child(2).active{background:linear-gradient(180deg,#b3e86a,#9bd950)}
-.stop-meter-buttons button:nth-child(3).active{background:linear-gradient(180deg,#f0ee6a,var(--yellow))}
-.stop-meter-buttons button:nth-child(4).active{background:linear-gradient(180deg,#ffc165,var(--orange))}
-.stop-meter-buttons button:nth-child(5).active{background:linear-gradient(180deg,#ff7280,var(--red));color:#fff}
+
+/* Meter: one neutral glass control family.
+   The scale lives mainly in the numeral color; strong color appears only when selected. */
+.stop-meter-buttons button{
+  position:relative;
+  height:44px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--r-pill);
+  background:rgba(255,255,255,.055);
+  font-weight:600;
+  font-size:17px;
+  cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+  transition:.16s cubic-bezier(.34,1.3,.5,1);
+  -webkit-backdrop-filter:saturate(120%) blur(12px);
+  backdrop-filter:saturate(120%) blur(12px);
+}
+.stop-meter-buttons button:nth-child(1){
+  background:linear-gradient(180deg,rgba(76,207,111,.22),rgba(76,207,111,.14));
+  border-color:rgba(104,224,136,.28);
+  color:#9aebb2;
+}
+.stop-meter-buttons button:nth-child(2){
+  background:linear-gradient(180deg,rgba(153,216,77,.22),rgba(153,216,77,.14));
+  border-color:rgba(177,229,98,.28);
+  color:#c8ec86;
+}
+.stop-meter-buttons button:nth-child(3){
+  background:linear-gradient(180deg,rgba(214,225,70,.22),rgba(214,225,70,.14));
+  border-color:rgba(225,233,89,.29);
+  color:#edf08e;
+}
+.stop-meter-buttons button:nth-child(4){
+  background:linear-gradient(180deg,rgba(244,149,56,.24),rgba(244,149,56,.15));
+  border-color:rgba(247,169,83,.32);
+  color:#f5bb78;
+}
+.stop-meter-buttons button:nth-child(5){
+  background:linear-gradient(180deg,rgba(222,76,95,.24),rgba(222,76,95,.15));
+  border-color:rgba(232,102,119,.32);
+  color:#ef96a4;
+}
+
+.stop-meter-buttons button.active{
+  border-color:rgba(255,255,255,.24);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 4px 14px rgba(0,0,0,.24);
+  transform:translateY(-1px);
+}
+.stop-meter-buttons button.active::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:5px;
+  transform:translateX(-50%);
+  width:12px;
+  height:2px;
+  border-radius:2px;
+  background:currentColor;
+  opacity:.42;
+}
+
+.stop-meter-buttons button:nth-child(1).active{
+  background:linear-gradient(180deg,#61df88,#43ba6b);
+  border-color:rgba(119,232,151,.38);
+  color:#071008;
+}
+.stop-meter-buttons button:nth-child(2).active{
+  background:linear-gradient(180deg,#b0e465,#89c348);
+  border-color:rgba(191,235,109,.38);
+  color:#0b1006;
+}
+.stop-meter-buttons button:nth-child(3).active{
+  background:linear-gradient(180deg,#e8ec66,#cfd449);
+  border-color:rgba(235,239,111,.40);
+  color:#111206;
+}
+.stop-meter-buttons button:nth-child(4).active{
+  background:linear-gradient(180deg,#eea95c,#d18a44);
+  border-color:rgba(241,183,102,.38);
+  color:#140d06;
+}
+.stop-meter-buttons button:nth-child(5).active{
+  background:linear-gradient(180deg,#de6675,#bb4b5a);
+  border-color:rgba(229,117,132,.36);
+  color:#fff;
+}
 .stop-meter-copy{margin-top:10px;font-size:13px;line-height:1.4;color:var(--muted)}
 .stop-meter-copy strong{color:#fff;font-weight:600}
 
@@ -200,9 +272,30 @@ h1{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system
 .empty strong{color:#cdd5db}
 
 .route-only{margin-top:26px;padding:0 2px 8px}
-.routebtn{display:flex;align-items:center;justify-content:center;min-height:56px;border-radius:var(--r-pill);background:var(--prim);color:var(--ink);border:1px solid rgba(255,255,255,.2);font-size:17px;font-weight:600;letter-spacing:-.014em;box-shadow:var(--primEdge),0 6px 18px rgba(0,0,0,.3)}
-.routebtn:hover{color:var(--ink)}
-.routebtn:active{transform:translateY(1px)}
+.routebtn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:56px;
+  border-radius:var(--r-pill);
+  background:var(--glassControl);
+  color:#eef2f5;
+  border:1px solid var(--hairStrong);
+  font-size:17px;
+  font-weight:600;
+  letter-spacing:-.014em;
+  -webkit-backdrop-filter:saturate(120%) blur(18px);
+  backdrop-filter:saturate(120%) blur(18px);
+  box-shadow:var(--edge);
+}
+.routebtn:hover{
+  color:#fff;
+  background:var(--glassControlHover);
+}
+.routebtn:active{
+  transform:translateY(1px);
+  background:rgba(255,255,255,.12);
+}
 
 footer{margin:26px 4px 0;color:var(--faint);font-size:12px;line-height:1.5}
 
@@ -221,10 +314,23 @@ footer{margin:26px 4px 0;color:var(--faint);font-size:12px;line-height:1.5}
 .toast.show{opacity:1}
 
 .alternatives{margin-top:12px}
-.alternatives summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;background:transparent;color:rgba(235,235,245,.7);border:0;padding:0;font-size:13px;font-weight:600;line-height:1.25}
+.alternatives summary{
+  list-style:none;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:transparent;
+  color:rgba(189,245,58,.82);
+  border:0;
+  padding:0;
+  font-size:13px;
+  font-weight:600;
+  line-height:1.25;
+}
 .alternatives summary::-webkit-details-marker{display:none}
 .alternatives summary span{color:inherit;font-size:14px;line-height:1;transform-origin:center;transition:.16s}
-.alternatives[open] summary{color:#eef2f4}
+.alternatives[open] summary{color:rgba(189,245,58,.94)}
 .alternatives[open] summary span{transform:rotate(45deg)}
 .alt-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
 .alt-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid rgba(255,255,255,.08)}
@@ -259,12 +365,29 @@ footer{margin:26px 4px 0;color:var(--faint);font-size:12px;line-height:1.5}
   --primStroke:rgba(189,245,58,.34);
 }
 
-/* Keep navigation as the clear primary action. */
-.journey-nav,
-.navbtn,
-.routebtn{
+/* Keep only the sticky journey navigation as the clear primary action. */
+.journey-nav{
   background:var(--prim);
   color:var(--ink);
+}
+
+/* Per-stop navigation is neutral glass.
+   Same control language as the other secondary actions, while the sticky CTA owns the lime. */
+.navbtn{
+  background:rgba(255,255,255,.055);
+  color:#eef2f5;
+  border-color:rgba(255,255,255,.14);
+  -webkit-backdrop-filter:saturate(120%) blur(18px);
+  backdrop-filter:saturate(120%) blur(18px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 4px 12px rgba(0,0,0,.16);
+}
+.navbtn:hover{
+  color:#fff;
+  background:rgba(255,255,255,.09);
+}
+.navbtn:active{
+  background:rgba(255,255,255,.12);
+  transform:translateY(1px);
 }
 
 /* Softer progress states: current is strongest, completed is more restrained. */
@@ -345,15 +468,16 @@ footer{margin:26px 4px 0;color:var(--faint);font-size:12px;line-height:1.5}
   background:linear-gradient(180deg,rgba(189,245,58,.22),rgba(189,245,58,.14));
 }
 
-/* “Ik ben hier” is a selected state, not another primary action. */
+/* “Ik ben hier” stays neutral until selected.
+   Selected uses the same bright accent language as other active/primary states. */
 .here{
   background:var(--glassControl);
 }
 .here.active{
-  background:linear-gradient(180deg,rgba(189,245,58,.16),rgba(189,245,58,.10));
-  color:#f6f9fb;
-  border-color:var(--primStroke);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 12px rgba(0,0,0,.16),0 0 0 1px rgba(189,245,58,.08);
+  background:var(--prim);
+  color:var(--ink);
+  border-color:rgba(189,245,58,.42);
+  box-shadow:var(--primEdge),0 4px 14px rgba(0,0,0,.22);
 }
 
 /* Timeline continuity fix only: preserve the original spacing and node geometry.
@@ -507,7 +631,7 @@ footer{margin:26px 4px 0;color:var(--faint);font-size:12px;line-height:1.5}
 var ICONP={"train":"<rect x=\"6\" y=\"3.6\" width=\"12\" height=\"12.4\" rx=\"3.8\"/><path d=\"M6.6 10.4h10.8\"/><path d=\"M9.4 13.2h.01M14.6 13.2h.01\"/><path d=\"M9.4 16.4 7.9 20.4M14.6 16.4l1.5 4\"/>","canoe":"<path d=\"M2.9 11.3c1.9-.8 16.3-.8 18.2 0-1.5 4.8-5 7.2-9.1 7.2s-7.6-2.4-9.1-7.2z\"/><path d=\"M6.3 12.7c2.7 1 8.7 1 11.4 0\"/><path d=\"m9.7 10.3 4.6-4.6\"/><path d=\"M14 5.3c.9-.9 2.4-.9 3.3 0s.9 2.4 0 3.3z\"/>","coffee":"<path d=\"M4.6 8.6h10.8v5.2a5 5 0 0 1-5 5h-.8a5 5 0 0 1-5-5z\"/><path d=\"M15.4 10.2h1.8a2.5 2.5 0 0 1 0 5h-1.8\"/><path d=\"M8 4v1.8M11.8 3.6v2.2\"/>","fork":"<path d=\"M6.4 3.6v5.8a2.3 2.3 0 0 0 4.6 0V3.6\"/><path d=\"M8.7 11.7v8.7\"/><path d=\"M17.2 3.6c-1.5 1.3-2.3 3.1-2.3 5.2s.8 3.4 2.3 4v7.6\"/>","ball":"<circle cx=\"12\" cy=\"5.6\" r=\"3.1\"/><path d=\"M5.2 20.8 18.8 9.8\"/><path d=\"M18.8 20.8 5.2 9.8\"/>","beer":"<path d=\"M6.6 7h8.2v11.6a1.8 1.8 0 0 1-1.8 1.8H8.4a1.8 1.8 0 0 1-1.8-1.8z\"/><path d=\"M14.8 9.6h2.2a2.5 2.5 0 0 1 0 5h-2.2\"/><path d=\"M9.4 10.6v5.8M12 10.6v5.8\"/><path d=\"M6.6 7c.6-2.2 7.6-2.2 8.2 0\"/>","boules":"<circle cx=\"8.4\" cy=\"15\" r=\"4.1\"/><circle cx=\"16.4\" cy=\"16.4\" r=\"2.9\"/><circle cx=\"14.4\" cy=\"8.4\" r=\"2.1\"/>","cocktail":"<path d=\"M4.4 5.2h15.2L12 12.8z\"/><path d=\"M12 12.8v6.4\"/><path d=\"M8.8 19.6h6.4\"/>","wine":"<path d=\"M7.4 3.8h9.2c0 5-1.7 7.4-4.6 8-2.9-.6-4.6-3-4.6-8z\"/><path d=\"M12 11.8v6.2\"/><path d=\"M8.9 20.2h6.2\"/>","dinner":"<path d=\"M6.4 3.6v5.8a2.3 2.3 0 0 0 4.6 0V3.6\"/><path d=\"M8.7 11.7v8.7\"/><path d=\"M17.2 3.6c-1.5 1.3-2.3 3.1-2.3 5.2s.8 3.4 2.3 4v7.6\"/>","sandwich":"<path d=\"M6.4 10.5h11.2l-1.3 9a1.8 1.8 0 0 1-1.8 1.5H9.5a1.8 1.8 0 0 1-1.8-1.5z\"/><path d=\"m9.5 10.3-1.1-5.7\"/><path d=\"M12 10.3V3.4\"/><path d=\"m14.5 10.3 1.1-5.7\"/>","flag":"<path d=\"M6.6 20.4V3.6\"/><path d=\"M6.6 4.8h10.6l-1.9 3.4 1.9 3.4H6.6\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4.1\"/><path d=\"M12 3.2v2M12 18.8v2M5.8 5.8l1.4 1.4M16.8 16.8l1.4 1.4M3.2 12h2M18.8 12h2M5.8 18.2l1.4-1.4M16.8 7.2l1.4-1.4\"/>","rain":"<path d=\"M7.8 15.2a4.3 4.3 0 0 1-.3-8.6 5.9 5.9 0 0 1 10.9 1.5 3.6 3.6 0 0 1-.6 7.1z\"/><path d=\"m9.4 17.8-.9 2.6M12.9 17.8l-.9 2.6M16.4 17.8l-.9 2.6\"/>","spot":"<circle cx=\"12\" cy=\"12\" r=\"2.2\"/><circle cx=\"12\" cy=\"12\" r=\"6.4\"/><path d=\"M12 3.4v2.2M12 18.4v2.2M3.4 12h2.2M18.4 12h2.2\"/>"};
 function svgIcon(n){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONP[n]||ICONP.flag)+'</svg>'}
 function stopBadge(n){return '<span class="stopicon">'+svgIcon(n)+'</span>'}
-var meterBands={1:{label:'Verdacht fris',text:'',color:'#4ecb76'},2:{label:'Keurig op koers',text:'',color:'#a5d95e'},3:{label:'Lekker uit de hand',text:'',color:'#dcd94c'},4:{label:'Ik hier?',text:'',color:'#f5a747'},5:{label:'Balzak.',text:'',color:'#f0555f'}};
+var meterBands={1:{label:'Verdacht fris',text:'',color:'#55c878'},2:{label:'Keurig op koers',text:'',color:'#9ed654'},3:{label:'Lekker uit de hand',text:'',color:'#d5dd50'},4:{label:'Ik hier?',text:'',color:'#dc9650'},5:{label:'Balzak.',text:'',color:'#ca5867'}};
 function maps(q){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)}
 function nav(q){return 'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q)+'&travelmode=walking'}
 var lunchAlts=[
@@ -862,7 +986,21 @@ function selectVenue(stopId,index){
   renderGroup();
   toast('Gekozen: '+opts[index].name);
 }
-function setHere(id){currentStop=id;storeSet('utca-stop',id);renderTimeline();syncState(false);toast('Locatie gedeeld')}
+function setHere(id){
+  if(currentStop===id){
+    currentStop='';
+    storeRemove('utca-stop');
+    renderTimeline();
+    syncState(false);
+    toast('Locatie uitgezet');
+    return;
+  }
+  currentStop=id;
+  storeSet('utca-stop',id);
+  renderTimeline();
+  syncState(false);
+  toast('Locatie gedeeld');
+}
 function setRating(id,value){
   if(Number(ratings[id])===value){
     delete ratings[id];
