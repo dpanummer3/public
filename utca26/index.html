@@ -175,6 +175,39 @@ h1{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system
 .here.active{background:var(--prim);color:var(--ink);border-color:rgba(189,245,58,.42);box-shadow:var(--primEdge)}
 .here:disabled{opacity:.42;cursor:not-allowed}
 
+.stop-people{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+.stop-person-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-height:32px;
+  padding:0 12px;
+  border-radius:var(--r-pill);
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  color:#eef2f5;
+  font-size:13px;
+  font-weight:500;
+  letter-spacing:-.004em;
+  box-shadow:var(--edge);
+}
+.stop-person-chip.me{
+  color:var(--limeText,var(--lime));
+  border-color:rgba(189,245,58,.36);
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+}
+.stop-person-chip .self-dot{
+  width:8px;
+  height:8px;
+  margin-left:2px;
+  box-shadow:none;
+}
+
 .stop-meter{margin-top:15px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
 .stop-meter-head{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;margin-bottom:8px}
 .stop-meter-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#dae0e6}
@@ -290,8 +323,12 @@ h1{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system
 
 .group{display:flex;flex-direction:column;gap:9px}
 .person{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border-radius:var(--r-panel);padding:13px 14px;background:rgba(28,30,30,.55);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:1px solid var(--hair);box-shadow:var(--edge)}
+.person.jumpable{cursor:pointer;transition:background .16s ease,border-color .16s ease}
+.person.jumpable:hover{background:rgba(255,255,255,.07)}
+.person.jumpable:active{background:rgba(255,255,255,.09)}
 .person strong{font-size:15px;font-weight:600;letter-spacing:-.008em}
 .person small{display:block;color:var(--muted);margin-top:4px;font-size:13px}
+.card[data-stop]{scroll-margin-top:104px}
 .score{min-width:58px;height:34px;padding:0 11px;border-radius:999px;display:grid;place-items:center;font-weight:600;color:var(--ink);font-size:14px;font-variant-numeric:tabular-nums;box-shadow:var(--edge)}
 .empty{border:1px dashed rgba(255,255,255,.12);border-radius:var(--r-panel);padding:16px;color:var(--muted);font-size:15px;line-height:1.45;background:rgba(255,255,255,.03)}
 .empty strong{color:#cdd5db}
@@ -832,6 +869,10 @@ body.rain-mode .login input:focus{
   box-shadow:0 0 0 3px rgba(127,214,238,.10);
 }
 
+body.rain-mode .stop-person-chip.me{
+  border-color:rgba(127,214,238,.38);
+}
+
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -1211,6 +1252,18 @@ function alternativesHtml(x){
   });
   return '<details class="alternatives"><summary>'+(opts.length-1)+' andere opties <span>+</span></summary><div class="alt-list">'+rows+'</div></details>';
 }
+function peopleAtStopHtml(stopId){
+  if(!participants||!participants.length)return'';
+  var here=participants.filter(function(p){return p.currentStop===stopId});
+  if(!here.length)return'';
+  var html='<div class="stop-people">';
+  here.forEach(function(p){
+    var isMe=user&&p.name.toLowerCase()===user.toLowerCase();
+    html+='<span class="stop-person-chip '+(isMe?'me':'')+'">'+escapeHtml(p.name)+(isMe?'<i class="self-dot" aria-hidden="true"></i>':'')+'</span>';
+  });
+  html+='</div>';
+  return html;
+}
 function meterHtml(x){if(!x.meter)return'';var v=Number(ratings[x.id]||0),band=v?bandForValue(v):null,buttons='';for(var n=1;n<=5;n++)buttons+='<button data-rate="'+x.id+'" data-value="'+n+'" class="'+(v===n?'active':'')+'" aria-pressed="'+(v===n?'true':'false')+'" aria-label="Score '+n+'">'+n+'</button>';return '<div class="stop-meter"><div class="stop-meter-head"><div class="stop-meter-title">Naar de klote meter</div><div class="stop-meter-state">'+(v?v+'/5':'Nog invullen')+'</div></div><div class="stop-meter-buttons">'+buttons+'</div><div class="meter-scale-labels"><span>Fris</span><span>Naar de klote</span></div><div class="stop-meter-copy">'+(band?'<strong>'+band.label+'</strong>':'Tik 1–5 na dit onderdeel.')+'</div></div>'}
 var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.6 4.5L19 6.5"/></svg>';
 function railHtml(state){return '<span class="tl-rail" aria-hidden="true"><span class="tl-node">'+(state==='done'?CHECK:'')+'</span></span>'}
@@ -1236,7 +1289,7 @@ function renderTimeline(){
       if(wd.walk>0||(wd.depart!==null&&wd.start!==null&&wd.start>wd.depart))html+='<div class="tl-row walkrow '+walkState+'"><span class="tl-rail" aria-hidden="true"></span><div class="walk"><span>'+range+'</span><div class="rule"></div><span>'+wd.text+'</span></div></div>';
     }
     var v=activeVenue(x),timeLabel=displayStopTime(x,sch[i]);
-    html+='<div class="tl-row stop '+states[i]+'">'+railHtml(states[i])+'<article class="card '+(currentStop===x.id?'current':'')+'" data-stop="'+x.id+'"><div class="top"><div class="topleft">'+stopBadge(x.icon)+'<div class="time">'+timeLabel+'</div></div><a class="navbtn" href="'+nav(v.addr)+'" target="_blank" rel="noopener">NAVIGEER</a></div><div class="name">'+escapeHtml(v.name)+'</div><p class="desc">'+escapeHtml(v.desc)+'</p><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="6.4"/><path d="M12 3.4v2.2M12 18.4v2.2M3.4 12h2.2M18.4 12h2.2"/></svg> '+escapeHtml(v.addr)+'</div>'+alternativesHtml(x)+'<div class="row"><div class="circles"><a class="round" href="'+v.info+'" target="_blank" rel="noopener" aria-label="Google Maps reviews">Info</a>'+(v.reserve?'<a class="round r" href="'+v.reserve+'"'+externalAttrs(v.reserve)+' aria-label="Reserveren">Boek</a>':'')+'</div><button class="here '+(currentStop===x.id?'active':'')+'" data-here="'+x.id+'" aria-pressed="'+(currentStop===x.id?'true':'false')+'" '+(user?'':'disabled')+'>'+(currentStop===x.id?'Ik ben hier ✓':'Ik ben hier')+'</button></div>'+meterHtml(x)+'</article></div>';
+    html+='<div class="tl-row stop '+states[i]+'">'+railHtml(states[i])+'<article class="card '+(currentStop===x.id?'current':'')+'" data-stop="'+x.id+'"><div class="top"><div class="topleft">'+stopBadge(x.icon)+'<div class="time">'+timeLabel+'</div></div><a class="navbtn" href="'+nav(v.addr)+'" target="_blank" rel="noopener">NAVIGEER</a></div><div class="name">'+escapeHtml(v.name)+'</div><p class="desc">'+escapeHtml(v.desc)+'</p><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="6.4"/><path d="M12 3.4v2.2M12 18.4v2.2M3.4 12h2.2M18.4 12h2.2"/></svg> '+escapeHtml(v.addr)+'</div>'+alternativesHtml(x)+'<div class="row"><div class="circles"><a class="round" href="'+v.info+'" target="_blank" rel="noopener" aria-label="Google Maps reviews">Info</a>'+(v.reserve?'<a class="round r" href="'+v.reserve+'"'+externalAttrs(v.reserve)+' aria-label="Reserveren">Boek</a>':'')+'</div><button class="here '+(currentStop===x.id?'active':'')+'" data-here="'+x.id+'" aria-pressed="'+(currentStop===x.id?'true':'false')+'" '+(user?'':'disabled')+'>'+(currentStop===x.id?'Ik ben hier ✓':'Ik ben hier')+'</button></div>'+peopleAtStopHtml(x.id)+meterHtml(x)+'</article></div>';
   });
   $('#timeline').innerHTML=html;
   renderProgress(doneCount,arr.length);
@@ -1290,8 +1343,39 @@ function relativeAge(ts){
 function checkinIsStale(p){
   return !!(p&&p.currentStop&&p.updatedAt&&((Date.now()/1000)-Number(p.updatedAt)>1800));
 }
+function jumpToStop(stopId){
+  if(!stopId)return;
+
+  if(stopId===weatherStop.sun.id&&mode!=='sun'){
+    mode='sun';
+    storeSet('utca-weather',mode);
+    applyWeatherTheme();
+    $$('.switcher button').forEach(function(x){
+      var active=x.getAttribute('data-mode')===mode;
+      x.classList.toggle('active',active);
+      x.setAttribute('aria-pressed',active?'true':'false');
+    });
+    renderTimeline();
+  }else if(stopId===weatherStop.rain.id&&mode!=='rain'){
+    mode='rain';
+    storeSet('utca-weather',mode);
+    applyWeatherTheme();
+    $$('.switcher button').forEach(function(x){
+      var active=x.getAttribute('data-mode')===mode;
+      x.classList.toggle('active',active);
+      x.setAttribute('aria-pressed',active?'true':'false');
+    });
+    renderTimeline();
+  }
+
+  requestAnimationFrame(function(){
+    var card=document.querySelector('.card[data-stop="'+stopId+'"]');
+    if(card)card.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+}
 function renderGroup(){
   renderRoster();
+  renderTimeline();
   var list=$('#groupList');
   if(!participants.length){
     list.innerHTML='<div class="empty">Nog niemand zichtbaar. Zodra iemand zijn naam invult, verschijnt die hier.</div>';
@@ -1308,9 +1392,20 @@ function renderGroup(){
     var where=byId[p.currentStop]||(p.currentStop?'Ergens tussen twee slechte beslissingen':'Nog niet ingecheckt');
     var age=p.currentStop?relativeAge(p.updatedAt):'';
     var stale=checkinIsStale(p)?' stale':'';
-    html+='<div class="person'+stale+'"><div><strong>'+escapeHtml(p.name)+(p.name.toLowerCase()===user.toLowerCase()?'<i class="self-dot" aria-hidden="true"></i>':'')+'</strong><small>'+where+(age?' · '+age:'')+(r.pct!==null?' · '+r.pct+'% naar de klote':'')+'</small></div><div class="score percent" style="background:'+(band?band.color:'#6d7780')+'">'+(r.pct!==null?r.pct+'%':'—')+'</div></div>'
+    var jump=p.currentStop?' jumpable':'';
+    var jumpAttrs=p.currentStop?' data-jump-stop="'+escapeHtml(p.currentStop)+'" role="link" tabindex="0" aria-label="Ga naar '+escapeHtml(where)+'"':'';
+    html+='<div class="person'+stale+jump+'"'+jumpAttrs+'><div><strong>'+escapeHtml(p.name)+(p.name.toLowerCase()===user.toLowerCase()?'<i class="self-dot" aria-hidden="true"></i>':'')+'</strong><small>'+where+(age?' · '+age:'')+(r.pct!==null?' · '+r.pct+'% naar de klote':'')+'</small></div><div class="score percent" style="background:'+(band?band.color:'#6d7780')+'">'+(r.pct!==null?r.pct+'%':'—')+'</div></div>'
   });
   list.innerHTML=html;
+  $$('[data-jump-stop]').forEach(function(el){
+    el.onclick=function(){jumpToStop(el.getAttribute('data-jump-stop'))};
+    el.onkeydown=function(e){
+      if(e.key==='Enter'||e.key===' '){
+        e.preventDefault();
+        jumpToStop(el.getAttribute('data-jump-stop'));
+      }
+    };
+  });
   if(valid.length){
     var sum=0;
     valid.forEach(function(x){sum+=x.pct});
