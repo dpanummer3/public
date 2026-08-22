@@ -575,7 +575,7 @@ a:hover{
 
 /* Compact expandable app guide, positioned between the date and the participant roster. */
 .howto{
-  margin:4px 0 14px;
+  margin:6px 0 16px;
 }
 .howto summary{
   list-style:none;
@@ -584,10 +584,10 @@ a:hover{
   display:inline-block;
   padding:4px 0;
   color:var(--text);
-  font-size:12px;
+  font-size:13px;
   font-weight:600;
   line-height:1.25;
-  letter-spacing:-.002em;
+  letter-spacing:.05em;
 }
 .howto summary::-webkit-details-marker{display:none}
 .howto summary::after{
@@ -621,8 +621,8 @@ a:hover{
 .howto-content strong{color:#fff;font-weight:600}
 
 body.live-mode .howto{
-  margin-top:0;
-  margin-bottom:14px;
+  margin-top:4px;
+  margin-bottom:16px;
 }
 
 @media(max-width:470px){
@@ -739,12 +739,12 @@ body.live-mode .hero{
 }
 
 @media(max-width:470px){
-  .brand,
-  .howto summary{
-    font-size:clamp(9px,2.65vw,11px);
-  }
   .brand{
+    font-size:clamp(9px,2.65vw,11px);
     letter-spacing:.07em;
+  }
+  .howto summary{
+    font-size:13px;
   }
 }
 
@@ -760,7 +760,7 @@ body.live-mode .hero{
 
   <header class="hero" id="dag">
     <details class="howto">
-      <summary>HOE WERKT DIT</summary>
+      <summary>HOE WERKT DEZE APP</summary>
       <div class="howto-content">
         <p>De hele dag staat voor jullie klaar, zon of regen. Bekijk het programma alvast en wees enthousiast of verberg je teleurstelling. Bij elke stop tik je op <strong>Ik ben hier,</strong> onderin de app kan je dan zien waar iedereen is. Handig als je ergens tegen de lamp loopt en de rest kwijt bent.</p>
         <p>Na iedere stop vul je de <strong>Naar de klote-meter</strong> in. Zo kan je onderin de app je dagstand en elkaars scores zien. Als kers op de taart kunnen we aan het einde kijken wie de absolute draak is en wie nog iets aan zijn zondag heeft.</p>
