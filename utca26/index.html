@@ -665,9 +665,14 @@ summary:focus-visible{
 }
 
 .brand{
-  line-height:1.3;
+  line-height:1.22;
   letter-spacing:.085em;
-  white-space:nowrap;
+}
+.brand-date{
+  display:block;
+  margin-top:3px;
+  font-size:1em;
+  letter-spacing:.085em;
 }
 
 body.live-mode .hero{
@@ -687,7 +692,7 @@ body.live-mode .hero{
 <body>
 <main class="app">
   <div class="topline">
-    <div class="brand">UTCA // FÜR DIE MÄNNER // ZATERDAG 26 SEPTEMBER 2026</div>
+    <div class="brand">UTCA // FÜR DIE MÄNNER<br><span class="brand-date">ZATERDAG 26 SEPTEMBER 2026</span></div>
     <div class="userchip" id="userChip"><span id="userName"></span><button id="logout" aria-label="Naam wissen">×</button></div>
   </div>
 
