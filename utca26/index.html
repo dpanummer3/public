@@ -246,6 +246,143 @@ footer{margin:26px 4px 0;color:var(--faint);font-size:12px;line-height:1.5}
 .boot-error.show{display:block}
 .boot-error strong{color:#fff}
 
+
+/* Apple-style accent hierarchy: visual-only overrides. No functionality changed. */
+:root{
+  --limeLine:rgba(189,245,58,.30);
+  --limeGlow:rgba(189,245,58,.16);
+  --limeTint:rgba(189,245,58,.10);
+  --limeTintStrong:rgba(189,245,58,.18);
+  --glassControl:rgba(255,255,255,.055);
+  --glassControlHover:rgba(255,255,255,.09);
+  --primSoft:linear-gradient(180deg,rgba(189,245,58,.18),rgba(189,245,58,.11));
+  --primStroke:rgba(189,245,58,.34);
+}
+
+/* Keep navigation as the clear primary action. */
+.journey-nav,
+.navbtn,
+.routebtn{
+  background:var(--prim);
+  color:var(--ink);
+}
+
+/* Softer progress states: current is strongest, completed is more restrained. */
+.tl-row.done .tl-rail::before,
+.tl-row.done .tl-rail::after{
+  background:rgba(189,245,58,.42);
+}
+.tl-row.current .tl-rail::before{
+  background:rgba(189,245,58,.42);
+}
+.tl-row.done .tl-node{
+  width:19px;
+  height:19px;
+  background:var(--primSoft);
+  border-color:var(--limeLine);
+  box-shadow:0 0 0 4px #050607,inset 0 1px 0 rgba(255,255,255,.08);
+}
+.tl-row.done .tl-node svg{
+  display:block;
+  color:var(--lime);
+}
+.tl-row.current .tl-node{
+  width:21px;
+  height:21px;
+  background:rgba(189,245,58,.09);
+  border-color:var(--lime);
+  box-shadow:0 0 0 4px #050607,0 0 10px rgba(189,245,58,.18);
+}
+.tl-progress-track i{
+  background:linear-gradient(90deg,rgba(189,245,58,.78),rgba(189,245,58,.96));
+}
+
+/* Current card gets a subtle accent instead of several full-lime surfaces. */
+.card.current{
+  border-color:rgba(189,245,58,.26);
+  box-shadow:0 10px 30px rgba(0,0,0,.34),var(--edge),0 0 0 1px rgba(189,245,58,.08);
+}
+.stopicon{
+  color:var(--lime);
+  background:var(--glassControl);
+  border-color:rgba(255,255,255,.12);
+  box-shadow:var(--edge);
+}
+.card.current .stopicon{
+  background:var(--primSoft);
+  color:var(--lime);
+  border-color:var(--limeLine);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 12px rgba(0,0,0,.18);
+}
+
+/* Only the current stop time uses the bright accent. */
+.time{
+  color:#dbe2e8;
+}
+.card.current .time{
+  color:var(--lime);
+}
+
+/* Reservation is secondary: tinted glass, not a second primary CTA. */
+.round.r{
+  background:var(--primSoft);
+  border-color:var(--limeLine);
+  color:var(--lime);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 4px 12px rgba(0,0,0,.18);
+}
+.round.r:hover{
+  color:var(--lime);
+  background:linear-gradient(180deg,rgba(189,245,58,.22),rgba(189,245,58,.14));
+}
+.mini-round.r{
+  background:var(--primSoft);
+  border-color:var(--limeLine);
+  color:var(--lime);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.mini-round.r:hover{
+  color:var(--lime);
+  background:linear-gradient(180deg,rgba(189,245,58,.22),rgba(189,245,58,.14));
+}
+
+/* “Ik ben hier” is a selected state, not another primary action. */
+.here{
+  background:var(--glassControl);
+}
+.here.active{
+  background:linear-gradient(180deg,rgba(189,245,58,.16),rgba(189,245,58,.10));
+  color:#f6f9fb;
+  border-color:var(--primStroke);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 12px rgba(0,0,0,.16),0 0 0 1px rgba(189,245,58,.08);
+}
+
+/* Timeline continuity fix only: preserve the original spacing and node geometry.
+   The timeline uses a 10px row gap; each rail now extends 5px into that gap,
+   so adjacent lime/grey segments meet exactly instead of overlapping. */
+.tl-rail::before,
+.tl-rail::after{
+  border-radius:0;
+}
+.tl-row.stop .tl-rail::before{
+  top:-5px;
+  height:26px; /* same original end point (21px), only removes overlap above */
+}
+.tl-row.stop .tl-rail::after{
+  top:51px;   /* original node spacing preserved */
+  bottom:-5px;
+}
+.tl-row.walkrow .tl-rail::before{
+  top:-5px;
+  bottom:-5px;
+  height:auto;
+}
+
+/* Keep small location accents quieter than the CTA. */
+.location svg{
+  color:rgba(189,245,58,.82);
+  opacity:.78;
+}
+
 @media(max-width:470px){
   .app{padding-left:11px;padding-right:11px}
   .dashboard{grid-template-columns:1fr 1fr}
@@ -726,7 +863,23 @@ function selectVenue(stopId,index){
   toast('Gekozen: '+opts[index].name);
 }
 function setHere(id){currentStop=id;storeSet('utca-stop',id);renderTimeline();syncState(false);toast('Locatie gedeeld')}
-function setRating(id,value){ratings[id]=value;persistRatings();renderTimeline();renderDayResult();syncState(false);toast(value===5?'Totaal naar de klote. Genoteerd.':'Meter bijgewerkt')}
+function setRating(id,value){
+  if(Number(ratings[id])===value){
+    delete ratings[id];
+    persistRatings();
+    renderTimeline();
+    renderDayResult();
+    syncState(false);
+    toast('Meter gewist');
+    return;
+  }
+  ratings[id]=value;
+  persistRatings();
+  renderTimeline();
+  renderDayResult();
+  syncState(false);
+  toast(value===5?'Totaal naar de klote. Genoteerd.':'Meter bijgewerkt');
+}
 function login(){var input=$('#nameInput'),v=input.value.trim().replace(/\s+/g,' ');if(!v)return;user=v.slice(0,24);storeSet('utca-name',user);currentStop='';storeRemove('utca-stop');renderUser();renderTimeline();syncState(false);toast('Hoi '+user+'. Succes ermee.')}
 function bind(){var loginBtn=$('#loginBtn'),nameInput=$('#nameInput'),logout=$('#logout');if(loginBtn)loginBtn.onclick=login;if(nameInput)nameInput.addEventListener('keydown',function(e){if(e.key==='Enter'||e.keyCode===13)login()});if(logout)logout.onclick=function(){storeRemove('utca-name');user='';renderUser();renderTimeline();if(nameInput)nameInput.value='';setTimeout(function(){if(nameInput)nameInput.focus()},50)};$$('.switcher button').forEach(function(b){b.onclick=function(){mode=b.getAttribute('data-mode');storeSet('utca-weather',mode);ensureNoConsecutiveDuplicate();$$('.switcher button').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-mode')===mode)});renderTimeline();renderDayResult();renderRoute();renderGroup()}})}
 function init(){try{var jsw=$('#jsPreviewWarning');if(jsw)jsw.style.display='none';ensureNoConsecutiveDuplicate();$$('.switcher button').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-mode')===mode)});renderTimeline();renderDayResult();renderRoute();renderGroup();bind();renderUser();setLive(false);var boot=$('#bootError');if(boot)boot.classList.remove('show');if(user){setTimeout(function(){syncState(true)},0);if(!standaloneMode)setInterval(refreshState,15000)}}catch(e){var bootErr=$('#bootError');if(bootErr)bootErr.classList.add('show');var overlay=$('#loginOverlay');if(overlay)overlay.classList.remove('show');if(window.console&&console.error)console.error(e)}}
