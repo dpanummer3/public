@@ -106,10 +106,10 @@ h1{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system
 .timeline{display:flex;flex-direction:column;gap:10px}
 .tl-row{display:grid;grid-template-columns:20px minmax(0,1fr);gap:13px;align-items:stretch}
 .tl-rail{position:relative}
-.tl-rail::before,.tl-rail::after{content:"";position:absolute;left:50%;width:2px;transform:translateX(-50%);background:rgba(255,255,255,.11);border-radius:var(--r-pill)}
-.tl-row.stop .tl-rail::before{top:-8px;height:29px}
-.tl-row.stop .tl-rail::after{top:51px;bottom:-8px}
-.tl-row.walkrow .tl-rail::before{top:-8px;bottom:-8px;height:auto}
+.tl-rail::before,.tl-rail::after{content:"";position:absolute;left:50%;width:2px;transform:translateX(-50%);background:#3c464f;border-radius:var(--r-pill)}
+.tl-row.stop .tl-rail::before{top:-12px;height:33px}
+.tl-row.stop .tl-rail::after{top:51px;bottom:-12px}
+.tl-row.walkrow .tl-rail::before{top:-12px;bottom:-12px;height:auto}
 .tl-row.walkrow .tl-rail::after{content:none}
 .tl-row:first-child .tl-rail::before{content:none}
 .tl-row:last-child .tl-rail::after{content:none}
@@ -424,7 +424,7 @@ function $(s){return document.querySelector(s)}
 function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
 var mode=storeGet('utca-weather')||'sun';
 var user=storeGet('utca-name')||'';
-var currentStop=storeGet('utca-stop')||'start';
+var currentStop=storeGet('utca-stop')||'';
 var ratings=safeJson(storeGet('utca-ratings'),{});
 var venueSelections=safeJson(storeGet('utca-venues-v13'),{});
 var shared=false,participants=[];
@@ -623,7 +623,7 @@ function stopStates(arr){
   var out=[];
   for(i=0;i<arr.length;i++){
     if(i===cur)out.push('current');
-    else if(i<cur||ratings[arr[i].id])out.push('done');
+    else if(cur>=0&&i<cur)out.push('done');
     else out.push('todo');
   }
   return {states:out,cur:cur}
@@ -683,7 +683,7 @@ function renderRoster(){
 }
 function renderGroup(){renderRoster();var list=$('#groupList');if(!participants.length){list.innerHTML='<div class="empty">Nog niemand zichtbaar. Zodra iemand zijn naam invult, verschijnt die hier.</div>';$('#groupAverage').textContent='—';return}var byId={};stopsCommon.concat([weatherStop.sun,weatherStop.rain]).forEach(function(s){byId[s.id]=activeVenue(s).name});var valid=[];participants.forEach(function(p){var rr=participantResult(p);if(rr.pct!==null)valid.push(rr)});var html='';participants.forEach(function(p){var r=participantResult(p),band=r.avg!==null?meterBands[bandForScore(r.avg)]:null;html+='<div class="person"><div><strong>'+escapeHtml(p.name)+(p.name.toLowerCase()===user.toLowerCase()?' · jij':'')+'</strong><small>'+(byId[p.currentStop]||'Ergens tussen twee slechte beslissingen')+(r.pct!==null?' · '+r.pct+'% naar de klote':'')+'</small></div><div class="score percent" style="background:'+(band?band.color:'#6d7780')+'">'+(r.pct!==null?r.pct+'%':'—')+'</div></div>'});list.innerHTML=html;if(valid.length){var sum=0;valid.forEach(function(x){sum+=x.pct});$('#groupAverage').textContent=Math.round(sum/valid.length)+'%'}else $('#groupAverage').textContent='—'}
 function escapeHtml(s){return String(s).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]})}
-function clearOwnSession(){storeRemove('utca-name');storeRemove('utca-stop');storeRemove('utca-ratings');user='';currentStop='start';ratings={};renderUser();renderTimeline();renderDayResult();var input=$('#nameInput');if(input)input.value=''}
+function clearOwnSession(){storeRemove('utca-name');storeRemove('utca-stop');storeRemove('utca-ratings');user='';currentStop='';ratings={};renderUser();renderTimeline();renderDayResult();var input=$('#nameInput');if(input)input.value=''}
 function removeParticipant(name){
   name=String(name||'').trim();if(!name)return;
   var removingSelf=!!user&&name.toLowerCase()===user.toLowerCase();
