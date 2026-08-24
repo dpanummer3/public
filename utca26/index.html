@@ -1123,6 +1123,45 @@ body.onboarding-open{overflow:hidden}
   .onboarding-head{padding-top:12px}
 }
 
+
+/* === LOGIN + ONBOARDING ACCENT CONSISTENCY ===
+   Match the softer lime used by the live round UI. */
+.login .minihead,
+.login-app-subtitle,
+.onboarding-head .minihead,
+.onboarding-kicker{
+  color:var(--limeText,var(--lime));
+}
+
+.login input:focus{
+  border-color:rgba(181,233,57,.42);
+  box-shadow:0 0 0 3px rgba(181,233,57,.08);
+}
+
+.login button,
+.onboarding-next{
+  background:linear-gradient(180deg,rgba(199,244,83,.84),rgba(181,233,57,.76));
+  border-color:rgba(189,245,58,.34);
+  color:var(--ink);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 4px 14px rgba(0,0,0,.24);
+}
+
+.onboarding-progress i.active{
+  background:var(--limeText,var(--lime));
+}
+
+body.rain-mode .login input:focus{
+  border-color:rgba(127,214,238,.42);
+  box-shadow:0 0 0 3px rgba(127,214,238,.08);
+}
+
+body.rain-mode .login button,
+body.rain-mode .onboarding-next{
+  background:linear-gradient(180deg,rgba(155,214,233,.84),rgba(119,199,222,.76));
+  border-color:rgba(127,214,238,.34);
+  color:#06181f;
+}
+
 </style>
 </head>
 <body>
@@ -1230,7 +1269,7 @@ body.onboarding-open{overflow:hidden}
   <div class="login">
     <div class="login-app-identity">
       <div class="login-app-title">DE RONDE</div>
-      <div class="login-app-subtitle">Utrecht · onze dag, route en tussenstand</div>
+      <div class="login-app-subtitle">Onze dag, route en tussenstand</div>
     </div>
     <div class="minihead">Wie ben jij?</div>
     <h2>Naam erin.<br>Klaar.</h2>
