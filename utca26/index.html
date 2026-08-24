@@ -398,7 +398,7 @@ footer{margin:26px 4px 0;color:var(--faint);font-size:12px;line-height:1.5}
 }
 .login-app-subtitle{
   margin-top:8px;
-  color:var(--muted);
+  color:var(--text);
   font-size:15px;
   line-height:1.35;
   letter-spacing:-.008em;
@@ -1127,10 +1127,13 @@ body.onboarding-open{overflow:hidden}
 /* === LOGIN + ONBOARDING ACCENT CONSISTENCY ===
    Match the softer lime used by the live round UI. */
 .login .minihead,
-.login-app-subtitle,
 .onboarding-head .minihead,
 .onboarding-kicker{
   color:var(--limeText,var(--lime));
+}
+
+.login-app-subtitle{
+  color:var(--text);
 }
 
 .login input:focus{
