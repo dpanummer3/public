@@ -103,7 +103,17 @@ h1{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system
 .switcher button.active svg{opacity:1}
 
 .journeybar{position:sticky;top:8px;z-index:35;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;margin:0 0 14px;padding:13px 13px 13px 15px;border:1px solid var(--hairStrong);background:rgba(20,22,23,.68);-webkit-backdrop-filter:saturate(120%) blur(30px);backdrop-filter:saturate(120%) blur(30px);border-radius:var(--r-sheet);box-shadow:0 10px 30px rgba(0,0,0,.36),var(--edge)}
-.journeycopy{min-width:0}
+.journeycopy{
+  min-width:0;
+  cursor:pointer;
+  border-radius:16px;
+  outline:none;
+}
+.journeycopy:active{opacity:.78}
+.journeycopy:focus-visible{
+  outline:2px solid var(--limeTextHover,var(--lime));
+  outline-offset:4px;
+}
 .journey-now{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .journey-now strong{color:var(--text);font-weight:600}
 .journey-next{margin-top:5px;font-size:17px;line-height:1.27;letter-spacing:-.014em;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -915,7 +925,7 @@ body.rain-mode .stop-person-chip.me{
   </div>
 
   <div class="journeybar" id="journeyBar" aria-live="polite">
-    <div class="journeycopy">
+    <div class="journeycopy" id="journeyCopy" role="button" tabindex="0" aria-label="Ga naar huidige stop">
       <div class="journey-now">HUIDIGE STOP · <strong id="journeyNow">Utrecht Centraal</strong></div>
       <div class="journey-next"><span>VOLGENDE</span> · <strong id="journeyNext">Kanoverhuur Utrecht</strong></div>
       <div class="journey-meta" id="journeyMeta">10:00 · volgende stop</div>
@@ -1214,8 +1224,12 @@ function renderJourneyHeader(){
   for(i=0;i<arr.length;i++)if(arr[i].id===currentStop){idx=i;break}
   if(idx<0)idx=0;
   var now=activeVenue(arr[idx]),nextIdx=idx+1;
-  var nowEl=$('#journeyNow'),nextEl=$('#journeyNext'),metaEl=$('#journeyMeta'),navEl=$('#journeyNav');
+  var nowEl=$('#journeyNow'),nextEl=$('#journeyNext'),metaEl=$('#journeyMeta'),navEl=$('#journeyNav'),copyEl=$('#journeyCopy');
   if(nowEl)nowEl.textContent=now.name;
+  if(copyEl){
+    copyEl.setAttribute('data-current-stop',arr[idx].id);
+    copyEl.setAttribute('aria-label','Ga naar huidige stop: '+now.name);
+  }
   if(nextIdx>=arr.length){
     if(nextEl)nextEl.textContent='Dag afgerond';
     if(metaEl)metaEl.textContent='Je bent terug op Utrecht Centraal.';
@@ -1479,7 +1493,21 @@ function setRating(id,value){
 }
 function login(){var input=$('#nameInput'),v=input.value.trim().replace(/\s+/g,' ');if(!v)return;user=v.slice(0,24);storeSet('utca-name',user);currentStop='';storeRemove('utca-stop');renderUser();renderTimeline();syncState(false);toast('Hoi '+user+'. Succes ermee.')}
 function bind(){var loginBtn=$('#loginBtn'),nameInput=$('#nameInput'),logout=$('#logout');if(loginBtn)loginBtn.onclick=login;if(nameInput)nameInput.addEventListener('keydown',function(e){if(e.key==='Enter'||e.keyCode===13)login()});if(logout)logout.onclick=function(){storeRemove('utca-name');user='';renderUser();renderTimeline();if(nameInput)nameInput.value='';setTimeout(function(){if(nameInput)nameInput.focus()},50)};$$('.switcher button').forEach(function(b){b.onclick=function(){var oldMode=mode,oldWeatherId=weatherStop[oldMode].id;mode=b.getAttribute('data-mode');storeSet('utca-weather',mode);applyWeatherTheme();if(currentStop===oldWeatherId){currentStop=weatherStop[mode].id;storeSet('utca-stop',currentStop)}ensureNoConsecutiveDuplicate();$$('.switcher button').forEach(function(x){var active=x.getAttribute('data-mode')===mode;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active?'true':'false')});renderTimeline();renderDayResult();renderRoute();renderGroup()}})}
-function init(){try{var jsw=$('#jsPreviewWarning');if(jsw)jsw.style.display='none';applyWeatherTheme();ensureNoConsecutiveDuplicate();$$('.switcher button').forEach(function(x){var active=x.getAttribute('data-mode')===mode;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active?'true':'false')});renderTimeline();renderDayResult();renderRoute();renderGroup();bind();renderUser();setLive(false);var boot=$('#bootError');if(boot)boot.classList.remove('show');if(user){setTimeout(function(){syncState(true)},0);if(!standaloneMode)setInterval(refreshState,15000)}}catch(e){var bootErr=$('#bootError');if(bootErr)bootErr.classList.add('show');var overlay=$('#loginOverlay');if(overlay)overlay.classList.remove('show');if(window.console&&console.error)console.error(e)}}
+function init(){try{var jsw=$('#jsPreviewWarning');if(jsw)jsw.style.display='none';applyWeatherTheme();ensureNoConsecutiveDuplicate();
+var journeyCopy=$('#journeyCopy');
+if(journeyCopy){
+  journeyCopy.onclick=function(){
+    var id=journeyCopy.getAttribute('data-current-stop');
+    if(id)jumpToStop(id);
+  };
+  journeyCopy.onkeydown=function(e){
+    if(e.key==='Enter'||e.key===' '){
+      e.preventDefault();
+      var id=journeyCopy.getAttribute('data-current-stop');
+      if(id)jumpToStop(id);
+    }
+  };
+}$$('.switcher button').forEach(function(x){var active=x.getAttribute('data-mode')===mode;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active?'true':'false')});renderTimeline();renderDayResult();renderRoute();renderGroup();bind();renderUser();setLive(false);var boot=$('#bootError');if(boot)boot.classList.remove('show');if(user){setTimeout(function(){syncState(true)},0);if(!standaloneMode)setInterval(refreshState,15000)}}catch(e){var bootErr=$('#bootError');if(bootErr)bootErr.classList.add('show');var overlay=$('#loginOverlay');if(overlay)overlay.classList.remove('show');if(window.console&&console.error)console.error(e)}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('focus',refreshState);
 })();
