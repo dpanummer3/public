@@ -884,6 +884,217 @@ body.rain-mode .stop-person-chip.me{
 }
 
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* === FIRST-RUN ONBOARDING ===
+   Uses the exact glass, radii, typography and accent variables of this UTCA build. */
+body.onboarding-open{overflow:hidden}
+
+.onboarding-overlay{
+  position:fixed;inset:0;z-index:88;
+  display:none;align-items:flex-end;justify-content:center;
+  padding:12px;
+  background:rgba(4,5,6,.62);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  backdrop-filter:blur(22px) saturate(150%)
+}
+.onboarding-overlay.show{display:flex}
+
+.onboarding-panel{
+  width:min(100%,560px);
+  max-height:calc(100dvh - 24px);
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  border-radius:var(--r-sheet);
+  background:rgba(24,26,27,.82);
+  -webkit-backdrop-filter:saturate(120%) blur(30px);
+  backdrop-filter:saturate(120%) blur(30px);
+  border:1px solid var(--hairStrong);
+  box-shadow:0 16px 44px rgba(0,0,0,.5),var(--edge);
+  overflow:hidden
+}
+
+.onboarding-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:17px 18px 8px
+}
+.onboarding-head .minihead{
+  font-size:11px;font-weight:600;letter-spacing:.08em;
+  color:var(--limeText,var(--lime));text-transform:uppercase
+}
+.onboarding-skip{
+  border:0;background:transparent;color:var(--faint);
+  font-size:13px;font-weight:600;padding:6px 2px;cursor:pointer
+}
+.onboarding-skip:active{opacity:.7}
+
+.onboarding-stage{min-height:0;overflow:hidden}
+.onboarding-slide{
+  display:none;height:100%;overflow:auto;
+  padding:4px 18px 12px
+}
+.onboarding-slide.active{display:block;animation:onboarding-in .2s ease both}
+@keyframes onboarding-in{
+  from{opacity:0;transform:translateX(8px)}
+  to{opacity:1;transform:none}
+}
+
+.onboarding-visual{
+  height:270px;
+  margin:2px 0 18px;
+  overflow:hidden;
+  position:relative;
+  border:1px solid var(--hair);
+  border-radius:var(--r-card);
+  background:rgba(8,10,11,.58);
+  box-shadow:var(--edge)
+}
+.onboarding-visual::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:42px;
+  pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(8,10,11,.88))
+}
+.onboarding-visual *{pointer-events:none!important}
+.onboarding-visual [id]{scroll-margin:0!important}
+
+.ob-canvas{
+  width:100%;
+  transform-origin:top left
+}
+
+/* Slide 1: real timeline crop */
+.ob-program .ob-canvas{padding:12px;transform:scale(.80);width:125%}
+.ob-program .timeline{gap:8px}
+.ob-program .tl-row{grid-template-columns:18px minmax(0,1fr);gap:10px}
+.ob-program .card{padding:13px;border-radius:20px}
+.ob-program .card .desc,
+.ob-program .card .location,
+.ob-program .card .alternatives,
+.ob-program .card .row,
+.ob-program .card .stop-meter{display:none}
+.ob-program .card .name{margin-bottom:0}
+.ob-program .walk{font-size:11px}
+
+/* Slide 2: real stop card crop */
+.ob-here-still .ob-canvas{padding:12px;transform:scale(.92);width:108.7%}
+.ob-here-still .card{margin:0}
+.ob-here-still .card .desc,
+.ob-here-still .card .alternatives,
+.ob-here-still .card .stop-meter,
+.ob-here-still .card .stop-people{display:none}
+.ob-here-still .card .row{margin-top:18px}
+
+/* Slide 3: actual meter + actual day result */
+.ob-meter-still{height:278px}
+.ob-meter-still .ob-canvas{padding:14px;transform:scale(.92);width:108.7%}
+.ob-meter-still .stop-meter{
+  margin:0;padding:0 0 15px;border-top:0
+}
+.ob-meter-still .dayresult{
+  margin:0;padding:15px;border-radius:var(--r-card)
+}
+.ob-meter-still .result-main strong{font-size:42px}
+
+/* Slide 4: actual alternatives component */
+.ob-options-still{height:286px}
+.ob-options-still .ob-canvas{padding:12px;transform:scale(.86);width:116.3%}
+.ob-options-still .card{margin:0}
+.ob-options-still .card .desc,
+.ob-options-still .card .location,
+.ob-options-still .card .row,
+.ob-options-still .card .stop-meter,
+.ob-options-still .card .stop-people{display:none}
+.ob-options-still .alternatives{margin-top:15px}
+.ob-options-still .alt-list{gap:4px}
+
+/* Slide 5: actual route controls */
+.ob-route-still .ob-canvas{padding:18px}
+.ob-route-still .dashboard{display:grid!important;margin-top:8px}
+.ob-route-still .route-only{margin-top:14px;padding:0}
+.ob-route-still .routebtn{background:var(--glassControl);color:#eef2f5}
+
+.onboarding-kicker{
+  font-size:11px;font-weight:600;letter-spacing:.08em;
+  color:var(--limeText,var(--lime));text-transform:uppercase;
+  margin-bottom:7px
+}
+.onboarding-slide h2{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system-ui,sans-serif;
+  margin:0;
+  font-size:29px;line-height:1.04;letter-spacing:-.03em;font-weight:700
+}
+.onboarding-slide p{
+  margin:10px 0 0;
+  color:var(--muted);
+  font-size:15px;line-height:1.43;letter-spacing:-.008em
+}
+.onboarding-slide p strong{color:#fff;font-weight:600}
+.onboarding-slide .punch{color:#eef2f5;font-weight:600}
+
+.onboarding-foot{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:10px;
+  align-items:center;
+  padding:10px 18px max(17px,env(safe-area-inset-bottom))
+}
+.onboarding-back{
+  width:52px;height:52px;
+  border:1px solid var(--hairStrong);
+  border-radius:var(--r-pill);
+  background:rgba(255,255,255,.06);
+  color:#eef2f5;
+  box-shadow:var(--edge);
+  font-size:20px;font-weight:600;cursor:pointer
+}
+.onboarding-back[hidden]{display:none}
+.onboarding-next{
+  min-height:52px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--r-pill);
+  background:var(--prim);
+  color:var(--ink);
+  font-size:17px;font-weight:600;letter-spacing:-.014em;
+  box-shadow:var(--primEdge),0 6px 18px rgba(0,0,0,.3);
+  cursor:pointer
+}
+.onboarding-back:active,.onboarding-next:active{transform:translateY(1px)}
+
+.onboarding-progress{
+  grid-column:1/-1;
+  display:flex;justify-content:center;align-items:center;gap:6px;
+  height:10px
+}
+.onboarding-progress i{
+  width:6px;height:6px;border-radius:var(--r-pill);
+  background:rgba(235,235,245,.24);
+  transition:.2s
+}
+.onboarding-progress i.active{
+  width:19px;
+  background:var(--limeText,var(--lime))
+}
+
+@media(max-width:470px){
+  .onboarding-overlay{padding:11px}
+  .onboarding-panel{max-height:calc(100dvh - 22px)}
+  .onboarding-head{padding:15px 16px 7px}
+  .onboarding-slide{padding:3px 16px 10px}
+  .onboarding-foot{padding:9px 16px max(15px,env(safe-area-inset-bottom))}
+  .onboarding-visual{height:252px;margin-bottom:15px}
+  .ob-meter-still{height:260px}
+  .ob-options-still{height:268px}
+  .onboarding-slide h2{font-size:27px}
+  .onboarding-slide p{font-size:14px}
+}
+
+@media(max-height:700px){
+  .onboarding-visual{height:210px;margin-bottom:12px}
+  .ob-meter-still,.ob-options-still{height:218px}
+  .onboarding-slide h2{font-size:24px}
+  .onboarding-slide p{font-size:13px;line-height:1.38}
+  .onboarding-head{padding-top:12px}
+}
+
 </style>
 </head>
 <body>
@@ -997,6 +1208,65 @@ body.rain-mode .stop-person-chip.me{
     <div class="privacy">Geen accountgedoe. × naast je naam = uitloggen en opnieuw beginnen.</div>
   </div>
 </div>
+
+<div class="onboarding-overlay" id="onboardingOverlay" role="dialog" aria-modal="true" aria-label="Hoe werkt deze app">
+  <div class="onboarding-panel">
+    <div class="onboarding-head">
+      <div class="minihead">UTCA // SNELLE UITLEG</div>
+      <button class="onboarding-skip" id="onboardingSkip" type="button">Overslaan</button>
+    </div>
+
+    <div class="onboarding-stage">
+      <section class="onboarding-slide active" data-onboarding-slide="0">
+        <div class="onboarding-visual ob-program" data-onboarding-visual="program"><div class="ob-canvas"></div></div>
+        <div class="onboarding-kicker">1 · De dag</div>
+        <h2>De hele dag geregeld.</h2>
+        <p>Zon of regen, het programma staat klaar. Bekijk het alvast en wees enthousiast of verberg je teleurstelling.</p>
+      </section>
+
+      <section class="onboarding-slide" data-onboarding-slide="1">
+        <div class="onboarding-visual ob-here-still" data-onboarding-visual="here"><div class="ob-canvas"></div></div>
+        <div class="onboarding-kicker">2 · Check-in</div>
+        <h2>Tik op ‘Ik ben hier’.</h2>
+        <p>Aangekomen bij een stop? Tik op <strong>Ik ben hier</strong>. Onderaan zie je daarna waar iedereen uithangt.</p>
+        <p class="punch">Handig als je ergens tegen de lamp loopt en even niet meer weet wie je bent.</p>
+      </section>
+
+      <section class="onboarding-slide" data-onboarding-slide="2">
+        <div class="onboarding-visual ob-meter-still" data-onboarding-visual="meter"><div class="ob-canvas"></div></div>
+        <div class="onboarding-kicker">3 · Tussenstand</div>
+        <h2>Naar de klote-meter.</h2>
+        <p>Na iedere stop vul je de meter in. Zo zie je je dagstand en elkaars scores.</p>
+        <p class="punch">Aan het einde weten we wie de absolute draak is en wie zondag nog iets aan zijn leven heeft.</p>
+      </section>
+
+      <section class="onboarding-slide" data-onboarding-slide="3">
+        <div class="onboarding-visual ob-options-still" data-onboarding-visual="options"><div class="ob-canvas"></div></div>
+        <div class="onboarding-kicker">4 · Wisselen</div>
+        <h2>Geen vibe? Switch gewoon.</h2>
+        <p>Voor kroegen, terrassen en lunch staan drie alternatieven op loopafstand klaar.</p>
+        <p>Plekken met <strong>Boek</strong> zijn vooraf gereserveerd. Daar valt niet aan te tornen.</p>
+      </section>
+
+      <section class="onboarding-slide" data-onboarding-slide="4">
+        <div class="onboarding-visual ob-route-still" data-onboarding-visual="route"><div class="ob-canvas"></div></div>
+        <div class="onboarding-kicker">5 · Hele route</div>
+        <h2>Alles in Google Maps.</h2>
+        <p>Helemaal onderaan staat <strong>Open hele ronde in Google Maps</strong>. De route en looptijd passen zich aan als we van plek wisselen.</p>
+        <p class="punch">Reken op maximaal twee uur lopen. Bergschoenen kunnen thuisblijven.</p>
+      </section>
+    </div>
+
+    <div class="onboarding-foot">
+      <button class="onboarding-back" id="onboardingBack" type="button" aria-label="Vorige" hidden>←</button>
+      <button class="onboarding-next" id="onboardingNext" type="button">Volgende</button>
+      <div class="onboarding-progress" id="onboardingProgress" aria-hidden="true">
+        <i class="active"></i><i></i><i></i><i></i><i></i>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1491,7 +1761,178 @@ function setRating(id,value){
   syncState(false);
   toast(value===5?'Totaal naar de klote. Genoteerd.':'Meter bijgewerkt');
 }
-function login(){var input=$('#nameInput'),v=input.value.trim().replace(/\s+/g,' ');if(!v)return;user=v.slice(0,24);storeSet('utca-name',user);currentStop='';storeRemove('utca-stop');renderUser();renderTimeline();syncState(false);toast('Hoi '+user+'. Succes ermee.')}
+
+var onboardingStep=0;
+var onboardingKey='utca-onboarding-v1';
+
+function onboardingSeen(){return storeGet(onboardingKey)==='1'}
+
+function onboardingClone(el){
+  if(!el)return null;
+  var c=el.cloneNode(true);
+  if(c.removeAttribute)c.removeAttribute('id');
+  Array.prototype.slice.call(c.querySelectorAll('[id]')).forEach(function(x){x.removeAttribute('id')});
+  Array.prototype.slice.call(c.querySelectorAll('a,button,input,summary')).forEach(function(x){
+    x.setAttribute('tabindex','-1');
+    x.removeAttribute('href');
+  });
+  return c;
+}
+
+function buildOnboardingStills(){
+  var program=$('[data-onboarding-visual="program"] .ob-canvas');
+  var here=$('[data-onboarding-visual="here"] .ob-canvas');
+  var meter=$('[data-onboarding-visual="meter"] .ob-canvas');
+  var options=$('[data-onboarding-visual="options"] .ob-canvas');
+  var route=$('[data-onboarding-visual="route"] .ob-canvas');
+  if(!program||!here||!meter||!options||!route)return;
+
+  program.innerHTML='';here.innerHTML='';meter.innerHTML='';options.innerHTML='';route.innerHTML='';
+
+  /* 1: a literal crop of the current rendered timeline */
+  var timeline=$('#timeline');
+  if(timeline){
+    var t=document.createElement('div');
+    t.className='timeline';
+    Array.prototype.slice.call(timeline.children,0,5).forEach(function(child){
+      var clone=onboardingClone(child);
+      if(clone)t.appendChild(clone);
+    });
+    program.appendChild(t);
+  }
+
+  /* 2: the app's own stop card, with the checked-in state demonstrated on the clone only */
+  var hereCard=$('.card[data-stop="'+weatherStop[mode].id+'"]')||$('.card[data-stop="lunch"]');
+  var hc=onboardingClone(hereCard);
+  if(hc){
+    hc.classList.add('current');
+    var hb=hc.querySelector('.here');
+    if(hb){hb.classList.add('active');hb.textContent='Ik ben hier ✓'}
+    here.appendChild(hc);
+  }
+
+  /* 3: the real meter and day-result components, populated as a visual example */
+  var meterCard=$('.card[data-stop="'+weatherStop[mode].id+'"] .stop-meter')||$('.card[data-stop="lunch"] .stop-meter');
+  var mc=onboardingClone(meterCard);
+  if(mc){
+    var buttons=mc.querySelectorAll('.stop-meter-buttons button');
+    Array.prototype.slice.call(buttons).forEach(function(b){b.classList.remove('active')});
+    if(buttons[2])buttons[2].classList.add('active');
+    var state=mc.querySelector('.stop-meter-state');
+    if(state)state.textContent='3/5';
+    var copy=mc.querySelector('.stop-meter-copy');
+    if(copy)copy.innerHTML='<strong>Lekker uit de hand</strong>';
+    meter.appendChild(mc);
+  }
+  var dr=onboardingClone($('#dayResult'));
+  if(dr){
+    var pct=dr.querySelector('[data-ob-pct],strong');
+    var resultStrong=dr.querySelector('.result-main strong');
+    var resultBar=dr.querySelector('.result-bar i');
+    var resultCopy=dr.querySelector('.result-copy');
+    var resultMeta=dr.querySelector('.result-meta');
+    if(resultStrong)resultStrong.textContent='50%';
+    if(resultBar){resultBar.style.width='50%';resultBar.style.background=meterBands[3].color}
+    if(resultCopy)resultCopy.innerHTML='<strong>Lekker uit de hand</strong>';
+    if(resultMeta)resultMeta.textContent='Voorbeeld van je dagstand';
+    meter.appendChild(dr);
+  }
+
+  /* 4: the real alternatives UI, opened in the still */
+  var optionCard=$('.card[data-stop="lunch"]')||$('.card[data-stop="neude"]');
+  var oc=onboardingClone(optionCard);
+  if(oc){
+    var details=oc.querySelector('.alternatives');
+    if(details)details.setAttribute('open','');
+    options.appendChild(oc);
+  }
+
+  /* 5: route-time dashboard + the app's real Google Maps button */
+  var dash=onboardingClone($('.dashboard'));
+  if(dash)route.appendChild(dash);
+  var routeOnly=onboardingClone($('.route-only'));
+  if(routeOnly)route.appendChild(routeOnly);
+}
+
+function updateOnboarding(){
+  var slides=$$('[data-onboarding-slide]');
+  slides.forEach(function(s,i){s.classList.toggle('active',i===onboardingStep)});
+  var dots=$$('#onboardingProgress i');
+  dots.forEach(function(d,i){d.classList.toggle('active',i===onboardingStep)});
+  var back=$('#onboardingBack'),next=$('#onboardingNext');
+  if(back)back.hidden=onboardingStep===0;
+  if(next)next.textContent=onboardingStep===slides.length-1?'Ik heb er zin in →':'Volgende';
+}
+
+function openOnboarding(force){
+  if(!user)return;
+  if(!force&&onboardingSeen())return;
+  buildOnboardingStills();
+  onboardingStep=0;
+  updateOnboarding();
+  var overlay=$('#onboardingOverlay');
+  if(overlay)overlay.classList.add('show');
+  document.body.classList.add('onboarding-open');
+}
+
+function closeOnboarding(){
+  storeSet(onboardingKey,'1');
+  var overlay=$('#onboardingOverlay');
+  if(overlay)overlay.classList.remove('show');
+  document.body.classList.remove('onboarding-open');
+}
+
+function bindOnboarding(){
+  var next=$('#onboardingNext'),back=$('#onboardingBack'),skip=$('#onboardingSkip'),overlay=$('#onboardingOverlay');
+  if(next)next.onclick=function(){
+    var total=$$('[data-onboarding-slide]').length;
+    if(onboardingStep>=total-1){closeOnboarding();return}
+    onboardingStep++;
+    updateOnboarding();
+  };
+  if(back)back.onclick=function(){
+    if(onboardingStep>0)onboardingStep--;
+    updateOnboarding();
+  };
+  if(skip)skip.onclick=closeOnboarding;
+
+  var touchStartX=null;
+  if(overlay){
+    overlay.addEventListener('touchstart',function(e){
+      if(e.touches&&e.touches.length===1)touchStartX=e.touches[0].clientX;
+    },{passive:true});
+    overlay.addEventListener('touchend',function(e){
+      if(touchStartX===null||!e.changedTouches||!e.changedTouches.length)return;
+      var dx=e.changedTouches[0].clientX-touchStartX;
+      touchStartX=null;
+      if(Math.abs(dx)<55)return;
+      if(dx<0&&onboardingStep<4){onboardingStep++;updateOnboarding()}
+      if(dx>0&&onboardingStep>0){onboardingStep--;updateOnboarding()}
+    },{passive:true});
+  }
+
+  document.addEventListener('keydown',function(e){
+    var shown=$('#onboardingOverlay');
+    if(!shown||!shown.classList.contains('show'))return;
+    if(e.key==='Escape'){closeOnboarding();return}
+    if(e.key==='ArrowRight'&&onboardingStep<4){onboardingStep++;updateOnboarding()}
+    if(e.key==='ArrowLeft'&&onboardingStep>0){onboardingStep--;updateOnboarding()}
+  });
+}
+
+function login(){
+  var input=$('#nameInput'),v=input.value.trim().replace(/\s+/g,' ');
+  if(!v)return;
+  user=v.slice(0,24);
+  storeSet('utca-name',user);
+  currentStop='';
+  storeRemove('utca-stop');
+  renderUser();
+  renderTimeline();
+  syncState(false);
+  toast('Hoi '+user+'. Succes ermee.');
+  setTimeout(function(){openOnboarding(false)},90);
+}
 function bind(){var loginBtn=$('#loginBtn'),nameInput=$('#nameInput'),logout=$('#logout');if(loginBtn)loginBtn.onclick=login;if(nameInput)nameInput.addEventListener('keydown',function(e){if(e.key==='Enter'||e.keyCode===13)login()});if(logout)logout.onclick=function(){storeRemove('utca-name');user='';renderUser();renderTimeline();if(nameInput)nameInput.value='';setTimeout(function(){if(nameInput)nameInput.focus()},50)};$$('.switcher button').forEach(function(b){b.onclick=function(){var oldMode=mode,oldWeatherId=weatherStop[oldMode].id;mode=b.getAttribute('data-mode');storeSet('utca-weather',mode);applyWeatherTheme();if(currentStop===oldWeatherId){currentStop=weatherStop[mode].id;storeSet('utca-stop',currentStop)}ensureNoConsecutiveDuplicate();$$('.switcher button').forEach(function(x){var active=x.getAttribute('data-mode')===mode;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active?'true':'false')});renderTimeline();renderDayResult();renderRoute();renderGroup()}})}
 function init(){try{var jsw=$('#jsPreviewWarning');if(jsw)jsw.style.display='none';applyWeatherTheme();ensureNoConsecutiveDuplicate();
 var journeyCopy=$('#journeyCopy');
@@ -1507,7 +1948,7 @@ if(journeyCopy){
       if(id)jumpToStop(id);
     }
   };
-}$$('.switcher button').forEach(function(x){var active=x.getAttribute('data-mode')===mode;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active?'true':'false')});renderTimeline();renderDayResult();renderRoute();renderGroup();bind();renderUser();setLive(false);var boot=$('#bootError');if(boot)boot.classList.remove('show');if(user){setTimeout(function(){syncState(true)},0);if(!standaloneMode)setInterval(refreshState,15000)}}catch(e){var bootErr=$('#bootError');if(bootErr)bootErr.classList.add('show');var overlay=$('#loginOverlay');if(overlay)overlay.classList.remove('show');if(window.console&&console.error)console.error(e)}}
+}$$('.switcher button').forEach(function(x){var active=x.getAttribute('data-mode')===mode;x.classList.toggle('active',active);x.setAttribute('aria-pressed',active?'true':'false')});renderTimeline();renderDayResult();renderRoute();renderGroup();bind();bindOnboarding();renderUser();setLive(false);var boot=$('#bootError');if(boot)boot.classList.remove('show');if(user){setTimeout(function(){syncState(true)},0);setTimeout(function(){openOnboarding(false)},110);if(!standaloneMode)setInterval(refreshState,15000)}}catch(e){var bootErr=$('#bootError');if(bootErr)bootErr.classList.add('show');var overlay=$('#loginOverlay');if(overlay)overlay.classList.remove('show');if(window.console&&console.error)console.error(e)}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('focus',refreshState);
 })();
