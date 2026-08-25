@@ -1074,10 +1074,7 @@ body.onboarding-open{overflow:hidden}
   box-shadow:var(--edge);
   font-size:20px;font-weight:600;cursor:pointer
 }
-.onboarding-back.is-placeholder{
-  visibility:hidden;
-  pointer-events:none;
-}
+
 .onboarding-next{
   min-height:52px;
   border:1px solid rgba(255,255,255,.2);
@@ -1335,7 +1332,7 @@ body.rain-mode .onboarding-next{
     </div>
 
     <div class="onboarding-foot">
-      <button class="onboarding-back is-placeholder" id="onboardingBack" type="button" aria-label="Vorige" aria-hidden="true" disabled>←</button>
+      <button class="onboarding-back" id="onboardingBack" type="button" aria-label="Terug naar naam">←</button>
       <button class="onboarding-next" id="onboardingNext" type="button">Volgende</button>
       <div class="onboarding-progress" id="onboardingProgress" aria-hidden="true">
         <i class="active"></i><i></i><i></i><i></i><i></i>
@@ -1398,15 +1395,15 @@ var stopsCommon=[
  {id:'finish',icon:'flag',time:'00:00',fixedStart:1440,fixedEnd:1440,name:'Utrecht Centraal',kind:'finish',meter:false,desc:'Rondje dicht. Succes met het perron.',addr:'Utrecht Centraal, Utrecht',geo:[52.08944,5.11028],info:maps('Utrecht Centraal')}
 ];
 var rainMorningAlts=[
+ {name:"Café 't Neutje",note:'Koffie & kaarten · Neude 30',desc:'Koffie en kaarten en wellicht een klein drankje.',addr:'Neude 30, Utrecht',geo:[52.0926573,5.1185024],info:maps("Café 't Neutje Neude 30 Utrecht")},
  {name:'Café Clair',note:'Bruine-kroegsfeer · Neude 31 · kaarten',desc:'Knus café direct aan de Neude met de sfeer van een bruine kroeg. Koffie op tafel, kaarten erbij en rustig de regen uitzitten.',addr:'Neude 31, Utrecht',geo:[52.09270,5.11857],info:maps('Café Clair Neude 31 Utrecht')},
- {name:'Café Orloff',note:'Gezellig café · Donkere Gaard 8 · kaarten',desc:'Gezellig en huiselijk café aan de Donkere Gaard. Open in de ochtend, koffie erbij en genoeg plek om een kaartje te leggen.',addr:'Donkere Gaard 8, Utrecht',geo:[52.08982,5.12113],info:maps('Café Orloff Donkere Gaard 8 Utrecht')},
  {name:'Café de Zaak',note:'Modern bruin café · Korte Minrebroederstraat 9 · kaarten',desc:'Modern bruin café achter het stadhuis. Open vanaf de ochtend en een logische plek voor koffie, een drankje en een potje kaarten.',addr:'Korte Minrebroederstraat 9, Utrecht',geo:[52.092152,5.120394],info:maps('Café de Zaak Korte Minrebroederstraat 9 Utrecht')}
 ];
 var weatherStop={
  sun:{id:'weather-sun',icon:'canoe',time:'10:00–11:45',fixedStart:600,fixedEnd:705,reservationAnchor:true,name:'Kanoverhuur Utrecht',kind:'play',meter:true,desc:'Water, de Oudegracht. Drie tweepersoonskano\'s. Rustig beginnen en koekeloeren.',addr:'Oudegracht aan de Werf 275, Utrecht',geo:[52.08360,5.12155],info:maps('Kanoverhuur Utrecht Oudegracht aan de Werf 275 Utrecht'),reserve:'https://kanoverhuurutrecht.nl/reserveren'},
- rain:{id:'weather-rain',icon:'coffee',time:'09:50–11:20',fixedStart:590,fixedEnd:680,name:"Café 't Neutje",optionNote:'Koffie & kaarten · Neude 30',kind:'food',meter:true,desc:'Koffie en kaarten en wellicht een klein drankje.',addr:'Neude 30, Utrecht',geo:[52.0926573,5.1185024],info:maps("Café 't Neutje Neude 30 Utrecht"),alts:rainMorningAlts}
+ rain:{id:'weather-rain',icon:'coffee',time:'09:50–11:20',fixedStart:590,fixedEnd:680,name:'Café Orloff',optionNote:'Koffie & kaarten · Donkere Gaard 8',kind:'food',meter:true,desc:'Koffie, kaarten en rustig op gang komen in een gezellig café aan de Donkere Gaard.',addr:'Donkere Gaard 8, Utrecht',geo:[52.08982,5.12113],info:maps('Café Orloff Donkere Gaard 8 Utrecht'),alts:rainMorningAlts}
 };
-var routeData={sun:{title:'Zonroute · oud UTCA-programma',text:'Centraal → kano → lunch → pool 14:00 → Neude → JEU 16:30 → Oudegracht → diner 19:00 → eerste kroeg → Bambi → Centraal. Looptijd zit in de tijdlijn.'},rain:{title:'Regenroute · oud UTCA-programma',text:"Centraal → Café 't Neutje / kaartoptie → lunch → pool 14:00 → Neude → JEU 16:30 → Oudegracht → diner 19:00 → eerste kroeg → Bambi → Centraal. Looptijd zit in de tijdlijn."}};
+var routeData={sun:{title:'Zonroute · oud UTCA-programma',text:'Centraal → kano → lunch → pool 14:00 → Neude → JEU 16:30 → Oudegracht → diner 19:00 → eerste kroeg → Bambi → Centraal. Looptijd zit in de tijdlijn.'},rain:{title:'Regenroute · oud UTCA-programma',text:"Centraal → Café Orloff / kaartoptie → lunch → pool 14:00 → Neude → JEU 16:30 → Oudegracht → diner 19:00 → eerste kroeg → Bambi → Centraal. Looptijd zit in de tijdlijn."}};
 
 var memoryStore={};
 function storeGet(k){try{return window.localStorage?window.localStorage.getItem(k):null}catch(e){return memoryStore[k]||null}}
@@ -1423,6 +1420,11 @@ var user=storeGet('utca-name')||'';
 var currentStop=storeGet('utca-stop')||'';
 var ratings=safeJson(storeGet('utca-ratings'),{});
 var venueSelections=safeJson(storeGet('utca-venues-v13'),{});
+if(storeGet('utca-rain-orloff-default-v1')!=='1'){
+  venueSelections['weather-rain']=0;
+  storeSet('utca-venues-v13',JSON.stringify(venueSelections));
+  storeSet('utca-rain-orloff-default-v1','1');
+}
 var shared=false,participants=[];
 var standaloneMode=(window.location.protocol==='file:'||window.location.protocol==='blob:'||window.location.protocol==='data:'||!window.location.hostname);
 function itinerary(){var a=[stopsCommon[0],weatherStop[mode]];return a.concat(stopsCommon.slice(1))}
@@ -1933,12 +1935,7 @@ function updateOnboarding(){
   var dots=$$('#onboardingProgress i');
   dots.forEach(function(d,i){d.classList.toggle('active',i===onboardingStep)});
   var back=$('#onboardingBack'),next=$('#onboardingNext');
-  if(back){
-    var first=onboardingStep===0;
-    back.classList.toggle('is-placeholder',first);
-    back.disabled=first;
-    back.setAttribute('aria-hidden',first?'true':'false');
-  }
+  if(back)back.setAttribute('aria-label',onboardingStep===0?'Terug naar naam':'Vorige');
   if(next)next.textContent=onboardingStep===slides.length-1?'Ik heb er zin in →':'Volgende';
 }
 
@@ -1958,6 +1955,25 @@ function closeOnboarding(){
   document.body.classList.remove('onboarding-open');
 }
 
+function onboardingBackToName(){
+  var previousName=user;
+  var overlay=$('#onboardingOverlay');
+  if(overlay)overlay.classList.remove('show');
+  document.body.classList.remove('onboarding-open');
+  storeRemove('utca-name');
+  user='';
+  renderUser();
+  renderTimeline();
+  var input=$('#nameInput');
+  if(input){
+    input.value=previousName||'';
+    setTimeout(function(){
+      input.focus();
+      try{input.setSelectionRange(input.value.length,input.value.length)}catch(e){}
+    },60);
+  }
+}
+
 function bindOnboarding(){
   var next=$('#onboardingNext'),back=$('#onboardingBack'),skip=$('#onboardingSkip'),overlay=$('#onboardingOverlay');
   if(next)next.onclick=function(){
@@ -1967,7 +1983,11 @@ function bindOnboarding(){
     updateOnboarding();
   };
   if(back)back.onclick=function(){
-    if(onboardingStep>0)onboardingStep--;
+    if(onboardingStep===0){
+      onboardingBackToName();
+      return;
+    }
+    onboardingStep--;
     updateOnboarding();
   };
   if(skip)skip.onclick=closeOnboarding;
@@ -1992,7 +2012,7 @@ function bindOnboarding(){
     if(!shown||!shown.classList.contains('show'))return;
     if(e.key==='Escape'){closeOnboarding();return}
     if(e.key==='ArrowRight'&&onboardingStep<4){onboardingStep++;updateOnboarding()}
-    if(e.key==='ArrowLeft'&&onboardingStep>0){onboardingStep--;updateOnboarding()}
+    if(e.key==='ArrowLeft'){if(onboardingStep===0){onboardingBackToName()}else{onboardingStep--;updateOnboarding()}}
   });
 }
 
