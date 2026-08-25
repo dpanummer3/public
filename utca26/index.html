@@ -1074,7 +1074,10 @@ body.onboarding-open{overflow:hidden}
   box-shadow:var(--edge);
   font-size:20px;font-weight:600;cursor:pointer
 }
-.onboarding-back[hidden]{display:none}
+.onboarding-back.is-placeholder{
+  visibility:hidden;
+  pointer-events:none;
+}
 .onboarding-next{
   min-height:52px;
   border:1px solid rgba(255,255,255,.2);
@@ -1332,7 +1335,7 @@ body.rain-mode .onboarding-next{
     </div>
 
     <div class="onboarding-foot">
-      <button class="onboarding-back" id="onboardingBack" type="button" aria-label="Vorige" hidden>←</button>
+      <button class="onboarding-back is-placeholder" id="onboardingBack" type="button" aria-label="Vorige" aria-hidden="true" disabled>←</button>
       <button class="onboarding-next" id="onboardingNext" type="button">Volgende</button>
       <div class="onboarding-progress" id="onboardingProgress" aria-hidden="true">
         <i class="active"></i><i></i><i></i><i></i><i></i>
@@ -1395,9 +1398,9 @@ var stopsCommon=[
  {id:'finish',icon:'flag',time:'00:00',fixedStart:1440,fixedEnd:1440,name:'Utrecht Centraal',kind:'finish',meter:false,desc:'Rondje dicht. Succes met het perron.',addr:'Utrecht Centraal, Utrecht',geo:[52.08944,5.11028],info:maps('Utrecht Centraal')}
 ];
 var rainMorningAlts=[
- {name:'Barista Cafe Utrecht Neude',note:'Koffie · Neude 1 · eigen kaarten mee',desc:'Koffie aan de Neude. Neem zelf een pak kaarten mee en maak er zonder veel gedoe een rustige regenstart van.',addr:'Neude 1, Utrecht',geo:[52.09310,5.11934],info:maps('Barista Cafe Utrecht Neude 1 Utrecht')},
- {name:'Noda · Bibliotheek Neude',note:'Koffie / ontbijt · Neude 11 · eigen kaarten mee',desc:'Ruime ochtendplek in Bibliotheek Neude. Koffie erbij, kaarten op tafel en rustig op gang komen.',addr:'Neude 11, Utrecht',geo:[52.09313,5.11816],info:maps('Noda Neude 11 Utrecht')},
- {name:'Anne&Max Utrecht Domstraat',note:'Koffie · Domstraat 4 · eigen kaarten mee',desc:'Huiskamerachtige koffieplek vlak bij de Dom. Goede tafel, koffie en je eigen kaarten mee.',addr:'Domstraat 4, Utrecht',geo:[52.09087,5.12186],info:maps('Anne&Max Utrecht Domstraat 4 Utrecht')}
+ {name:'Café Clair',note:'Bruine-kroegsfeer · Neude 31 · kaarten',desc:'Knus café direct aan de Neude met de sfeer van een bruine kroeg. Koffie op tafel, kaarten erbij en rustig de regen uitzitten.',addr:'Neude 31, Utrecht',geo:[52.09270,5.11857],info:maps('Café Clair Neude 31 Utrecht')},
+ {name:'Café Orloff',note:'Gezellig café · Donkere Gaard 8 · kaarten',desc:'Gezellig en huiselijk café aan de Donkere Gaard. Open in de ochtend, koffie erbij en genoeg plek om een kaartje te leggen.',addr:'Donkere Gaard 8, Utrecht',geo:[52.08982,5.12113],info:maps('Café Orloff Donkere Gaard 8 Utrecht')},
+ {name:'Café de Zaak',note:'Modern bruin café · Korte Minrebroederstraat 9 · kaarten',desc:'Modern bruin café achter het stadhuis. Open vanaf de ochtend en een logische plek voor koffie, een drankje en een potje kaarten.',addr:'Korte Minrebroederstraat 9, Utrecht',geo:[52.092152,5.120394],info:maps('Café de Zaak Korte Minrebroederstraat 9 Utrecht')}
 ];
 var weatherStop={
  sun:{id:'weather-sun',icon:'canoe',time:'10:00–11:45',fixedStart:600,fixedEnd:705,reservationAnchor:true,name:'Kanoverhuur Utrecht',kind:'play',meter:true,desc:'Water, de Oudegracht. Drie tweepersoonskano\'s. Rustig beginnen en koekeloeren.',addr:'Oudegracht aan de Werf 275, Utrecht',geo:[52.08360,5.12155],info:maps('Kanoverhuur Utrecht Oudegracht aan de Werf 275 Utrecht'),reserve:'https://kanoverhuurutrecht.nl/reserveren'},
@@ -1930,7 +1933,12 @@ function updateOnboarding(){
   var dots=$$('#onboardingProgress i');
   dots.forEach(function(d,i){d.classList.toggle('active',i===onboardingStep)});
   var back=$('#onboardingBack'),next=$('#onboardingNext');
-  if(back)back.hidden=onboardingStep===0;
+  if(back){
+    var first=onboardingStep===0;
+    back.classList.toggle('is-placeholder',first);
+    back.disabled=first;
+    back.setAttribute('aria-hidden',first?'true':'false');
+  }
   if(next)next.textContent=onboardingStep===slides.length-1?'Ik heb er zin in →':'Volgende';
 }
 
