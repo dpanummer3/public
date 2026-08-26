@@ -180,7 +180,7 @@ footer{margin:26px 4px 0;color:var(--faint);font-size:12px;line-height:1.5}
 .login h2{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system-ui,sans-serif;font-size:28px;line-height:1.07;letter-spacing:-.028em;font-weight:700;margin:10px 0 10px}
 .login p{color:var(--muted);font-size:15px;line-height:1.4;letter-spacing:-.008em;margin:0 0 18px}
 .login input{width:100%;height:52px;border-radius:var(--r-input);border:1px solid var(--hairStrong);background:rgba(0,0,0,.32);color:#fff;padding:0 16px;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
-.login input:focus{border-color:rgba(189,245,58,.5);box-shadow:0 0 0 3px rgba(189,245,58,.10)}
+.login input:focus-visible{outline:none}
 .login button{width:100%;height:52px;margin-top:10px;border:1px solid rgba(255,255,255,.2);border-radius:var(--r-pill);background:var(--prim);color:var(--ink);font-size:17px;font-weight:600;letter-spacing:-.014em;cursor:pointer;box-shadow:var(--primEdge),0 6px 18px rgba(0,0,0,.3)}
 .login .privacy{margin-top:12px;font-size:12px;line-height:1.4;color:var(--faint)}
 .login-app-identity{margin:0 0 24px;padding:0 0 20px;border-bottom:1px solid var(--hair)}
@@ -336,7 +336,6 @@ body.rain-mode .tl-progress-track i{background:linear-gradient(90deg,rgba(127,21
 body.rain-mode .card.current{border-color:rgba(127,214,238,.26);box-shadow:0 10px 30px rgba(0,0,0,.34),var(--edge),0 0 0 1px rgba(127,214,238,.08)}
 body.rain-mode .round.r:hover,
 body.rain-mode .mini-round.r:hover{background:linear-gradient(180deg,rgba(127,214,238,.22),rgba(127,214,238,.14))}
-body.rain-mode .login input:focus{border-color:rgba(127,214,238,.50);box-shadow:0 0 0 3px rgba(127,214,238,.10)}
 body.rain-mode .stop-person-chip.me{border-color:rgba(127,214,238,.38)}
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important}
@@ -393,7 +392,7 @@ body.onboarding-open{overflow:hidden}
 .ob-route-still .dashboard{display:grid!important;margin-top:8px}
 .ob-route-still .route-only{margin-top:14px;padding:0}
 .ob-route-still .routebtn{background:var(--glassControl);color:#eef2f5}
-.ob-program :is(.journeybar,.tl-row),.ob-here-still .card>:not(.row),.ob-here-still .circles,.ob-meter-still .stop-meter-buttons button:not(.active),.ob-options-still .card>:not(.alternatives),.ob-route-still .dashboard{opacity:.35}
+.ob-program :is(.journeybar,.tl-row),.ob-here-still .card>:not(.row),.ob-here-still .circles,.ob-meter-still .stop-meter-buttons button:not(.active),.ob-options-still .card>:not(.alternatives),.ob-route-still .dashboard{opacity:.62}
 .onboarding-kicker{font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--limeText,var(--lime));text-transform:uppercase;margin-bottom:7px}
 .onboarding-slide h2{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro",system-ui,sans-serif;margin:0;font-size:29px;line-height:1.04;letter-spacing:-.03em;font-weight:700}
 .onboarding-slide p{margin:10px 0 0;color:var(--muted);font-size:15px;line-height:1.43;letter-spacing:-.008em}
@@ -425,11 +424,9 @@ body.onboarding-open{overflow:hidden}
 .onboarding-head .minihead,
 .onboarding-kicker{color:var(--limeText,var(--lime))}
 .login-app-subtitle{color:var(--text)}
-.login input:focus{border-color:rgba(181,233,57,.42);box-shadow:0 0 0 3px rgba(181,233,57,.08)}
 .login button,
 .onboarding-next{background:linear-gradient(180deg,rgba(199,244,83,.84),rgba(181,233,57,.76));border-color:rgba(189,245,58,.34);color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 4px 14px rgba(0,0,0,.24)}
 .onboarding-progress i.active{background:var(--limeText,var(--lime))}
-body.rain-mode .login input:focus{border-color:rgba(127,214,238,.42);box-shadow:0 0 0 3px rgba(127,214,238,.08)}
 body.rain-mode .login button,
 body.rain-mode .onboarding-next{background:linear-gradient(180deg,rgba(155,214,233,.84),rgba(119,199,222,.76));border-color:rgba(127,214,238,.34);color:#06181f}
 .card[data-stop]{-webkit-tap-highlight-color:rgba(189,245,58,.08)}
