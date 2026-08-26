@@ -1163,7 +1163,6 @@ function buildOnboardingStills(){
   }
   var dr=onboardingClone($('#dayResult'));
   if(dr){
-    var pct=dr.querySelector('[data-ob-pct],strong');
     var resultStrong=dr.querySelector('.result-main strong');
     var resultBar=dr.querySelector('.result-bar i');
     var resultCopy=dr.querySelector('.result-copy');
@@ -1174,7 +1173,7 @@ function buildOnboardingStills(){
     if(resultMeta)resultMeta.textContent='Voorbeeld van je dagstand';
     meter.appendChild(dr);
   }
-  var optionCard=$('.card[data-stop="lunch"]')||$('.card[data-stop="neude"]');
+  var optionCard=$('.card[data-stop="bars"]')||$('.card[data-stop="lunch"]');
   var oc=onboardingClone(optionCard);
   if(oc){
     var details=oc.querySelector('.alternatives');
