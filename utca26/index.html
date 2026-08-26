@@ -1165,6 +1165,31 @@ body.rain-mode .onboarding-next{
   color:#06181f;
 }
 
+
+/* Easier check-in: the quiet part of each stop card is also tappable.
+   All explicit controls remain independent, especially "3 andere opties +". */
+.card[data-stop]{
+  -webkit-tap-highlight-color:rgba(189,245,58,.08);
+}
+.tl-node[data-rail-here]{
+  cursor:pointer;
+  touch-action:manipulation;
+}
+.tl-node[data-rail-here]::before{
+  content:"";
+  position:absolute;
+  width:42px;
+  height:42px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+}
+.tl-node[data-rail-here]:focus-visible{
+  outline:2px solid var(--limeTextHover,var(--lime));
+  outline-offset:8px;
+}
+
 </style>
 </head>
 <body>
@@ -1630,7 +1655,9 @@ function peopleAtStopHtml(stopId){
 }
 function meterHtml(x){if(!x.meter)return'';var v=Number(ratings[x.id]||0),band=v?bandForValue(v):null,buttons='';for(var n=1;n<=5;n++)buttons+='<button data-rate="'+x.id+'" data-value="'+n+'" class="'+(v===n?'active':'')+'" aria-pressed="'+(v===n?'true':'false')+'" aria-label="Score '+n+'">'+n+'</button>';return '<div class="stop-meter"><div class="stop-meter-head"><div class="stop-meter-title">Naar de klote meter</div><div class="stop-meter-state">'+(v?v+'/5':'Nog invullen')+'</div></div><div class="stop-meter-buttons">'+buttons+'</div><div class="meter-scale-labels"><span>Fris</span><span>Naar de klote</span></div><div class="stop-meter-copy">'+(band?'<strong>'+band.label+'</strong>':'Tik 1–5 na dit onderdeel.')+'</div></div>'}
 var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.6 4.5L19 6.5"/></svg>';
-function railHtml(state){return '<span class="tl-rail" aria-hidden="true"><span class="tl-node">'+(state==='done'?CHECK:'')+'</span></span>'}
+function railHtml(state,id){
+  return '<span class="tl-rail"><span class="tl-node" role="button" tabindex="0" data-rail-here="'+id+'" aria-label="Ik ben hier bij deze stop">'+(state==='done'?CHECK:'')+'</span></span>'
+}
 function stopStates(arr){
   var cur=-1,i;
   for(i=0;i<arr.length;i++){if(arr[i].id===currentStop){cur=i;break}}
@@ -1653,11 +1680,12 @@ function renderTimeline(){
       if(wd.walk>0||(wd.depart!==null&&wd.start!==null&&wd.start>wd.depart))html+='<div class="tl-row walkrow '+walkState+'"><span class="tl-rail" aria-hidden="true"></span><div class="walk"><span>'+range+'</span><div class="rule"></div><span>'+wd.text+'</span></div></div>';
     }
     var v=activeVenue(x),timeLabel=displayStopTime(x,sch[i]);
-    html+='<div class="tl-row stop '+states[i]+'">'+railHtml(states[i])+'<article class="card '+(currentStop===x.id?'current':'')+'" data-stop="'+x.id+'"><div class="top"><div class="topleft">'+stopBadge(x.icon)+'<div class="time">'+timeLabel+'</div></div><a class="navbtn" href="'+nav(v.addr)+'" target="_blank" rel="noopener">NAVIGEER</a></div><div class="name">'+escapeHtml(v.name)+'</div><p class="desc">'+escapeHtml(v.desc)+'</p><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="6.4"/><path d="M12 3.4v2.2M12 18.4v2.2M3.4 12h2.2M18.4 12h2.2"/></svg> '+escapeHtml(v.addr)+'</div>'+alternativesHtml(x)+'<div class="row"><div class="circles"><a class="round" href="'+v.info+'" target="_blank" rel="noopener" aria-label="Google Maps reviews">Info</a>'+(v.reserve?'<a class="round r" href="'+v.reserve+'"'+externalAttrs(v.reserve)+' aria-label="Reserveren">Boek</a>':'')+'</div><button class="here '+(currentStop===x.id?'active':'')+'" data-here="'+x.id+'" aria-pressed="'+(currentStop===x.id?'true':'false')+'" '+(user?'':'disabled')+'>'+(currentStop===x.id?'Ik ben hier ✓':'Ik ben hier')+'</button></div>'+peopleAtStopHtml(x.id)+meterHtml(x)+'</article></div>';
+    html+='<div class="tl-row stop '+states[i]+'">'+railHtml(states[i],x.id)+'<article class="card '+(currentStop===x.id?'current':'')+'" data-stop="'+x.id+'"><div class="top"><div class="topleft">'+stopBadge(x.icon)+'<div class="time">'+timeLabel+'</div></div><a class="navbtn" href="'+nav(v.addr)+'" target="_blank" rel="noopener">NAVIGEER</a></div><div class="name">'+escapeHtml(v.name)+'</div><p class="desc">'+escapeHtml(v.desc)+'</p><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="6.4"/><path d="M12 3.4v2.2M12 18.4v2.2M3.4 12h2.2M18.4 12h2.2"/></svg> '+escapeHtml(v.addr)+'</div>'+alternativesHtml(x)+'<div class="row"><div class="circles"><a class="round" href="'+v.info+'" target="_blank" rel="noopener" aria-label="Google Maps reviews">Info</a>'+(v.reserve?'<a class="round r" href="'+v.reserve+'"'+externalAttrs(v.reserve)+' aria-label="Reserveren">Boek</a>':'')+'</div><button class="here '+(currentStop===x.id?'active':'')+'" data-here="'+x.id+'" aria-pressed="'+(currentStop===x.id?'true':'false')+'" '+(user?'':'disabled')+'>'+(currentStop===x.id?'Ik ben hier ✓':'Ik ben hier')+'</button></div>'+peopleAtStopHtml(x.id)+meterHtml(x)+'</article></div>';
   });
   $('#timeline').innerHTML=html;
   renderProgress(doneCount,arr.length);
   $$('[data-here]').forEach(function(b){b.onclick=function(){setHere(b.getAttribute('data-here'))}});
+  bindEasyCheckinZones();
   $$('[data-rate]').forEach(function(b){b.onclick=function(){setRating(b.getAttribute('data-rate'),Number(b.getAttribute('data-value')))}});
   $$('[data-venue-stop]').forEach(function(b){b.onclick=function(){selectVenue(b.getAttribute('data-venue-stop'),Number(b.getAttribute('data-venue-index')))}});
   renderJourneyHeader();
@@ -1808,6 +1836,43 @@ function selectVenue(stopId,index){
   renderGroup();
   toast('Gekozen: '+opts[index].name);
 }
+function activateHere(id){
+  if(!user||!id)return;
+  if(currentStop===id)return;
+  setHere(id);
+}
+
+function bindEasyCheckinZones(){
+  $$('.card[data-stop]').forEach(function(card){
+    card.addEventListener('click',function(e){
+      if(!user)return;
+
+      /* Keep all real controls completely independent:
+         navigation, Info/Boek, Ik ben hier, alternatives (+),
+         participant chips and the meter. */
+      if(e.target.closest('a,button,summary,details,.alternatives,.row,.stop-people,.stop-meter'))return;
+
+      activateHere(card.getAttribute('data-stop'));
+    });
+  });
+
+  $$('[data-rail-here]').forEach(function(node){
+    function activate(e){
+      if(e){
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      activateHere(node.getAttribute('data-rail-here'));
+    }
+    node.addEventListener('click',activate);
+    node.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){
+        activate(e);
+      }
+    });
+  });
+}
+
 function setHere(id){
   if(currentStop===id){
     currentStop='';
