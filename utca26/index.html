@@ -361,17 +361,14 @@ body.onboarding-open{overflow:hidden}
 .onboarding-visual *{pointer-events:none!important}
 .onboarding-visual [id]{scroll-margin:0!important}
 .ob-canvas{width:100%;transform-origin:top left}
-.ob-program .ob-canvas{padding:12px;transform:scale(.80);width:125%}
-.ob-program .timeline{gap:8px}
+.ob-program .ob-canvas{padding:10px;transform:scale(.56);transform-origin:top left;width:178.6%}
+.ob-program .switcher{margin-bottom:12px}
+.ob-program .journeybar{position:relative;top:auto;margin:0 0 14px}
+.ob-program .dashboard,.ob-program .boot-error,.ob-program .roster-wrap{display:none!important}
+.ob-program .section-title{margin-top:8px}
+.ob-program .tl-progress{display:flex!important}
 .ob-program .tl-row{grid-template-columns:18px minmax(0,1fr);gap:10px}
-.ob-program .card{padding:13px;border-radius:20px}
-.ob-program .card .desc,
-.ob-program .card .location,
-.ob-program .card .alternatives,
-.ob-program .card .row,
-.ob-program .card .stop-meter{display:none}
-.ob-program .card .name{margin-bottom:0}
-.ob-program .walk{font-size:11px}
+.ob-program .walk,.ob-program .tl-row .alternatives,.ob-program .tl-row .stop-meter{display:none!important}
 .ob-here-still .ob-canvas{padding:12px;transform:scale(.92);width:108.7%}
 .ob-here-still .card{margin:0}
 .ob-here-still .card .desc,
@@ -554,6 +551,7 @@ body.rain-mode .onboarding-next{background:linear-gradient(180deg,rgba(155,214,2
         <div class="onboarding-kicker">1 · De dag</div>
         <h2>De hele dag geregeld.</h2>
         <p>Zon of regen, het programma staat klaar. Bekijk het alvast en wees enthousiast of verberg je teleurstelling.</p>
+        <p class="punch">Kies zon of regen afhankelijk van het weer of je mood.</p>
       </section>
       <section class="onboarding-slide" data-onboarding-slide="1">
         <div class="onboarding-visual ob-here-still" data-onboarding-visual="here"><div class="ob-canvas"></div></div>
@@ -1125,16 +1123,12 @@ function buildOnboardingStills(){
   var route=$('[data-onboarding-visual="route"] .ob-canvas');
   if(!program||!here||!meter||!options||!route)return;
   program.innerHTML='';here.innerHTML='';meter.innerHTML='';options.innerHTML='';route.innerHTML='';
-  var timeline=$('#timeline');
-  if(timeline){
-    var t=document.createElement('div');
-    t.className='timeline';
-    Array.prototype.slice.call(timeline.children,0,5).forEach(function(child){
-      var clone=onboardingClone(child);
-      if(clone)t.appendChild(clone);
-    });
-    program.appendChild(t);
-  }
+  var switcher=$('.switcher'),journey=$('#journeyBar'),sectionTitle=$('.section-title'),progress=$('#tlProgress'),firstStop=$('.tl-row.stop');
+  if(switcher){var s=onboardingClone(switcher);if(s)program.appendChild(s)}
+  if(journey){var j=onboardingClone(journey);if(j)program.appendChild(j)}
+  if(sectionTitle){var st=onboardingClone(sectionTitle);if(st)program.appendChild(st)}
+  if(progress){var p=onboardingClone(progress);if(p){p.hidden=false;program.appendChild(p)}}
+  if(firstStop){var fs=onboardingClone(firstStop);if(fs)program.appendChild(fs)}
   var hereCard=$('.card[data-stop="'+weatherStop[mode].id+'"]')||$('.card[data-stop="lunch"]');
   var hc=onboardingClone(hereCard);
   if(hc){
