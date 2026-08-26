@@ -344,7 +344,7 @@ body.rain-mode .stop-person-chip.me{border-color:rgba(127,214,238,.38)}
 body.onboarding-open{overflow:hidden}
 .onboarding-overlay{position:fixed;inset:0;z-index:88;display:none;align-items:flex-end;justify-content:center;padding:12px;background:rgba(4,5,6,.62);-webkit-backdrop-filter:blur(22px) saturate(150%);backdrop-filter:blur(22px) saturate(150%)}
 .onboarding-overlay.show{display:flex}
-.onboarding-panel{width:min(100%,560px);max-height:calc(100dvh - 24px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;border-radius:var(--r-sheet);background:rgba(24,26,27,.82);-webkit-backdrop-filter:saturate(120%) blur(30px);backdrop-filter:saturate(120%) blur(30px);border:1px solid var(--hairStrong);box-shadow:0 16px 44px rgba(0,0,0,.5),var(--edge);overflow:hidden}
+.onboarding-panel{width:min(calc(100vw - 24px),560px);height:min(calc(100dvh - 24px),660px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;border-radius:var(--r-sheet);background:rgba(24,26,27,.82);-webkit-backdrop-filter:saturate(120%) blur(30px);backdrop-filter:saturate(120%) blur(30px);border:1px solid var(--hairStrong);box-shadow:0 16px 44px rgba(0,0,0,.5),var(--edge);overflow:hidden}
 .onboarding-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 18px 8px}
 .onboarding-head .minihead{font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--limeText,var(--lime));text-transform:uppercase}
 .onboarding-skip{border:0;background:transparent;color:var(--faint);font-size:13px;font-weight:600;padding:6px 2px;cursor:pointer}
@@ -379,12 +379,10 @@ body.onboarding-open{overflow:hidden}
 .ob-here-still .card .stop-meter,
 .ob-here-still .card .stop-people{display:none}
 .ob-here-still .card .row{margin-top:18px}
-.ob-meter-still{height:278px}
 .ob-meter-still .ob-canvas{padding:14px;transform:scale(.92);width:108.7%}
 .ob-meter-still .stop-meter{margin:0;padding:0 0 15px;border-top:0}
 .ob-meter-still .dayresult{margin:0;padding:15px;border-radius:var(--r-card)}
 .ob-meter-still .result-main strong{font-size:42px}
-.ob-options-still{height:286px}
 .ob-options-still .ob-canvas{padding:12px;transform:scale(.86);width:116.3%}
 .ob-options-still .card{margin:0}
 .ob-options-still .card .desc,
@@ -412,19 +410,15 @@ body.onboarding-open{overflow:hidden}
 .onboarding-progress i.active{width:19px}
 @media (max-width:470px){
   .onboarding-overlay{padding:11px}
-  .onboarding-panel{max-height:calc(100dvh - 22px)}
   .onboarding-head{padding:15px 16px 7px}
   .onboarding-slide{padding:3px 16px 10px}
   .onboarding-foot{padding:9px 16px max(15px,env(safe-area-inset-bottom))}
   .onboarding-visual{height:252px;margin-bottom:15px}
-  .ob-meter-still{height:260px}
-  .ob-options-still{height:268px}
   .onboarding-slide h2{font-size:27px}
   .onboarding-slide p{font-size:14px}
 }
 @media (max-height:700px){
   .onboarding-visual{height:210px;margin-bottom:12px}
-  .ob-meter-still,.ob-options-still{height:218px}
   .onboarding-slide h2{font-size:24px}
   .onboarding-slide p{font-size:13px;line-height:1.38}
   .onboarding-head{padding-top:12px}
