@@ -435,6 +435,61 @@ body.rain-mode .onboarding-next{background:linear-gradient(180deg,rgba(155,214,2
 .tl-node[data-rail-here]{cursor:pointer;touch-action:manipulation}
 .tl-node[data-rail-here]::before{content:"";position:absolute;width:42px;height:42px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%}
 .tl-node[data-rail-here]:focus-visible{outline:2px solid var(--limeTextHover,var(--lime));outline-offset:8px}
+
+
+/* iOS-style button press feedback — v24 */
+button:not(:disabled),
+.navbtn,
+.round,
+.journey-nav,
+.routebtn {
+  -webkit-tap-highlight-color: transparent;
+  transform-origin: center;
+  transition:
+    transform .18s cubic-bezier(.34,1.56,.64,1),
+    background-color .18s ease,
+    border-color .18s ease,
+    color .18s ease,
+    box-shadow .18s ease,
+    opacity .18s ease;
+}
+
+/* Grote / primaire controls: subtiele press */
+button:not(:disabled):active,
+.navbtn:active,
+.journey-nav:active,
+.routebtn:active {
+  transform: scale(.97);
+}
+
+/* Kleine controls: nog subtieler */
+.round:active,
+.userchip button:not(:disabled):active,
+.roster-chip button:not(:disabled):active,
+.stop-meter-buttons button:not(:disabled):active,
+.onboarding-back:not(:disabled):active,
+.onboarding-next:not(:disabled):active {
+  transform: scale(.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:not(:disabled),
+  .navbtn,
+  .round,
+  .journey-nav,
+  .routebtn {
+    transition: none;
+  }
+
+  button:not(:disabled):active,
+  .navbtn:active,
+  .round:active,
+  .journey-nav:active,
+  .routebtn:active {
+    transform: none;
+  }
+}
+
 </style>
 </head>
 <body>
