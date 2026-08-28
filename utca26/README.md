@@ -28,6 +28,7 @@ De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, i
 - Tussentijdse dagstand en groepsgemiddelde
 - Vijfdelige onboarding bij iedere nieuwe login
 - Mobile-first, donkere glass/liquid-interface
+- Installeerbaar als **standalone webapp/PWA** op Android (Chrome) en iPhone
 - Lokale fallback wanneer de gedeelde backend niet beschikbaar is
 
 ---
@@ -86,15 +87,45 @@ Er is geen framework, bundler of build-step nodig.
 /
 ├── index.html
 ├── _worker.js
+├── manifest.webmanifest
+├── sw.js
+├── icon-192.png
+├── icon-512.png
+├── icon-maskable-192.png
+├── icon-maskable-512.png
+├── apple-touch-icon.png
+├── favicon-32.png
 ├── robots.txt
 └── README.md
 ```
 
 `index.html` bevat de interface, styling, programma-data en client-side logica.
 
-`_worker.js` verzorgt `/api/state`, de D1-koppeling, asset-responses en de `X-Robots-Tag`.
+`_worker.js` verzorgt `/api/state`, de D1-koppeling, asset-responses, correcte PWA-headers en de `X-Robots-Tag`.
+
+`manifest.webmanifest` maakt de app voor Chromium herkenbaar als installeerbare webapp met `display: standalone`. De 192/512 px-iconen en maskable varianten worden door Android gebruikt. `sw.js` registreert een lichte service worker met netwerk-eerst navigatie en alleen een offline fallback voor de app-shell; `/api/state` blijft rechtstreeks via het netwerk lopen.
 
 `robots.txt` is een geldige crawler-file. De pagina zelf gebruikt `noindex,nofollow,noarchive`.
+
+---
+
+## Installeren als webapp
+
+De repository bevat nu een volledige Web App Manifest-configuratie voor Android/Chromium én de bestaande iOS-webappflow.
+
+### Android · Chrome
+
+Na deployment en een refresh hoort Chrome de site als app te herkennen:
+
+```text
+⋮ → Installeren en snelkoppelingen → App installeren
+```
+
+Na installatie opent UTCA met `display: standalone`, dus zonder de normale Chrome-adresbalk. Als op een toestel nog **Snelle link maken** verschijnt, verwijder dan eerst de oude snelkoppeling, laad de site opnieuw in Chrome en wacht enkele seconden totdat Chrome de nieuwe manifest-status heeft verwerkt.
+
+### iPhone
+
+Via **Deel → Zet op beginscherm** blijft de app als webapp te openen. De repository bevat daarnaast een `apple-touch-icon` en iOS-webappmetadata voor een consistente appweergave.
 
 ---
 
@@ -238,3 +269,18 @@ Er is geen volwaardig accountsysteem of sterke authenticatie. Namen functioneren
 
 **UTCA // FÜR DIE MÄNNER**  
 **Zaterdag 26 september 2026**
+
+## v27 — code cleanup & PageSpeed
+
+Deze versie verandert niets aan functionaliteit, content of vormgeving. Alleen productie-optimalisaties zijn toegepast:
+
+- inline CSS lossless gecomprimeerd en overbodige opmaak-whitespace verwijderd;
+- HTML/JavaScript-opmaak compacter gemaakt zonder logica te wijzigen;
+- de losse service-worker-registratie samengevoegd tot één scriptblok;
+- manifest gecomprimeerd;
+- statische app-iconen krijgen een lange browsercache; HTML blijft revalideren;
+- service-worker cacheversie verhoogd zodat bestaande installaties de nieuwe build oppakken;
+- Cloudflare Worker opgeschoond zonder de D1/API-contracten te wijzigen.
+
+De PWA-installatie voor iPhone en Android blijft hetzelfde als in v26.
+
