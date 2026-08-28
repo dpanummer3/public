@@ -284,3 +284,13 @@ Deze versie verandert niets aan functionaliteit, content of vormgeving. Alleen p
 
 De PWA-installatie voor iPhone en Android blijft hetzelfde als in v26.
 
+
+## v28 — iPhone safe status bar + retained PageSpeed build
+
+Deze versie bouwt rechtstreeks voort op de opgeschoonde v27 en verandert niets aan programma, functionaliteit of vormgeving van de app zelf.
+
+- iPhone Home Screen-webapp gebruikt nu een niet-transparante zwarte iOS-statusbalk, zodat de bovenste appregel niet meer onder de klok, notch of Dynamic Island terechtkomt;
+- dit is Apple-specifieke webappmetadata en verandert de Android-layout niet;
+- de bestaande standalone PWA-installatie voor Android blijft ongewijzigd;
+- de v27 CSS/JavaScript/Cloudflare/PageSpeed-optimalisaties zijn behouden;
+- service-worker cacheversie verhoogd zodat reeds geïnstalleerde webapps de nieuwe shell schoon kunnen ophalen.
