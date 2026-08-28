@@ -74,7 +74,7 @@ headers.set('cache-control','no-cache');
 headers.set('content-type','application/javascript; charset=utf-8');
 headers.set('cache-control','no-cache');
 headers.set('Service-Worker-Allowed','/');
-}else if(/^\/(?:icon(?:-maskable)?-(?:192|512)|apple-touch-icon(?:-v34)?|favicon-32)\.png$/.test(url.pathname)){
+}else if(/^\/(?:icon(?:-maskable)?-(?:192|512)|apple-touch-icon(?:-v(?:34|35))?|favicon-32)\.png$/.test(url.pathname)){
 headers.set('cache-control','public, max-age=31536000, immutable');
 }else if(url.pathname==='/'||url.pathname==='/index.html'){
 headers.set('cache-control','public, max-age=0, must-revalidate');
