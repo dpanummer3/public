@@ -26,6 +26,9 @@ De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, i
 - Tik op een deelnemer om direct naar zijn stop te springen
 - **Naar de klote-meter** van 1 t/m 5 per relevante stop
 - Tussentijdse dagstand en groepsgemiddelde
+- Korte meterreactie in de bestaande tone of voice (`Verdacht fris` → `Balzak.`), waarbij score 4 bewust **Ik hier?** blijft
+- Bij 6/6 op dezelfde stop verandert de actieve check-in-knop één keer kort naar **De kudde is compleet.**
+- Bij de finish verschijnt een compacte einduitslag met meest/minst naar de klote en de meest stabiele scorelijn
 - Vijfdelige onboarding bij iedere nieuwe login
 - Mobile-first, donkere glass/liquid-interface
 - Installeerbaar als **standalone webapp/PWA** op Android (Chrome) en iPhone
@@ -294,3 +297,13 @@ Deze versie bouwt rechtstreeks voort op de opgeschoonde v27 en verandert niets a
 - de bestaande standalone PWA-installatie voor Android blijft ongewijzigd;
 - de v27 CSS/JavaScript/Cloudflare/PageSpeed-optimalisaties zijn behouden;
 - service-worker cacheversie verhoogd zodat reeds geïnstalleerde webapps de nieuwe shell schoon kunnen ophalen.
+
+## v45 — subtiele engagementmomenten
+
+Deze versie bouwt rechtstreeks voort op de aangeleverde v44 en voegt alleen drie lichte groepsmomenten toe, zonder aparte gamificationlaag:
+
+- meterkeuzes geven een korte reactie met de bestaande vijf labels; **Ik hier?** blijft exact behouden;
+- zodra alle zes deelnemers op dezelfde stop staan, toont de bestaande **Ik ben hier**-knop één keer kort **De kudde is compleet.**;
+- bij check-in op de finish verschijnt een compacte einduitslag op basis van de al aanwezige D1-meterdata.
+
+Er zijn geen nieuwe backendvelden, API-routes of extra permanente UI-knoppen toegevoegd.

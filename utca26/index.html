@@ -100,6 +100,7 @@
 </section>
 <div class="section-title" id="groep"><h2>Waar is iedereen?</h2><span>laatste check-ins</span></div>
 <section class="group" id="groupList"><div class="empty">Vul bovenaan je naam in. Daarna kan iedereen op een stop op <strong>“Ik ben hier”</strong> tikken.</div></section>
+<section class="dayresult" id="finalResult" hidden><div class="result-kicker">Einduitslag</div><div class="result-copy" id="finalCopy"></div><div class="result-meta" id="finalMeta"></div></section>
 <section class="route-only">
 <a class="routebtn" id="fullRoute" target="_blank" rel="noopener">Open hele ronde in Google Maps</a>
 </section>
@@ -502,6 +503,8 @@ fullRoute.href='https://www.google.com/maps/dir/?api=1&origin='+encodeURICompone
 }
 }
 function participantResult(p){var r=averageFromRatings(p.ratings||{});return r.avg===null?{pct:null,avg:null}:{pct:percentFromAverage(r.avg),avg:r.avg}}
+function herdMoment(){if(!user||!currentStop||participants.length!==6||!participants.every(function(p){return p.currentStop===currentStop}))return;var key='utca-herd-'+currentStop,b=$('[data-here="'+currentStop+'"]');if(storeGet(key)||!b)return;storeSet(key,'1');b.textContent='De kudde is compleet.';var id=currentStop;setTimeout(function(){var x=$('[data-here="'+id+'"]');if(x&&currentStop===id)x.textContent='Ik ben hier ✓'},2600)}
+function renderFinalResult(){var box=$('#finalResult');if(!box)return;var scored=participants.map(function(p){return{p:p,r:participantResult(p)}}).filter(function(x){return x.r.avg!==null});if(currentStop!=='finish'||scored.length<2){box.hidden=true;return}var hi=Math.max.apply(null,scored.map(function(x){return x.r.pct})),lo=Math.min.apply(null,scored.map(function(x){return x.r.pct})),names=function(n){return scored.filter(function(x){return x.r.pct===n}).map(function(x){return escapeHtml(x.p.name)}).join(' & ')},stable=scored.map(function(x){var v=Object.values(x.p.ratings||{}).map(Number).filter(function(n){return n>=1&&n<=5});return{x:x,spread:v.length>2?Math.max.apply(null,v)-Math.min.apply(null,v):99}}).sort(function(a,b){return a.spread-b.spread})[0];box.hidden=false;$('#finalCopy').innerHTML='<strong>Meest naar de klote:</strong> '+names(hi)+' · '+hi+'%<br><strong>Minst naar de klote:</strong> '+names(lo)+' · '+lo+'%';$('#finalMeta').textContent=stable&&stable.spread<99?'Meest stabiel: '+stable.x.p.name+'. De wetenschap heeft gesproken.':'De wetenschap heeft gesproken.'}
 function renderRoster(){
 var box=$('#roster'),count=$('#rosterCount');
 if(count)count.textContent=participants.length+'/6';
@@ -559,7 +562,7 @@ var list=$('#groupList');
 if(!participants.length){
 list.innerHTML='<div class="empty">Nog niemand zichtbaar. Zodra iemand zijn naam invult, verschijnt die hier.</div>';
 $('#groupAverage').textContent='—';
-return
+renderFinalResult();return
 }
 var byId={};
 stopsCommon.concat([weatherStop.sun,weatherStop.rain]).forEach(function(s){byId[s.id]=activeVenue(s).name});
@@ -589,7 +592,8 @@ if(valid.length){
 var sum=0;
 valid.forEach(function(x){sum+=x.pct});
 $('#groupAverage').textContent=Math.round(sum/valid.length)+'%'
-}else $('#groupAverage').textContent='—'
+}else $('#groupAverage').textContent='—';
+herdMoment();renderFinalResult()
 }
 function escapeHtml(s){return String(s).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]})}
 function clearOwnSession(){storeRemove('utca-name');storeRemove('utca-stop');storeRemove('utca-ratings');user='';currentStop='';ratings={};renderUser();renderTimeline();renderDayResult();var input=$('#nameInput');if(input)input.value=''}
@@ -682,7 +686,7 @@ persistRatings();
 renderTimeline();
 renderDayResult();
 syncState(false);
-toast(value===5?'Totaal naar de klote. Genoteerd.':'Meter bijgewerkt');
+toast(bandForValue(value).label);
 }
 var onboardingStep=0;
 function onboardingClone(el){
