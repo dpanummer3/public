@@ -17,6 +17,7 @@ De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, i
 - Sticky **Huidige stop / Volgende**-navigatie
 - Google Maps-navigatie per locatie
 - **Open hele ronde in Google Maps** met actuele route en looptijd
+- Bij de finish wordt **KLAAR** rood en springt die direct naar de **Einduitslag**
 - Drie alternatieven bij wisselbare stops
 - **Info** voor locatie-informatie en **Boek** bij gereserveerde locaties
 - **Ik ben hier**-check-in per stop
