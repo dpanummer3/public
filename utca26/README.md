@@ -17,10 +17,9 @@ De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, i
 - Sticky **Huidige stop / Volgende**-navigatie
 - Google Maps-navigatie per locatie
 - **Open hele ronde in Google Maps** met actuele route en looptijd
-- Bij de finish wordt **KLAAR** rood en springt die direct naar de **Einduitslag**
 - Drie alternatieven bij wisselbare stops
 - **Info** voor locatie-informatie en **Boek** bij gereserveerde locaties
-- **Ik ben hier**-check-in per stop
+- **Check in ✓**-knop per stop
 - Grote delen van een stopkaart en het tijdlijnbolletje werken ook als extra check-in-zone
 - Per locatie zichtbaar wie daar aanwezig is
 - **Waar is iedereen?** met actuele positie van de groep
@@ -42,7 +41,7 @@ De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, i
 Na het invoeren van een naam verschijnt een onboarding met vijf vaste slides:
 
 1. **De dag** — Zon/Regen kiezen en het programma begrijpen
-2. **Check-in** — `Ik ben hier`
+2. **Check-in** — `Check in ✓`
 3. **Tussenstand** — Naar de klote-meter
 4. **Wisselen** — drie alternatieven op loopafstand
 5. **Hele route** — volledige ronde in Google Maps
@@ -221,11 +220,11 @@ De **Naar de klote-meter** blijft altijd groen → geelgroen → geel → oranje
 
 ## Check-ins
 
-Iedere deelnemer voert een voornaam in en kan bij een stop op **Ik ben hier** drukken.
+Iedere deelnemer voert een voornaam in en kan bij een stop op **Check in ✓** drukken.
 
 Voor makkelijker mobiel gebruik werken ook rustige delen van de stopkaart en het tijdlijnbolletje als check-in-zone. Knoppen zoals **Navigeer**, **Info**, **Boek**, alternatieven en de meter blijven daarvan uitgesloten.
 
-De extra zones kunnen alleen inchecken. Uitchecken gebeurt bewust via de echte **Ik ben hier**-knop om onbedoelde taps te voorkomen.
+De extra zones kunnen alleen inchecken. Uitchecken gebeurt bewust via de echte **Check in ✓**-knop om onbedoelde taps te voorkomen.
 
 ---
 
@@ -254,7 +253,7 @@ De interface is bewust:
 De belangrijkste interactie per stop blijft:
 
 ```text
-Info / Boek → Ik ben hier → Naar de klote-meter
+Info / Boek → Check in ✓ → Naar de klote-meter
 ```
 
 De onboarding geeft alleen het mentale model mee; de rest mag tijdens de dag ontdekt worden.
@@ -304,7 +303,7 @@ Deze versie bouwt rechtstreeks voort op de opgeschoonde v27 en verandert niets a
 Deze versie bouwt rechtstreeks voort op de aangeleverde v44 en voegt alleen drie lichte groepsmomenten toe, zonder aparte gamificationlaag:
 
 - meterkeuzes geven een korte reactie met de bestaande vijf labels; **Ik hier?** blijft exact behouden;
-- zodra alle zes deelnemers op dezelfde stop staan, toont de bestaande **Ik ben hier**-knop één keer kort **Grupo completo ✓**;
+- zodra alle zes deelnemers op dezelfde stop staan, toont de bestaande **Check in ✓**-knop één keer kort **Grupo completo ✓**;
 - bij check-in op de finish verschijnt een compacte einduitslag op basis van de al aanwezige D1-meterdata, inclusief **De balansman**: degene die qua eindpercentage het dichtst bij het midden tussen de hoogste en laagste score ligt.
 
 Er zijn geen nieuwe backendvelden, API-routes of extra permanente UI-knoppen toegevoegd.
