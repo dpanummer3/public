@@ -28,7 +28,7 @@ De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, i
 - Tussentijdse dagstand en groepsgemiddelde
 - Korte meterreactie in de bestaande tone of voice (`Verdacht fris` → `Balzak.`), waarbij score 4 bewust **Ik hier?** blijft
 - Bij 6/6 op dezelfde stop verandert de actieve check-in-knop één keer kort naar **Grupo completo ✓**
-- Bij de finish verschijnt **EINDUITSLAG** met drie losse scorekaarten en bijbehorende kleurbalken: **Meest naar de klote**, **DE KLOOTZAK** en **Minst naar de klote**. **DE KLOOTZAK** is degene wiens eindpercentage het dichtst bij het exacte midden tussen de hoogste en laagste eindscore ligt
+- Bij de finish verschijnt **EINDUITSLAG** met drie losse scorekaarten en bijbehorende kleurbalken: **THE ABSOLUTE BOLLOCKS** — *ZONDAG BESTAAT NIET*, **DE KLOOTZAK** — *BEST OF BOTH WORLDS* en **THE LIONEL RICHIE** — *EASY LIKE A SONNTAG MORGEN*. **DE KLOOTZAK** is degene wiens eindpercentage het dichtst bij het exacte midden tussen de hoogste en laagste eindscore ligt
 - Vijfdelige onboarding bij iedere nieuwe login
 - Mobile-first, donkere glass/liquid-interface
 - Installeerbaar als **standalone webapp/PWA** op Android (Chrome) en iPhone
@@ -275,7 +275,7 @@ Er is geen volwaardig accountsysteem of sterke authenticatie. Namen functioneren
 
 ## Datum
 
-**UTCA // FÜR DIE MÄNNER**  
+**UTCA // FÜR DIE MÄNNER**
 **Zaterdag 26 september 2026**
 
 ## v27 — code cleanup & PageSpeed
@@ -364,3 +364,26 @@ Een stop overslaan verandert dit niet: check je direct bij lunch in, dan staat d
 - v65: HTML-underlay, CSS background, `<meta name="theme-color">` en PWA manifest gebruiken dezelfde surfacekleur. Dit voorkomt een zichtbare zwarte scheidslijn op iPhone-notch/Dynamic Island en Android statusbars/punch-holes voor zover de browser/OS die zone laat tinten.
 - v65: theme-color wordt live meegewisseld met Zon/Regen.
 - v65: service-worker cache verhoogd naar `utca-shell-v16`.
+
+## v66 — EINDUITSLAG copy & hiërarchie
+
+- Alleen het **EINDUITSLAG**-blok is visueel aangepast; de berekening en overige functionaliteit zijn ongewijzigd.
+- Nieuwe labels en subtitels:
+  - **THE ABSOLUTE BOLLOCKS** — *ZONDAG BESTAAT NIET*
+  - **DE KLOOTZAK** — *BEST OF BOTH WORLDS*
+  - **THE LIONEL RICHIE** — *EASY LIKE A SONNTAG MORGEN*
+- De subtitels staan als compacte secundaire tekst onder de groene resultaatslabels.
+- De bestaande responsive scorekaarten, namen, percentages en voortgangsbalken blijven intact.
+
+## v67 — conservative code cleanup
+
+Deze release bouwt rechtstreeks voort op v66 en verandert **geen design, route, data, berekeningen, interacties of backendlogica**. Omdat behoud van gedrag expliciet belangrijk is, is de cleanup bewust conservatief uitgevoerd.
+
+- niet-functionele inline codecomment verwijderd;
+- trailing whitespace in `index.html` opgeschoond;
+- PWA asset-versies gelijkgetrokken naar `v=67`;
+- service-worker shell-cache verhoogd naar `utca-shell-v17`, zodat bestaande homescreen-installaties de nieuwe app-shell schoon kunnen ophalen;
+- README bijgewerkt naar de actuele EINDUITSLAG-copy en huidige release;
+- alle app-iconen, inclusief Android maskable icons en het iOS touch icon, zijn **ongewijzigd** overgenomen uit v66;
+- `_worker.js`, D1/API-contracten en alle client-side functies zijn inhoudelijk ongewijzigd.
+
