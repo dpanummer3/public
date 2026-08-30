@@ -46,7 +46,7 @@
 <div class="boot-error" id="bootError">De interactieve laag kon niet starten. Open deze pagina rechtstreeks in Safari/Chrome of publiceer hem via Cloudflare Pages.</div>
 <noscript><div class="boot-error show">JavaScript is nodig voor deze app.</div></noscript>
 <div class="section-title"><h2>De dag</h2><span>programma &amp; route</span></div>
-<div class="tl-progress" id="tlProgress" hidden><span id="tlProgressLabel">0 van 12 afgelegd</span><span class="tl-progress-track"><i id="tlProgressBar"></i></span></div>
+<div class="tl-progress" id="tlProgress" hidden><span id="tlProgressLabel">0 van 11 afgelegd</span><span class="tl-progress-track"><i id="tlProgressBar"></i></span></div>
 <section class="timeline" id="timeline"></section>
 <section class="dayresult" id="dayResult">
 <div class="result-kicker">Jouw dagstand</div>
@@ -417,9 +417,7 @@ return {states:out,cur:cur}
 }
 function renderTimeline(){
 var arr=itinerary(),sch=computeSchedule(),html='';
-var st=stopStates(arr),states=st.states,doneCount=0;
-states.forEach(function(s){if(s==='done')doneCount++});
-if(st.cur===arr.length-1)doneCount=arr.length;
+var st=stopStates(arr),states=st.states,position=st.cur>=0?st.cur+1:0;
 arr.forEach(function(x,i){
 if(i){
 var wd=walkDisplay(arr,sch,i),range=(wd.depart!==null&&wd.start!==null)?fmtTime(wd.depart)+'–'+fmtTime(wd.start):'';
@@ -430,20 +428,20 @@ var v=activeVenue(x),timeLabel=displayStopTime(x,sch[i]);
 html+='<div class="tl-row stop '+states[i]+'">'+railHtml(states[i],x.id)+'<article class="card '+(currentStop===x.id?'current':'')+'" data-stop="'+x.id+'"><div class="top"><div class="topleft">'+stopBadge(x.icon)+'<div class="time">'+timeLabel+'</div></div><a class="navbtn" href="'+nav(v.addr)+'" target="_blank" rel="noopener">NAVIGEER</a></div><div class="name">'+escapeHtml(v.name)+'</div><p class="desc">'+escapeHtml(v.desc)+'</p><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="6.4"/><path d="M12 3.4v2.2M12 18.4v2.2M3.4 12h2.2M18.4 12h2.2"/></svg> '+escapeHtml(v.addr)+'</div>'+alternativesHtml(x)+'<div class="row"><div class="circles"><a class="round" href="'+v.info+'" target="_blank" rel="noopener" aria-label="Google Maps reviews">Info</a>'+(v.reserve?'<a class="round r" href="'+v.reserve+'"'+externalAttrs(v.reserve)+' aria-label="Reserveren">Boek</a>':'')+'</div><button class="here '+(currentStop===x.id?'active':'')+'" data-here="'+x.id+'" aria-pressed="'+(currentStop===x.id?'true':'false')+'" '+(user?'':'disabled')+'>'+'Check in ✓'+'</button></div>'+peopleAtStopHtml(x.id)+meterHtml(x)+'</article></div>';
 });
 $('#timeline').innerHTML=html;
-renderProgress(doneCount,arr.length);
+renderProgress(position,arr.length);
 $$('[data-here]').forEach(function(b){b.onclick=function(){setHere(b.getAttribute('data-here'))}});
 bindEasyCheckinZones();
 $$('[data-rate]').forEach(function(b){b.onclick=function(){setRating(b.getAttribute('data-rate'),Number(b.getAttribute('data-value')))}});
 $$('[data-venue-stop]').forEach(function(b){b.onclick=function(){selectVenue(b.getAttribute('data-venue-stop'),Number(b.getAttribute('data-venue-index')))}});
 renderJourneyHeader();
 }
-function renderProgress(done,total){
+function renderProgress(position,total){
 var wrap=$('#tlProgress'),bar=$('#tlProgressBar'),label=$('#tlProgressLabel');
 if(!wrap)return;
-if(!user||!done){wrap.hidden=true;return}
+if(!user||!position){wrap.hidden=true;return}
 wrap.hidden=false;
-label.innerHTML='<strong>'+done+'</strong> van '+total+' afgelegd';
-bar.style.width=Math.round(done/total*100)+'%';
+label.innerHTML='<strong>'+position+'</strong> van '+total+' afgelegd';
+bar.style.width=Math.round(position/total*100)+'%';
 }
 function renderDayResult(){var r=averageFromRatings(),pct=$('#dayPercent'),bar=$('#dayBar'),copy=$('#dayCopy'),meta=$('#dayMeta');if(r.avg===null){pct.textContent='—';bar.style.width='0%';bar.style.background=meterBands[1].color;copy.textContent='Vul onder een onderdeel de meter in. Alleen ingevulde meters tellen mee.';meta.textContent='0 van '+r.total+' onderdelen ingevuld';return}var p=percentFromAverage(r.avg),band=meterBands[bandForScore(r.avg)];pct.textContent=p+'%';bar.style.width=p+'%';bar.style.background=band.color;copy.innerHTML='<strong>'+band.label+'</strong>';meta.textContent='Gemiddeld '+r.avg.toFixed(1)+'/5 · '+r.count+' van '+r.total+' onderdelen ingevuld'}
 function renderRoute(){
@@ -461,7 +459,7 @@ fullRoute.href='https://www.google.com/maps/dir/?api=1&origin='+encodeURICompone
 }
 function participantResult(p){var r=averageFromRatings(p.ratings||{});return r.avg===null?{pct:null,avg:null}:{pct:percentFromAverage(r.avg),avg:r.avg}}
 function herdMoment(){if(!user||!currentStop||participants.length!==6||!participants.every(function(p){return p.currentStop===currentStop}))return;var key='utca-herd-'+currentStop,b=$('[data-here="'+currentStop+'"]');if(storeGet(key)||!b)return;storeSet(key,'1');b.textContent='Grupo completo ✓';var id=currentStop;setTimeout(function(){var x=$('[data-here="'+id+'"]');if(x&&currentStop===id)x.textContent='Check in ✓'},2600)}
-function renderFinalResult(){var box=$('#finalResult');if(!box)return;var scored=participants.map(function(p){return{p:p,r:participantResult(p)}}).filter(function(x){return x.r.avg!==null});if(currentStop!=='finish'||scored.length<2){box.hidden=true;return}var hi=Math.max.apply(null,scored.map(function(x){return x.r.pct})),lo=Math.min.apply(null,scored.map(function(x){return x.r.pct})),mid=(hi+lo)/2,names=function(n){return scored.filter(function(x){return x.r.pct===n}).map(function(x){return escapeHtml(x.p.name)}).join(' & ')},balance=scored.slice().sort(function(a,b){var da=Math.abs(a.r.pct-mid),db=Math.abs(b.r.pct-mid);return da-db})[0],setResult=function(nameEl,scoreEl,barEl,name,pct){var n=$(nameEl),s=$(scoreEl),b=$(barEl),avg=1+(pct/100)*4,band=meterBands[bandForScore(avg)];if(n)n.innerHTML=name;if(s)s.textContent=pct+'%';if(b){b.style.width=pct+'%';b.style.background=band.color}};box.hidden=false;setResult('#finalTopName','#finalTopScore','#finalTopBar',names(hi),hi);setResult('#finalMidName','#finalMidScore','#finalMidBar',escapeHtml(balance.p.name),balance.r.pct);setResult('#finalLowName','#finalLowScore','#finalLowBar',names(lo),lo)}
+function renderFinalResult(){var box=$('#finalResult');if(!box)return;var scored=participants.map(function(p){return{p:p,r:participantResult(p)}}).filter(function(x){return x.r.avg!==null});if(currentStop!=='finish'||scored.length<2){box.hidden=true;return}var hi=Math.max.apply(null,scored.map(function(x){return x.r.pct})),lo=Math.min.apply(null,scored.map(function(x){return x.r.pct})),mid=(hi+lo)/2,names=function(n){return scored.filter(function(x){return x.r.pct===n}).map(function(x){return escapeHtml(x.p.name)}).join(' & ')},balance=scored.reduce(function(best,x){return Math.abs(x.r.pct-mid)<Math.abs(best.r.pct-mid)?x:best},scored[0]),setResult=function(nameEl,scoreEl,barEl,name,pct){var n=$(nameEl),s=$(scoreEl),b=$(barEl),avg=1+(pct/100)*4,band=meterBands[bandForScore(avg)];if(n)n.innerHTML=name;if(s)s.textContent=pct+'%';if(b){b.style.width=pct+'%';b.style.background=band.color}};box.hidden=false;setResult('#finalTopName','#finalTopScore','#finalTopBar',names(hi),hi);setResult('#finalMidName','#finalMidScore','#finalMidBar',escapeHtml(balance.p.name),balance.r.pct);setResult('#finalLowName','#finalLowScore','#finalLowBar',names(lo),lo)}
 function renderRoster(){
 var box=$('#roster'),count=$('#rosterCount');
 if(count)count.textContent=participants.length+'/6';

@@ -319,6 +319,20 @@ Er zijn geen nieuwe backendvelden, API-routes of extra permanente UI-knoppen toe
 De losse **HOE WERKT DEZE APP +**-uitleg in het hoofdscherm is verwijderd. De onboarding is nu de enige tutorial/uitleglaag en verschijnt na het invoeren van een naam.
 
 
+## Routevoortgang
+
+De voortgang boven de route volgt nu **de huidige ingecheckte stop in de route**, niet het aantal stops waarop eerder daadwerkelijk is ingecheckt.
+
+Voorbeeld:
+- Utrecht Centraal = 1 van 11
+- Kano / regenactiviteit = 2 van 11
+- Lunch = 3 van 11
+- ...
+- Utrecht Centraal aan het einde = 11 van 11
+
+Een stop overslaan verandert dit niet: check je direct bij lunch in, dan staat de voortgang op **3 van 11**. Ga je daarna terug en check je bij kano in, dan wordt dit weer **2 van 11**.
+
+
 ## Performance / cleanup
 
 - Oude verborgen hero-copy, Henny-intro en niet meer gebruikte statuschips verwijderd.
@@ -326,3 +340,7 @@ De losse **HOE WERKT DEZE APP +**-uitleg in het hoofdscherm is verwijderd. De on
 - Niet meer gebruikte `liveState`, `walkChip`, `live-mode`, `shared`-status en legacy `intox`-payload verwijderd.
 - De verborgen dashboarddata blijft alleen aanwezig omdat onboarding-slide 5 die gebruikt.
 - Service-worker cache verhoogd naar `utca-shell-v11` zodat oude shell-cache wordt opgeschoond.
+
+- v61: voortgangsberekening vereenvoudigd naar de actuele routepositie; onnodige telling over alle eerdere states verwijderd.
+- v61: bepaling van **DE KLOOTZAK** gebruikt nu één lineaire scan in plaats van een volledige sortering.
+- v61: service-worker cache verhoogd naar `utca-shell-v12`.
