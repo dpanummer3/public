@@ -348,3 +348,9 @@ Een stop overslaan verandert dit niet: check je direct bij lunch in, dan staat d
 - v62: onboarding modal weer compacter gemaakt (kortere panelhoogte, kleinere preview-containers, minder verticale spacing).
 - v62: topregel visueel aangescherpt: `UTCA // FÜR DIE MÄNNER` onder uitgelijnd met de naam-pill en lettergrootte subtiel vergroot.
 - v62: service-worker cache verhoogd naar `utca-shell-v13` zodat de onboarding-aanpassingen sneller zichtbaar zijn.
+
+- v63: topregel opnieuw opgebouwd als compacte, optisch gecentreerde app-bar; merkblok en naam-pill zijn nu proportioneel op elkaar afgestemd.
+- v63: merknaam en datum hebben nu een duidelijke typografische hiërarchie in plaats van twee even zware regels.
+- v63: `html`, theme-color en standalone safe-area gebruiken dezelfde donkere appkleur (`#0c0d0e`) voor een rustiger overgang rond notch/Dynamic Island/punch-hole.
+- v63: onboarding previews nog iets compacter gemaakt zonder inhoud of flow te wijzigen.
+- v63: service-worker cache verhoogd naar `utca-shell-v14`.
