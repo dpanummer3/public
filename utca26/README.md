@@ -344,3 +344,7 @@ Een stop overslaan verandert dit niet: check je direct bij lunch in, dan staat d
 - v61: voortgangsberekening vereenvoudigd naar de actuele routepositie; onnodige telling over alle eerdere states verwijderd.
 - v61: bepaling van **DE KLOOTZAK** gebruikt nu één lineaire scan in plaats van een volledige sortering.
 - v61: service-worker cache verhoogd naar `utca-shell-v12`.
+
+- v62: onboarding modal weer compacter gemaakt (kortere panelhoogte, kleinere preview-containers, minder verticale spacing).
+- v62: topregel visueel aangescherpt: `UTCA // FÜR DIE MÄNNER` onder uitgelijnd met de naam-pill en lettergrootte subtiel vergroot.
+- v62: service-worker cache verhoogd naar `utca-shell-v13` zodat de onboarding-aanpassingen sneller zichtbaar zijn.
