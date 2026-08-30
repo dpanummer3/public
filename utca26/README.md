@@ -359,3 +359,8 @@ Een stop overslaan verandert dit niet: check je direct bij lunch in, dan staat d
 - v64: `viewport-fit=cover` en `black-translucent` behouden voor iOS edge-to-edge gedrag; `theme-color` blijft aanwezig voor Android/Chrome/PWA statusbar-integratie.
 - v64: extra `color-scheme`/html-background override uit v63 teruggedraaid omdat die een zichtbare donkere bovenrand kon veroorzaken.
 - v64: service-worker cache verhoogd naar `utca-shell-v15`.
+
+- v65: statusbar/notch-surface niet langer bijna-zwart `#0c0d0e`, maar afgestemd op de echte bovenste app-background: Zon `#11150f`, Regen `#0d1518`.
+- v65: HTML-underlay, CSS background, `<meta name="theme-color">` en PWA manifest gebruiken dezelfde surfacekleur. Dit voorkomt een zichtbare zwarte scheidslijn op iPhone-notch/Dynamic Island en Android statusbars/punch-holes voor zover de browser/OS die zone laat tinten.
+- v65: theme-color wordt live meegewisseld met Zon/Regen.
+- v65: service-worker cache verhoogd naar `utca-shell-v16`.
