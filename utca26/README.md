@@ -354,3 +354,8 @@ Een stop overslaan verandert dit niet: check je direct bij lunch in, dan staat d
 - v63: `html`, theme-color en standalone safe-area gebruiken dezelfde donkere appkleur (`#0c0d0e`) voor een rustiger overgang rond notch/Dynamic Island/punch-hole.
 - v63: onboarding previews nog iets compacter gemaakt zonder inhoud of flow te wijzigen.
 - v63: service-worker cache verhoogd naar `utca-shell-v14`.
+
+- v64: de effen safe-area overlay uit v63 verwijderd. De echte app-background loopt weer door achter de iPhone-notch / Dynamic Island in standalone mode.
+- v64: `viewport-fit=cover` en `black-translucent` behouden voor iOS edge-to-edge gedrag; `theme-color` blijft aanwezig voor Android/Chrome/PWA statusbar-integratie.
+- v64: extra `color-scheme`/html-background override uit v63 teruggedraaid omdat die een zichtbare donkere bovenrand kon veroorzaken.
+- v64: service-worker cache verhoogd naar `utca-shell-v15`.
