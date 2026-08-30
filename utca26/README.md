@@ -28,7 +28,7 @@ De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, i
 - Tussentijdse dagstand en groepsgemiddelde
 - Korte meterreactie in de bestaande tone of voice (`Verdacht fris` → `Balzak.`), waarbij score 4 bewust **Ik hier?** blijft
 - Bij 6/6 op dezelfde stop verandert de actieve check-in-knop één keer kort naar **Grupo completo ✓**
-- Bij de finish verschijnt een compacte einduitslag met meest/minst naar de klote en **De balansman**: degene wiens eindpercentage het dichtst bij het midden tussen beide uitersten ligt
+- Bij de finish verschijnt **EINDUITSLAG** met drie losse scorekaarten en bijbehorende kleurbalken: **Meest naar de klote**, **DE KLOOTZAK** en **Minst naar de klote**. **DE KLOOTZAK** is degene wiens eindpercentage het dichtst bij het exacte midden tussen de hoogste en laagste eindscore ligt
 - Vijfdelige onboarding bij iedere nieuwe login
 - Mobile-first, donkere glass/liquid-interface
 - Installeerbaar als **standalone webapp/PWA** op Android (Chrome) en iPhone
@@ -67,7 +67,13 @@ Belangrijke huidige locaties zijn onder andere:
 - Café De Morgenster
 - Broodje Bambi
 
-Bij regen start het ochtendprogramma met **Café Orloff**. Alternatieven zijn onder andere Café 't Neutje, Café Clair en Café de Zaak.
+Voor de lunch bij **Café Ledig Erf** zijn in de Zon-route de drie alternatieven:
+
+- Graaf Floris — Vismarkt 13
+- Eetcafé De Vingerhoed — Donkere Gaard 11
+- Orloff aan de Kade — Oosterkade 18
+
+Bij regen start het ochtendprogramma met **Café Orloff**. De drie alternatieven daar zijn Café 't Neutje, Graaf Floris en Café de Zaak.
 
 ---
 
@@ -158,7 +164,6 @@ Voorbeeld POST:
 {
   "name": "Batman",
   "currentStop": "pool",
-  "intox": 3,
   "ratings": {
     "pool": 3
   }
@@ -307,3 +312,17 @@ Deze versie bouwt rechtstreeks voort op de aangeleverde v44 en voegt alleen drie
 - bij check-in op de finish verschijnt een compacte einduitslag op basis van de al aanwezige D1-meterdata, inclusief **De balansman**: degene die qua eindpercentage het dichtst bij het midden tussen de hoogste en laagste score ligt.
 
 Er zijn geen nieuwe backendvelden, API-routes of extra permanente UI-knoppen toegevoegd.
+
+
+## Interface en gedrag
+
+De losse **HOE WERKT DEZE APP +**-uitleg in het hoofdscherm is verwijderd. De onboarding is nu de enige tutorial/uitleglaag en verschijnt na het invoeren van een naam.
+
+
+## Performance / cleanup
+
+- Oude verborgen hero-copy, Henny-intro en niet meer gebruikte statuschips verwijderd.
+- De dubbele statische timeline-fallback verwijderd; de route wordt één keer door JavaScript opgebouwd.
+- Niet meer gebruikte `liveState`, `walkChip`, `live-mode`, `shared`-status en legacy `intox`-payload verwijderd.
+- De verborgen dashboarddata blijft alleen aanwezig omdat onboarding-slide 5 die gebruikt.
+- Service-worker cache verhoogd naar `utca-shell-v11` zodat oude shell-cache wordt opgeschoond.

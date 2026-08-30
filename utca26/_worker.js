@@ -30,16 +30,16 @@ return out;
 function rowToParticipant(row){
 let ratings={};
 try{ratings=JSON.parse(row.ratingsJson||'{}')}catch{}
-return {name:row.name,currentStop:row.currentStop,intox:row.intox,ratings,updatedAt:row.updatedAt};
+return {name:row.name,currentStop:row.currentStop,ratings,updatedAt:row.updatedAt};
 }
 async function getParticipants(env){
-if(!await ensureSchema(env))return {shared:false,participants:[]};
-const {results=[]}=await env.DB.prepare(`SELECT name,current_stop AS currentStop,intox,ratings_json AS ratingsJson,updated_at AS updatedAt FROM participants WHERE updated_at >= unixepoch() - 172800 ORDER BY updated_at DESC LIMIT 12`).all();
-return {shared:true,participants:results.map(rowToParticipant)};
+if(!await ensureSchema(env))return {participants:[]};
+const {results=[]}=await env.DB.prepare(`SELECT name,current_stop AS currentStop,ratings_json AS ratingsJson,updated_at AS updatedAt FROM participants WHERE updated_at >= unixepoch() - 172800 ORDER BY updated_at DESC LIMIT 12`).all();
+return {participants:results.map(rowToParticipant)};
 }
 async function handleState(request,env,url){
 if(request.method==='GET')return json(await getParticipants(env));
-if(!env.DB)return json({shared:false,participants:[]},503);
+if(!env.DB)return json({participants:[]},503);
 await ensureSchema(env);
 if(request.method==='POST'){
 let body;
@@ -47,9 +47,8 @@ try{body=await request.json()}catch{return json({error:'Ongeldige JSON'},400)}
 const name=String(body.name||'').trim().replace(/\s+/g,' ').slice(0,24);
 if(!name)return json({error:'Naam ontbreekt'},400);
 const currentStop=String(body.currentStop==null?'':body.currentStop).slice(0,64);
-const intox=Math.max(1,Math.min(5,Math.round(Number(body.intox)||1)));
 const ratings=cleanRatings(body.ratings);
-await env.DB.prepare(`INSERT INTO participants(name,current_stop,intox,ratings_json,updated_at) VALUES(?1,?2,?3,?4,unixepoch()) ON CONFLICT(name) DO UPDATE SET current_stop=excluded.current_stop,intox=excluded.intox,ratings_json=excluded.ratings_json,updated_at=unixepoch()`).bind(name,currentStop,intox,JSON.stringify(ratings)).run();
+await env.DB.prepare(`INSERT INTO participants(name,current_stop,ratings_json,updated_at) VALUES(?1,?2,?3,unixepoch()) ON CONFLICT(name) DO UPDATE SET current_stop=excluded.current_stop,ratings_json=excluded.ratings_json,updated_at=unixepoch()`).bind(name,currentStop,JSON.stringify(ratings)).run();
 return json(await getParticipants(env));
 }
 if(request.method==='DELETE'){
