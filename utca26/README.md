@@ -16,7 +16,9 @@ De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, i
 - **Zon / Regen**-variant met eigen route en accentkleur
 - Sticky **Huidige stop / Volgende**-navigatie
 - Google Maps-navigatie per locatie
+- Eén Google Places-foto per actieve stopkaart, direct boven de locatienaam; wissel je naar een alternatief, dan wisselt de foto automatisch mee
 - **Open hele ronde in Google Maps** met actuele route en looptijd
+- Zwevende bottom navigation met **De dag · Tussenstand · Route** en eigen line-icons in dezelfde appstijl
 - Drie alternatieven bij wisselbare stops
 - **Info** voor locatie-informatie en **Boek** bij gereserveerde locaties
 - **Check in ✓**-knop per stop
@@ -49,6 +51,8 @@ Na het invoeren van een naam verschijnt een onboarding met vijf vaste slides:
 De slides gebruiken echte onderdelen uit de live interface als still. Niet-relevante onderdelen worden subtiel gedimd zodat de belangrijkste interactie duidelijk blijft zonder de rest van de app onleesbaar te maken.
 
 De terugknop op slide 1 gaat terug naar het naamveld. De ingevoerde naam blijft daarbij alvast ingevuld.
+
+Na afronden of overslaan van de onboarding opent de app altijd **helemaal bovenaan**, zodat `UTCA // FÜR DIE MÄNNER`, de datum, ingelogde groep en Zon/Regen direct in beeld staan. Browser-scrollrestauratie wordt daarbij bewust genegeerd.
 
 ---
 
@@ -110,7 +114,7 @@ Er is geen framework, bundler of build-step nodig.
 
 `index.html` bevat de interface, styling, programma-data en client-side logica.
 
-`_worker.js` verzorgt `/api/state`, de D1-koppeling, asset-responses, correcte PWA-headers en de `X-Robots-Tag`.
+`_worker.js` verzorgt `/api/state`, de D1-koppeling, de Google Places-fotoproxy (`/api/place-photo`), asset-responses, correcte PWA-headers en de `X-Robots-Tag`. De Google API-key blijft server-side als Cloudflare secret en komt niet in de browser of repository terecht.
 
 `manifest.webmanifest` maakt de app voor Chromium herkenbaar als installeerbare webapp met `display: standalone`. De 192/512 px-iconen en maskable varianten worden door Android gebruikt. `sw.js` registreert een lichte service worker met netwerk-eerst navigatie en alleen een offline fallback voor de app-shell; `/api/state` blijft rechtstreeks via het netwerk lopen.
 
@@ -156,6 +160,8 @@ De D1-tabel wordt automatisch aangemaakt wanneer die nog niet bestaat. Alleen de
 GET    /api/state
 POST   /api/state
 DELETE /api/state?name=<naam>
+GET    /api/place-photo?q=<naam+adres>&lat=<lat>&lng=<lng>
+GET    /api/place-photo/media?name=<Google-photo-resource>
 ```
 
 Voorbeeld POST:
@@ -178,13 +184,27 @@ Voorbeeld POST:
 2. Gebruik geen build-command; publiceer de repository direct.
 3. Maak een D1-database aan.
 4. Voeg een D1-binding toe met exact de naam `DB`.
-5. Na iedere push naar `main` publiceert Cloudflare Pages automatisch de nieuwste versie.
+5. Maak in Google Cloud een project met billing en schakel **Places API (New)** in.
+6. Maak een Google Maps Platform API-key en beperk die sleutel bij **API restrictions** tot Places API (New).
+7. Voeg in Cloudflare Pages onder **Settings → Variables and Secrets** een encrypted secret toe met exact de naam `GOOGLE_MAPS_API_KEY`. Doe dit voor Production en, als je previews gebruikt, ook voor Preview.
+8. Redeploy daarna de Pages-projectdeployment.
+9. Na iedere push naar `main` publiceert Cloudflare Pages automatisch de nieuwste versie.
+
+Zonder `GOOGLE_MAPS_API_KEY` blijft de app gewoon werken en blijven de fotovakken verborgen; route, check-ins, meter en groepsstatus veranderen niet. De sleutel hoort **nooit** in GitHub of `index.html`. Voor kostenbeheersing is het verstandig in Google Cloud een budgetwaarschuwing en passende quota in te stellen.
 
 `_worker.js` verwacht de database als:
 
 ```js
 env.DB
 ```
+
+en voor locatie-foto’s:
+
+```js
+env.GOOGLE_MAPS_API_KEY
+```
+
+De foto’s worden pas vlak voordat een stop in beeld komt opgevraagd. De app bewaart geen Google photo-resource-names en de worker stuurt fotoresponses met `no-store`. Iedere foto linkt terug naar de individuele bronfoto in Google Maps en toont binnen het fotovak de tekst **Google Maps** als bronvermelding.
 
 ---
 
@@ -386,4 +406,121 @@ Deze release bouwt rechtstreeks voort op v66 en verandert **geen design, route, 
 - README bijgewerkt naar de actuele EINDUITSLAG-copy en huidige release;
 - alle app-iconen, inclusief Android maskable icons en het iOS touch icon, zijn **ongewijzigd** overgenomen uit v66;
 - `_worker.js`, D1/API-contracten en alle client-side functies zijn inhoudelijk ongewijzigd.
+
+
+
+## v68 — Google Places-foto’s in bestaande stopkaarten
+
+Deze release bouwt rechtstreeks voort op v67. De bestaande kleuren, glass/liquid-stijl, tijdlijn, Zon/Regen-thema’s, teksten, alternatieven, navigatie, check-ins, groepsstatus, Naar de klote-meter en EINDUITSLAG zijn niet herontworpen.
+
+- boven de bestaande locatienaam van iedere actieve stop staat één afgeronde venuefoto;
+- de foto wordt opgehaald via **Google Places API (New) / Place Photos (New)**;
+- de Google API-key staat uitsluitend server-side als Cloudflare secret `GOOGLE_MAPS_API_KEY`;
+- foto’s laden lazy via `IntersectionObserver`, zodat niet alle stops direct netwerkverkeer veroorzaken;
+- als bij een wisselbare stop een alternatief wordt gekozen, rendert de kaart opnieuw en wordt automatisch de foto van die nieuwe venue opgehaald;
+- als Google Places nog niet is ingesteld of geen foto teruggeeft, blijft het gereserveerde fotovak bewust leeg; zodra de API beschikbaar is vult dezelfde plek zich automatisch met de locatie-foto;
+- de foto bevat een zichtbare **Google Maps**-bronvermelding en opent bij tikken de bronfoto in Google Maps wanneer Google die link meestuurt;
+- Google photo-resource-names worden niet opgeslagen of gecachet;
+- PWA assetversie verhoogd naar `v=68` en service-worker shell-cache naar `utca-shell-v18`.
+
+### Google Maps Platform aandachtspunten
+
+Gebruik van Places-foto’s valt onder de actuele Google Maps Platform-voorwaarden. Voor een publieke/production inzet moet je ook voldoen aan Google’s vereisten voor attributie en de vereiste Terms of Use / Privacy Policy voor jouw toepassing.
+
+---
+
+## v69 — smoother timeline & check-in motion
+
+Deze release bouwt rechtstreeks voort op v68 en **verandert geen route-data, kleuren, locaties, Google Places-foto-logica, Naar de klote-meter, D1/API-logica of overige functionaliteit**. De bestaande interface blijft hetzelfde; alleen de overgang tussen bestaande states is vloeiender gemaakt.
+
+### Nieuwe motion-laag
+
+- De verticale tijdlijn springt niet meer direct naar de volgende status: het lime/blauwe voortgangsdeel **vult zichtbaar van de huidige stop richting de volgende stop**.
+- Bij aankomst krijgt het nieuwe tijdlijnbolletje een korte, subtiele spring/pulse en krijgt de vorige stop zijn vinkje met een kleine pop-animatie.
+- De horizontale `2 van 11 afgelegd`-progressbar loopt rustiger naar zijn nieuwe positie.
+- `Check in ✓` krijgt een korte press/morph in plaats van onmiddellijk van donker naar actief te springen.
+- Als check-in informatie een kaart hoger of lager maakt, **expandeert of krimpt de bestaande kaart geleidelijk**; onderliggende kaarten worden daardoor vanzelf soepel meegeschoven.
+- Namen/chips die door een check-in in de kaart verschijnen, komen met een korte fade/slide binnen.
+- De Naar de klote-meter behoudt exact dezelfde werking en kleuren, maar de geselecteerde score krijgt een kleine spring-transition.
+- `prefers-reduced-motion` wordt gerespecteerd: gebruikers die systeemanimaties hebben verminderd krijgen de directe, niet-geanimeerde state-wissel.
+
+De motion is met CSS en vanilla JavaScript uitgevoerd; er is **geen React Native, framework, animatie-library of extra build-step** toegevoegd.
+
+---
+
+## v70 — cinematic timeline draw + smoother check-in
+
+Deze release vervangt alleen de motionlaag uit v69. **Design, kleuren, route-data, locaties, alternatieven, Google Places-foto's, Naar de klote-meter, EINDUITSLAG, D1/API-contracten en overige appfunctionaliteit blijven intact.**
+
+### Indiana-Jones-achtige tijdlijn
+
+- Bij een check-in naar een volgende stop verschijnt de nieuwe lime route **niet vooraf al ingevuld**.
+- De reeds afgelegde route blijft zichtbaar; alleen het nieuwe traject blijft eerst grijs.
+- Na de check-in/card-transition vertrekt een kleine lime tracer vanaf de huidige tijdlijnnode en **tekent de lijn fysiek van begin tot eind** naar de volgende stop.
+- De tracer heeft een subtiele heldere kop zodat de beweging te volgen is, zonder het bestaande minimalistische ontwerp te veranderen.
+- Het traject duurt afhankelijk van de afstand ongeveer **1,25–1,95 seconde**; bij het overslaan van meerdere stops loopt dezelfde tracer door over het hele nieuwe traject.
+- Pas wanneer de tracer de bestemming bereikt, wordt het nieuwe traject permanent lime, springt de nieuwe node subtiel in en krijgt de vorige node zijn vinkje.
+- In Regen-modus gebruikt dezelfde motionlaag de bestaande blauwe accentkleur.
+
+### Check-in motion
+
+- De bestaande `Check in ✓`-knop krijgt eerst een korte tactiele compressie voordat de state wordt vastgelegd.
+- De actieve kleur vloeit daarna geleidelijk in, in plaats van op dezelfde paint direct te verschijnen.
+- De eigen deelnemer wordt visueel direct in de nieuwe stopkaart getoond terwijl de bestaande backend-sync ongewijzigd doorloopt. Daardoor kan de kaart meteen vloeiend expanderen zonder op de netwerkresponse te wachten.
+- Kaart-expansie/collapse is verlengd en gebruikt dezelfde rustige easing als de rest van de interface.
+- De netwerkpayload, D1-opslag en gedeelde deelnemerslogica zijn niet gewijzigd; de onmiddellijke eigen chip is alleen een optimistische UI-weergave.
+
+### Techniek
+
+- Vanilla JavaScript + Web Animations API en CSS; **geen React Native of extra dependency**.
+- `prefers-reduced-motion` blijft gerespecteerd.
+- PWA assetversie verhoogd naar `v=70` en service-worker shell-cache naar `utca-shell-v20`, zodat bestaande homescreen-installaties de nieuwe motionlaag ophalen.
+- Google Places-foto's blijven optioneel. Zonder `GOOGLE_MAPS_API_KEY` werkt de hele app en alle motion gewoon; alleen de venuefoto's blijven verborgen.
+
+
+---
+
+## v71 — cinematic timeline at half speed
+
+Deze release verandert uitsluitend de snelheid van de Indiana-Jones-achtige tijdlijnanimatie uit v70. Design, check-in-logica, Google Places-foto's, route-data, Naar de klote-meter, EINDUITSLAG, backend en overige functionaliteit blijven gelijk.
+
+- De tracer tekent het nieuwe traject nu op **50% van de vorige snelheid**.
+- De animatieduur is verdubbeld van circa **1,25–1,95 seconde** naar circa **2,5–3,9 seconden**, afhankelijk van de afstand tussen de stops.
+- De bewegende tracer-kop en de lime lijn blijven exact synchroon.
+- De node-arrival gebeurt nog steeds pas nadat de tracer de volgende stop bereikt.
+- `prefers-reduced-motion` blijft gerespecteerd.
+- PWA assetversie verhoogd naar `v=71` en service-worker shell-cache naar `utca-shell-v21`, zodat bestaande homescreen-installaties de nieuwe timing ophalen.
+
+---
+
+## v72 — bottom navigation, top-open & photo placeholder
+
+Deze release bouwt rechtstreeks voort op v71. De route-data, check-in-logica, cinematic timeline, Naar de klote-meter, EINDUITSLAG, D1/API-contracten en Google Places-endpoints zijn niet gewijzigd.
+
+### Bottom navigation
+
+- Nieuwe zwevende glass-tabbar onderaan met drie compacte tabs: **De dag**, **Tussenstand** en **Route**.
+- De iconen zijn als lichte inline SVG line-icons opgebouwd en gebruiken dezelfde stroke, afgeronde vormen en lime/blauwe actieve accentkleur als de rest van de app.
+- **De dag** gebruikt een timeline/list-icoon, **Tussenstand** een meter/gauge en **Route** een route/pin-icoon.
+- Tikken op een tab scrolt vloeiend naar het bestaande relevante onderdeel; er is geen nieuwe pagina, router of framework toegevoegd.
+- De actieve tab volgt de scrollpositie.
+- De tabbar gebruikt iOS/Android safe-area padding en extra onderruimte zodat hij geen content afdekt.
+
+### Openen vanaf boven
+
+- Na de laatste onboarding-slide, **Overslaan** of een nieuwe sessie opent de app op scrollpositie 0.
+- Browser `scrollRestoration` staat op `manual` om te voorkomen dat Safari/Chrome de PWA halverwege de vorige route terugzet.
+- Dit verandert niets aan de bestaande knop/actie waarmee een gebruiker later bewust naar een specifieke stop springt.
+
+### Google Places-fotovak
+
+- Het bestaande Google Places-fotovak uit v68-v71 blijft nu **zichtbaar als een leeg, rustig glass-vak** zolang `GOOGLE_MAPS_API_KEY` nog niet is ingesteld.
+- Er staat geen placeholdertekst, foutmelding of Google-label in het lege vak.
+- Zodra de API later is ingesteld, laadt dezelfde plek automatisch de Google Places-foto en verschijnt de vereiste Google Maps-bronvermelding.
+- Bij het wisselen van venue blijft de bestaande logica gelden: het fotovak wordt opnieuw gekoppeld aan de gekozen locatie en haalt daarvan de foto op.
+
+### Versie/cache
+
+- PWA assetversie verhoogd naar `v=72`.
+- Service-worker shell-cache verhoogd naar `utca-shell-v22`.
 
