@@ -1,5 +1,31 @@
 # DE RONDE // FÜR DIE MÄNNER
 
+## v90 — consistency pass + exact Google Maps place links
+
+Deze release is een kleine UX/consistentie-pass bovenop v89. De route-data, check-ins, Naar-de-klote-meter, D1/API-contracten en Places-fotologica blijven functioneel hetzelfde.
+
+### Consistentie
+- De compacte sticky statusheader is iets hoger gemaakt (**78 px**) zodat huidige stop, volgende stop, navigeer en voortgang minder op elkaar gedrukt staan.
+- De voortgangslijn heeft in compacte toestand een eigen onderruimte; hij raakt de tekst of `Navigeer`-knop niet meer.
+- `Navigeer` in de sticky header is visueel compacter (44 px hoog) en sluit aan op de secundaire actieknoppen in de stopkaarten.
+- `Check in ✓` is iets compacter (48 px hoog) maar blijft duidelijk de primaire actie.
+- De secundaire knoppen houden hun 44 px tap-target, maar hebben iets minder horizontale padding en kleinere typografie.
+- De deelnemerschips bij stops zonder meter (zoals Utrecht Centraal) worden nu altijd ín `.card-body` geplaatst. Daardoor hebben ze exact dezelfde padding als bij de overige stopkaarten en zitten namen niet meer tegen de kaartrand.
+
+### Google Maps vanaf foto
+- Tikken op een live Places-foto opent nu de **exacte Google Maps-locatie** via de bestaande Place ID (`query_place_id`). Daardoor kom je in Google Maps bij de plaatsdetails uit in plaats van een algemene zoekopdracht.
+- Hiervoor is geen extra Places-field of extra API-call nodig; de Place ID werd al opgehaald voor de foto.
+
+### Gamification-UX pass
+- De gamification-hiërarchie blijft bewust rustig: **huidige stop → check-in → meter → stand**.
+- De voortgang is zichtbaar maar concurreert niet met de primaire actie; meterfeedback en score blijven de speelse laag.
+- Geen extra badges, confetti, streaks of andere prikkels toegevoegd.
+
+### Performance / onderhoud
+- Geen framework, dependency of extra netwerkrequest toegevoegd.
+- Bestaande lazy Places-foto's, photo de-duplication, DOM-in-place meter/check-in updates en PageSpeed-optimalisaties blijven behouden.
+- PWA-assets naar `v=90`; shell-cache naar `utca-shell-v38`.
+
 ## v89 — consistentie & verfraaiing
 
 Deze release voert de goedgekeurde design-review door. Route-data, check-ins, Naar-de-klote-meter, Google Places-fotologica, D1/API-contracten en onboardingflow zijn functioneel ongewijzigd.

@@ -280,9 +280,14 @@ var query=(v.name||'')+', '+(v.addr||''),lat=v.geo&&isFinite(Number(v.geo[0]))?N
 return '<figure class="venue-photo" data-place-photo="'+escapeHtml(query)+'" data-place-lat="'+lat+'" data-place-lng="'+lng+'" data-place-link="'+escapeHtml(v.info||'')+'" data-photo-priority="'+(high?'high':'auto')+'"><a class="venue-photo-link" target="_blank" rel="noopener" aria-label="Bekijk foto van '+escapeHtml(v.name)+' in Google Maps"><img alt="" loading="'+(high?'eager':'lazy')+'" decoding="async" fetchpriority="'+(high?'high':'auto')+'"><span class="venue-photo-google" translate="no">Google Maps</span></a></figure>';
 }
 function loadedPhotoTwin(el){var key=photoKey(el),items=$$('[data-place-photo].loaded');for(var i=0;i<items.length;i++)if(items[i]!==el&&photoKey(items[i])===key){var img=items[i].querySelector('img');if(img&&img.src)return{img:img,link:items[i].querySelector('.venue-photo-link')}}return null}
+function placeDetailsHref(el,data){
+var q=el.getAttribute('data-place-photo')||'',id=data&&data.placeId||'';
+if(id)return'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)+'&query_place_id='+encodeURIComponent(id);
+return data&&data.googleMapsUri||el.getAttribute('data-place-link')||'#'
+}
 function applyPlacePhoto(el,data){
 if(!el||!data||!data.src)return;var img=el.querySelector('img'),link=el.querySelector('.venue-photo-link');if(!img||!link)return;
-if(data.placeId)savePlaceId(photoKey(el),data.placeId);link.href=data.googleMapsUri||el.getAttribute('data-place-link')||'#';
+if(data.placeId)savePlaceId(photoKey(el),data.placeId);link.href=placeDetailsHref(el,data);
 img.onload=function(){el.classList.add('loaded');img.alt='Foto van '+(el.getAttribute('data-place-photo')||'de locatie')};
 img.onerror=function(){el.classList.remove('loaded');el.removeAttribute('data-photo-loading');img.removeAttribute('src');img.alt=''};
 img.src=data.src;
@@ -322,7 +327,7 @@ return html;
 }
 function meterHtml(x){if(!x.meter)return'';var v=Number(ratings[x.id]||0),band=v?bandForValue(v):null,buttons='';for(var n=1;n<=5;n++)buttons+='<button data-rate="'+x.id+'" data-value="'+n+'" class="'+(v===n?'active':'')+'" aria-pressed="'+(v===n?'true':'false')+'" aria-label="Score '+n+'">'+n+'</button>';return '<div class="stop-meter"><div class="stop-meter-head"><div class="stop-meter-title">Naar de klote-meter</div><div class="stop-meter-state">'+(v?v+'/5':'Nog invullen')+'</div></div><div class="stop-meter-buttons">'+buttons+'</div><div class="meter-scale-labels"><span>Fris</span><span>Naar de klote</span></div><div class="stop-meter-copy">'+(band?'<strong>'+band.label+'</strong>':'Tik 1–5 na dit onderdeel.')+'</div></div>'}
 function updateMeterUi(id){var meter=document.querySelector('.card[data-stop="'+id+'"] .stop-meter');if(!meter)return;var v=Number(ratings[id]||0),band=v?bandForValue(v):null;meter.querySelectorAll('[data-rate]').forEach(function(b){var on=Number(b.getAttribute('data-value'))===v;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on?'true':'false')});var state=meter.querySelector('.stop-meter-state'),copy=meter.querySelector('.stop-meter-copy');if(state)state.textContent=v?v+'/5':'Nog invullen';if(copy)copy.innerHTML=band?'<strong>'+band.label+'</strong>':'Tik 1–5 na dit onderdeel.'}
-function renderStopPeople(){$$('.card[data-stop]').forEach(function(card){var id=card.getAttribute('data-stop'),old=card.querySelector('.stop-people'),html=peopleAtStopHtml(id);if(old){if(html)old.outerHTML=html;else old.remove()}else if(html){var meter=card.querySelector('.stop-meter');if(meter)meter.insertAdjacentHTML('beforebegin',html);else card.insertAdjacentHTML('beforeend',html)}})}
+function renderStopPeople(){$$('.card[data-stop]').forEach(function(card){var id=card.getAttribute('data-stop'),old=card.querySelector('.stop-people'),html=peopleAtStopHtml(id);if(old){if(html)old.outerHTML=html;else old.remove()}else if(html){var body=card.querySelector('.card-body'),meter=card.querySelector('.stop-meter');if(meter)meter.insertAdjacentHTML('beforebegin',html);else (body||card).insertAdjacentHTML('beforeend',html)}})}
 var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.6 4.5L19 6.5"/></svg>';
 function railHtml(state,id){
 return '<span class="tl-rail"><span class="tl-node" role="button" tabindex="0" data-rail-here="'+id+'" aria-label="Check in bij deze stop">'+(state==='done'?CHECK:'')+'</span></span>'
@@ -688,7 +693,7 @@ hc.classList.add('current');
 var hb=hc.querySelector('.here');
 if(hb){hb.classList.add('active');setHereButtonLabel(hb,'Check in ✓')}
 here.appendChild(hc);
-var hp=hc.querySelector('[data-place-photo]');if(hp)setStaticOnboardingPhoto(hp,'/onboarding-checkin.webp?v=89','Foto van Kanoverhuur Utrecht','https://maps.google.com/?q=Kanoverhuur+Utrecht+Oudegracht+aan+de+Werf+275+Utrecht')
+var hp=hc.querySelector('[data-place-photo]');if(hp)setStaticOnboardingPhoto(hp,'/onboarding-checkin.webp?v=90','Foto van Kanoverhuur Utrecht','https://maps.google.com/?q=Kanoverhuur+Utrecht+Oudegracht+aan+de+Werf+275+Utrecht')
 }
 var meterCard=$('.card[data-stop="'+weatherStop[mode].id+'"] .stop-meter')||$('.card[data-stop="lunch"] .stop-meter');
 var mc=onboardingClone(meterCard);
@@ -717,7 +722,7 @@ meter.appendChild(dr);
 var optionCard=$('.card[data-stop="bars"]')||$('.card[data-stop="lunch"]');
 var oc=onboardingClone(optionCard);
 if(oc){
-var op=oc.querySelector('.venue-photo');if(op)setStaticOnboardingPhoto(op,'/onboarding-options.webp?v=89','Foto van Café De Morgenster','https://maps.google.com/?q=Caf%C3%A9+De+Morgenster+Oudegracht+323+Utrecht')
+var op=oc.querySelector('.venue-photo');if(op)setStaticOnboardingPhoto(op,'/onboarding-options.webp?v=90','Foto van Café De Morgenster','https://maps.google.com/?q=Caf%C3%A9+De+Morgenster+Oudegracht+323+Utrecht')
 var details=oc.querySelector('.alternatives');if(details)details.setAttribute('open','');
 options.appendChild(oc);
 }
