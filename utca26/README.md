@@ -1,5 +1,23 @@
 # UTCA // FÜR DIE MÄNNER
 
+## v86 — clean source, PageSpeed-pass & klotenstanden
+
+- De scorecontainer heet tijdens de dag **KLOTENTUSSENSTAND** en na **KLAAR** **KLOTENEINDSTAND**. De bottom-tab blijft bewust **Tussenstand**, zodat de navigatie kort en duidelijk blijft.
+- `index.html` is opnieuw netjes semantisch genest en ingesprongen voor een rustige **View Page Source**. De originele HTML/SVG-attributen blijven daarbij exact behouden.
+- Inline CSS/JavaScript blijft uit `index.html`: styling staat in `app.css`, logica in `app.js`, beide met `defer`/lange immutable cache voor snelle herhaalbezoeken.
+- Alleen verouderde release-comments zijn uit de runtime-CSS verwijderd; geen design- of functiewijzigingen.
+- Geen framework, dependency of extra netwerklaag toegevoegd; check-ins, Places-foto's, meter, D1 en navigatie blijven intact.
+- PWA-assets naar `v=86`; shell-cache naar `utca-shell-v34`.
+
+## v85 — compactere onboarding spacing
+
+- De vijf onboarding-containers houden **exact dezelfde responsive afmetingen per device**; er is geen slide-afhankelijke hoogte toegevoegd.
+- De totale onboarding-container is subtiel **14 px compacter** gemaakt, zodat de uitlegtekst dichter bij de navigatieknoppen staat.
+- De bovenpadding van de onboarding-footer is met **3 px** verkleind; knophoogtes, safe-area, beelden en typografie blijven gelijk.
+- Op kleinere/lagere telefoons wordt dezelfde reductie consequent toegepast, zonder de content te laten verspringen.
+- Geen wijzigingen aan appfunctionaliteit, Google Places, check-ins, meter, timeline, bottom navigation of backend.
+- Assets naar `v=85`; service-worker shell-cache naar `utca-shell-v33`.
+
 ## v84 — clean source + cachebare CSS/JS
 
 - `index.html` is opgeschoond van circa **117 KB naar circa 12 KB** en bevat nu vooral nette, geneste HTML. Daardoor is **View Page Source** veel overzichtelijker.

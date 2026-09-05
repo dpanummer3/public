@@ -268,7 +268,7 @@ body.rain-mode .stop-person-chip.me{border-color:rgba(127,214,238,.38)}
 body.onboarding-open{overflow:hidden}
 .onboarding-overlay{position:fixed;inset:0;z-index:88;display:none;align-items:flex-end;justify-content:center;padding:12px;background:rgba(4,5,6,.62);-webkit-backdrop-filter:blur(22px) saturate(150%);backdrop-filter:blur(22px) saturate(150%)}
 .onboarding-overlay.show{display:flex}
-.onboarding-panel{width:min(calc(100vw - 28px),548px);height:min(calc(100dvh - 48px),612px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;border-radius:var(--r-sheet);background:rgba(24,26,27,.82);-webkit-backdrop-filter:saturate(120%) blur(30px);backdrop-filter:saturate(120%) blur(30px);border:1px solid var(--hairStrong);box-shadow:0 16px 44px rgba(0,0,0,.5),var(--edge);overflow:hidden}
+.onboarding-panel{width:min(calc(100vw - 28px),548px);height:min(calc(100dvh - 48px),598px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;border-radius:var(--r-sheet);background:rgba(24,26,27,.82);-webkit-backdrop-filter:saturate(120%) blur(30px);backdrop-filter:saturate(120%) blur(30px);border:1px solid var(--hairStrong);box-shadow:0 16px 44px rgba(0,0,0,.5),var(--edge);overflow:hidden}
 .onboarding-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 18px 6px}
 .onboarding-head .minihead{font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--limeText,var(--lime));text-transform:uppercase}
 .onboarding-skip{border:0;background:transparent;color:var(--faint);font-size:13px;font-weight:600;padding:6px 2px;cursor:pointer}
@@ -320,7 +320,7 @@ body.onboarding-open{overflow:hidden}
 .onboarding-slide p{margin:10px 0 0;color:var(--muted);font-size:15px;line-height:1.43;letter-spacing:-.008em}
 .onboarding-slide p strong{color:#fff;font-weight:600}
 .onboarding-slide .punch{color:#eef2f5;font-weight:600}
-.onboarding-foot{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;padding:8px 18px max(14px,env(safe-area-inset-bottom))}
+.onboarding-foot{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;padding:5px 18px max(14px,env(safe-area-inset-bottom))}
 .onboarding-back{width:52px;height:52px;border:1px solid var(--hairStrong);border-radius:var(--r-pill);background:rgba(255,255,255,.06);color:#eef2f5;box-shadow:var(--edge);font-size:20px;font-weight:600;cursor:pointer}
 .onboarding-next{min-height:52px;border:1px solid rgba(255,255,255,.2);border-radius:var(--r-pill);background:var(--prim);color:var(--ink);font-size:17px;font-weight:600;letter-spacing:-.014em;box-shadow:var(--primEdge),0 6px 18px rgba(0,0,0,.3);cursor:pointer}
 .onboarding-progress{grid-column:1/-1;display:flex;justify-content:center;align-items:center;gap:6px;height:10px}
@@ -328,16 +328,16 @@ body.onboarding-open{overflow:hidden}
 .onboarding-progress i.active{width:19px}
 @media (max-width:470px){
   .onboarding-overlay{padding:11px}
-  .onboarding-panel{height:min(calc(100dvh - 34px),590px);width:min(calc(100vw - 22px),540px)}
+  .onboarding-panel{height:min(calc(100dvh - 34px),576px);width:min(calc(100vw - 22px),540px)}
   .onboarding-head{padding:13px 16px 6px}
   .onboarding-slide{padding:2px 16px 8px}
-  .onboarding-foot{padding:8px 16px max(13px,env(safe-area-inset-bottom))}
+  .onboarding-foot{padding:5px 16px max(13px,env(safe-area-inset-bottom))}
   .onboarding-visual{height:206px;margin-bottom:10px}
   .onboarding-slide h2{font-size:27px}
   .onboarding-slide p{font-size:14px;line-height:1.4}
 }
 @media (max-height:700px){
-  .onboarding-panel{height:min(calc(100dvh - 28px),560px)}
+  .onboarding-panel{height:min(calc(100dvh - 28px),546px)}
   .onboarding-visual{height:192px;margin-bottom:10px}
   .onboarding-slide h2{font-size:24px}
   .onboarding-slide p{font-size:13px;line-height:1.36}
@@ -376,7 +376,7 @@ button:not(:disabled):active,.navbtn:active,.journey-nav:active,.routebtn:active
 @media(max-width:470px){
   .venue-photo{aspect-ratio:16/7.3}
 }
-/* v72 bottom navigation + launch position */ .app{padding-bottom:118px}
+.app{padding-bottom:118px}
 .nav-anchor{scroll-margin-top:104px}
 .bottom-nav-shell{position:fixed;z-index:58;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);display:none;align-items:stretch;gap:8px;width:min(calc(100% - 20px),560px)}
 .bottom-nav-shell.show{display:flex}
@@ -404,9 +404,7 @@ body.rain-mode .bottom-tab.active{color:#7fd6ee;background:rgba(127,214,238,.09)
 @media(prefers-reduced-motion:reduce){
   .bottom-tab,.bottom-map{transition:none}
 }
-/* v75: linker navigatielijn blijft de eenvoudige v65-statuslijn.
-   Check-in gedrag terug naar de rustige v67-versie: geen kaart-reflow,
-   geen opwaartse chipanimatie en geen morph/fill-animatie in de knop. */ .timeline{position:relative;overflow-anchor:none}
+.timeline{position:relative;overflow-anchor:none}
 .card[data-stop]{overflow-anchor:none}
 .tl-progress-track i{transition:width 900ms cubic-bezier(.22,1,.36,1),background-color 260ms ease}
 .card[data-stop]{transition:border-color 220ms ease,box-shadow 220ms ease}

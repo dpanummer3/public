@@ -10,55 +10,154 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="UTCA" />
-    <link rel="manifest" href="/manifest.webmanifest?v=84" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=84" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=84" />
+    <link rel="manifest" href="/manifest.webmanifest?v=86" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=86" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=86" />
     <title>UTCA // FÜR DIE MÄNNER — 26 september 2026</title>
-    <link rel="stylesheet" href="/app.css?v=84" />
-    <script defer src="/app.js?v=84"></script>
+    <link rel="stylesheet" href="/app.css?v=86" />
+    <script defer src="/app.js?v=86"></script>
   </head>
   <body>
     <main class="app">
       <div class="topline">
-        <div class="brand"><span class="brand-name">UTCA // FÜR DIE MÄNNER</span><span class="brand-date">ZATERDAG 26 SEPTEMBER 2026</span></div>
-        <div class="userchip" id="userChip"><span id="userName"></span><i class="top-user-dot" aria-hidden="true"></i><button id="logout" aria-label="Naam wissen">×</button></div>
+        <div class="brand">
+          <span class="brand-name">UTCA // FÜR DIE MÄNNER</span>
+          <span class="brand-date">ZATERDAG 26 SEPTEMBER 2026</span>
+        </div>
+        <div class="userchip" id="userChip">
+          <span id="userName"></span>
+          <i class="top-user-dot" aria-hidden="true"></i>
+          <button id="logout" aria-label="Naam wissen">×</button>
+        </div>
       </div>
-      <header class="hero"><div class="roster-wrap" aria-label="Ingelogde deelnemers">
-          <div class="roster-head"><span>Ingelogd</span><span id="rosterCount">0/6</span></div>
-          <div class="roster" id="roster"><span class="roster-empty">Nog niemand zichtbaar.</span></div>
+      <header class="hero">
+        <div class="roster-wrap" aria-label="Ingelogde deelnemers">
+          <div class="roster-head">
+            <span>Ingelogd</span>
+            <span id="rosterCount">0/6</span>
+          </div>
+          <div class="roster" id="roster">
+            <span class="roster-empty">Nog niemand zichtbaar.</span>
+          </div>
         </div>
       </header>
       <div class="switcher" aria-label="Weeroptie">
-        <button class="active" data-mode="sun" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.1"/><path d="M12 3.2v2M12 18.8v2M5.8 5.8l1.4 1.4M16.8 16.8l1.4 1.4M3.2 12h2M18.8 12h2M5.8 18.2l1.4-1.4M16.8 7.2l1.4-1.4"/></svg><span>Zon</span></button>
-        <button data-mode="rain" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.8 15.2a4.3 4.3 0 0 1-.3-8.6 5.9 5.9 0 0 1 10.9 1.5 3.6 3.6 0 0 1-.6 7.1z"/><path d="m9.4 17.8-.9 2.6M12.9 17.8l-.9 2.6M16.4 17.8l-.9 2.6"/></svg><span>Regen</span></button>
+        <button class="active" data-mode="sun" aria-pressed="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.1"/>
+            <path d="M12 3.2v2M12 18.8v2M5.8 5.8l1.4 1.4M16.8 16.8l1.4 1.4M3.2 12h2M18.8 12h2M5.8 18.2l1.4-1.4M16.8 7.2l1.4-1.4"/>
+          </svg>
+          <span>Zon</span>
+        </button>
+        <button data-mode="rain" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7.8 15.2a4.3 4.3 0 0 1-.3-8.6 5.9 5.9 0 0 1 10.9 1.5 3.6 3.6 0 0 1-.6 7.1z"/>
+            <path d="m9.4 17.8-.9 2.6M12.9 17.8l-.9 2.6M16.4 17.8l-.9 2.6"/>
+          </svg>
+          <span>Regen</span>
+        </button>
       </div>
       <div class="journeybar" id="journeyBar" aria-live="polite">
         <div class="journeycopy" id="journeyCopy" role="button" tabindex="0" aria-label="Ga naar huidige stop">
-          <div class="journey-now">HUIDIGE STOP · <strong id="journeyNow">Utrecht Centraal</strong></div>
-          <div class="journey-next"><span>VOLGENDE</span> · <strong id="journeyNext">Kanoverhuur Utrecht</strong></div>
+          <div class="journey-now">
+            HUIDIGE STOP ·
+            <strong id="journeyNow">Utrecht Centraal</strong>
+          </div>
+          <div class="journey-next">
+            <span>VOLGENDE</span>
+            ·
+            <strong id="journeyNext">Kanoverhuur Utrecht</strong>
+          </div>
           <div class="journey-meta" id="journeyMeta">10:00 · volgende stop</div>
         </div>
         <a class="journey-nav" id="journeyNav" href="#">NAVIGEER</a>
       </div>
       <section class="dashboard">
-        <div class="dash"><div class="big" id="routeWalk">± 90 min</div><div class="small">hele ronde lopen</div></div>
-        <div class="dash"><div class="big" id="groupAverage">—</div><div class="small">groep gemiddeld</div></div>
+        <div class="dash">
+          <div class="big" id="routeWalk">± 90 min</div>
+          <div class="small">hele ronde lopen</div>
+        </div>
+        <div class="dash">
+          <div class="big" id="groupAverage">—</div>
+          <div class="small">groep gemiddeld</div>
+        </div>
       </section>
       <div class="boot-error" id="bootError">De interactieve laag kon niet starten. Open deze pagina rechtstreeks in Safari/Chrome of publiceer hem via Cloudflare Pages.</div>
-      <noscript><div class="boot-error show">JavaScript is nodig voor deze app.</div></noscript>
-      <div class="section-title nav-anchor" id="dag"><h2>De dag</h2><span>programma &amp; route</span></div>
-      <div class="tl-progress" id="tlProgress" hidden><span id="tlProgressLabel">0 van 11 afgelegd</span><span class="tl-progress-track"><i id="tlProgressBar"></i></span></div>
+      <noscript>
+        <div class="boot-error show">JavaScript is nodig voor deze app.</div>
+      </noscript>
+      <div class="section-title nav-anchor" id="dag">
+        <h2>De dag</h2>
+        <span>programma &amp; route</span>
+      </div>
+      <div class="tl-progress" id="tlProgress" hidden>
+        <span id="tlProgressLabel">0 van 11 afgelegd</span>
+        <span class="tl-progress-track">
+          <i id="tlProgressBar"></i>
+        </span>
+      </div>
       <section class="timeline" id="timeline"></section>
       <section class="dayresult nav-anchor" id="dayResult">
         <div class="result-kicker">Jouw dagstand</div>
-        <div class="result-main"><strong id="dayPercent">—</strong><span>naar de klote</span></div>
-        <div class="result-bar"><i id="dayBar"></i></div>
+        <div class="result-main">
+          <strong id="dayPercent">—</strong>
+          <span>naar de klote</span>
+        </div>
+        <div class="result-bar">
+          <i id="dayBar"></i>
+        </div>
         <div class="result-copy" id="dayCopy">Vul onder een onderdeel de meter in. Alleen ingevulde meters tellen mee.</div>
         <div class="result-meta" id="dayMeta">0 onderdelen ingevuld</div>
       </section>
-      <div class="section-title nav-anchor" id="groep"><h2>Waar is iedereen?</h2><span>laatste check-ins &amp; tussenstand</span></div>
-      <section class="group" id="groupList"><div class="empty">Vul bovenaan je naam in. Daarna kan iedereen op een stop op <strong>“Check in ✓”</strong> tikken.</div></section>
-      <section class="dayresult finalresult nav-anchor" id="finalResult"><div class="result-kicker" id="resultStageTitle">Tussenstand</div><div class="final-grid"><div class="final-stat"><div class="final-stat-label">THE ABSOLUTE BOLLOCKS</div><div class="final-stat-sub">ZONDAG?</div><div class="final-stat-main"><strong id="finalTopName">—</strong><span id="finalTopScore">—</span></div><div class="final-stat-bar"><i id="finalTopBar"></i></div></div><div class="final-stat"><div class="final-stat-label">DE KLOOTZAK</div><div class="final-stat-sub">BEST OF BOTH WORLDS</div><div class="final-stat-main"><strong id="finalMidName">—</strong><span id="finalMidScore">—</span></div><div class="final-stat-bar"><i id="finalMidBar"></i></div></div><div class="final-stat"><div class="final-stat-label">THE LIONEL RICHIE</div><div class="final-stat-sub">EASY LIKE A SONNTAG MORGEN</div><div class="final-stat-main"><strong id="finalLowName">—</strong><span id="finalLowScore">—</span></div><div class="final-stat-bar"><i id="finalLowBar"></i></div></div></div></section>
+      <div class="section-title nav-anchor" id="groep">
+        <h2>Waar is iedereen?</h2>
+        <span>laatste check-ins &amp; tussenstand</span>
+      </div>
+      <section class="group" id="groupList">
+        <div class="empty">
+          Vul bovenaan je naam in. Daarna kan iedereen op een stop op
+          <strong>“Check in ✓”</strong>
+          tikken.
+        </div>
+      </section>
+      <section class="dayresult finalresult nav-anchor" id="finalResult">
+        <div class="result-kicker" id="resultStageTitle">KLOTENTUSSENSTAND</div>
+        <div class="final-grid">
+          <div class="final-stat">
+            <div class="final-stat-label">THE ABSOLUTE BOLLOCKS</div>
+            <div class="final-stat-sub">ZONDAG?</div>
+            <div class="final-stat-main">
+              <strong id="finalTopName">—</strong>
+              <span id="finalTopScore">—</span>
+            </div>
+            <div class="final-stat-bar">
+              <i id="finalTopBar"></i>
+            </div>
+          </div>
+          <div class="final-stat">
+            <div class="final-stat-label">DE KLOOTZAK</div>
+            <div class="final-stat-sub">BEST OF BOTH WORLDS</div>
+            <div class="final-stat-main">
+              <strong id="finalMidName">—</strong>
+              <span id="finalMidScore">—</span>
+            </div>
+            <div class="final-stat-bar">
+              <i id="finalMidBar"></i>
+            </div>
+          </div>
+          <div class="final-stat">
+            <div class="final-stat-label">THE LIONEL RICHIE</div>
+            <div class="final-stat-sub">EASY LIKE A SONNTAG MORGEN</div>
+            <div class="final-stat-main">
+              <strong id="finalLowName">—</strong>
+              <span id="finalLowScore">—</span>
+            </div>
+            <div class="final-stat-bar">
+              <i id="finalLowBar"></i>
+            </div>
+          </div>
+        </div>
+      </section>
       <section class="route-only nav-anchor" id="routeSection">
         <a class="routebtn" id="fullRoute" target="_blank" rel="noopener">Open hele ronde in Google Maps</a>
       </section>
@@ -66,20 +165,38 @@
     <div class="bottom-nav-shell" id="bottomNavShell">
       <nav class="bottom-tabs" id="bottomTabs" aria-label="Hoofdnavigatie">
         <button class="bottom-tab active" type="button" data-tab-target="hier" aria-current="page">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5.2"/><circle cx="12" cy="12" r="1.8"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21"/></svg>
-        <span>Hier</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5.2"/>
+            <circle cx="12" cy="12" r="1.8"/>
+            <path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21"/>
+          </svg>
+          <span>Hier</span>
         </button>
         <button class="bottom-tab" type="button" data-tab-target="stand">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16a7 7 0 1 1 14 0"/><path d="M12 16l4-4"/><circle cx="12" cy="16" r="1.5"/><path d="M7 18h10"/></svg>
-        <span>Tussenstand</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 16a7 7 0 1 1 14 0"/>
+            <path d="M12 16l4-4"/>
+            <circle cx="12" cy="16" r="1.5"/>
+            <path d="M7 18h10"/>
+          </svg>
+          <span>Tussenstand</span>
         </button>
         <button class="bottom-tab" type="button" data-tab-target="rest">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="3"/><circle cx="16.5" cy="10" r="2.4"/><path d="M3.8 19c.6-3.2 2.6-5 5.2-5s4.6 1.8 5.2 5"/><path d="M14.3 14.5c2.9-.5 5.2 1.2 5.9 4.5"/></svg>
-        <span>De rest</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="9" cy="9" r="3"/>
+            <circle cx="16.5" cy="10" r="2.4"/>
+            <path d="M3.8 19c.6-3.2 2.6-5 5.2-5s4.6 1.8 5.2 5"/>
+            <path d="M14.3 14.5c2.9-.5 5.2 1.2 5.9 4.5"/>
+          </svg>
+          <span>De rest</span>
         </button>
       </nav>
       <a class="bottom-map" id="bottomMap" target="_blank" rel="noopener" aria-label="Open hele ronde in Google Maps">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5 3.5 7v12L8 17l8 2 4.5-2V5L16 7 8 5Z"/><path d="M8 5v12M16 7v12"/><path d="M12 8.5c1.4 0 2.5 1.1 2.5 2.5 0 1.9-2.5 4.5-2.5 4.5S9.5 12.9 9.5 11c0-1.4 1.1-2.5 2.5-2.5Z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 5 3.5 7v12L8 17l8 2 4.5-2V5L16 7 8 5Z"/>
+          <path d="M8 5v12M16 7v12"/>
+          <path d="M12 8.5c1.4 0 2.5 1.1 2.5 2.5 0 1.9-2.5 4.5-2.5 4.5S9.5 12.9 9.5 11c0-1.4 1.1-2.5 2.5-2.5Z"/>
+        </svg>
       </a>
     </div>
     <div class="overlay" id="loginOverlay">
@@ -89,7 +206,11 @@
           <div class="login-app-subtitle">Onze dag, route en tussenstand</div>
         </div>
         <div class="minihead">Wie ben jij?</div>
-        <h2>Naam erin.<br>Klaar.</h2>
+        <h2>
+          Naam erin.
+          <br>
+          Klaar.
+        </h2>
         <p>Alleen je voornaam is genoeg. Daarmee zien de anderen waar je bent en hoe dramatisch je daggemiddelde ervoor staat.</p>
         <input id="nameInput" maxlength="24" autocomplete="nickname" placeholder="Voornaam" />
         <button id="loginBtn">Start de dag</button>
@@ -104,38 +225,60 @@
         </div>
         <div class="onboarding-stage">
           <section class="onboarding-slide active" data-onboarding-slide="0">
-            <div class="onboarding-visual ob-program" data-onboarding-visual="program"><div class="ob-canvas"></div></div>
+            <div class="onboarding-visual ob-program" data-onboarding-visual="program">
+              <div class="ob-canvas"></div>
+            </div>
             <div class="onboarding-kicker">1 · De dag</div>
             <h2>De hele dag geregeld.</h2>
             <p>Zon of regen, het programma staat klaar. Bekijk het alvast en wees enthousiast of verberg je teleurstelling.</p>
             <p class="punch">We kiezen zon of regen afhankelijk van het weer en onze mood.</p>
           </section>
           <section class="onboarding-slide" data-onboarding-slide="1">
-            <div class="onboarding-visual ob-here-still" data-onboarding-visual="here"><div class="ob-canvas"></div></div>
+            <div class="onboarding-visual ob-here-still" data-onboarding-visual="here">
+              <div class="ob-canvas"></div>
+            </div>
             <div class="onboarding-kicker">2 · Check-in</div>
             <h2>Tik als je er bent.</h2>
-            <p>Aangekomen bij een stop? Tik op <strong>Check in ✓</strong>. Iemand kwijt? Onderin de app en per event zie je live waar iedereen is.</p>
+            <p>
+              Aangekomen bij een stop? Tik op
+              <strong>Check in ✓</strong>
+              . Iemand kwijt? Onderin de app en per event zie je live waar iedereen is.
+            </p>
             <p class="punch">Maar bovenal is de Check in ✓ — muy importante vóór de METER.</p>
           </section>
           <section class="onboarding-slide" data-onboarding-slide="2">
-            <div class="onboarding-visual ob-meter-still" data-onboarding-visual="meter"><div class="ob-canvas"></div></div>
+            <div class="onboarding-visual ob-meter-still" data-onboarding-visual="meter">
+              <div class="ob-canvas"></div>
+            </div>
             <div class="onboarding-kicker">3 · Tussenstand</div>
             <h2>Naar de klote-meter.</h2>
             <p>Na iedere stop vul je de meter in. Zo zie je je dagstand en elkaars scores.</p>
             <p class="punch">Aan het einde weten we wie de absolute draak is en wie zondag nog iets aan zijn leven heeft.</p>
           </section>
           <section class="onboarding-slide" data-onboarding-slide="3">
-            <div class="onboarding-visual ob-options-still" data-onboarding-visual="options"><div class="ob-canvas"></div></div>
+            <div class="onboarding-visual ob-options-still" data-onboarding-visual="options">
+              <div class="ob-canvas"></div>
+            </div>
             <div class="onboarding-kicker">4 · Wisselen</div>
             <h2>Geen vibe? Switch gewoon.</h2>
             <p>Voor kroegen, terrassen en lunch staan drie alternatieven op loopafstand klaar.</p>
-            <p class="punch">Plekken met <strong>Boek</strong> zijn vooraf gereserveerd. Daar valt niet aan te tornen.</p>
+            <p class="punch">
+              Plekken met
+              <strong>Boek</strong>
+              zijn vooraf gereserveerd. Daar valt niet aan te tornen.
+            </p>
           </section>
           <section class="onboarding-slide" data-onboarding-slide="4">
-            <div class="onboarding-visual ob-route-still" data-onboarding-visual="route"><div class="ob-canvas"></div></div>
+            <div class="onboarding-visual ob-route-still" data-onboarding-visual="route">
+              <div class="ob-canvas"></div>
+            </div>
             <div class="onboarding-kicker">5 · Hele route</div>
             <h2>Bekijk de hele route.</h2>
-            <p>Helemaal onderaan staat <strong>Open hele ronde in Google Maps</strong>. De route en looptijd passen zich aan als we van plek wisselen.</p>
+            <p>
+              Helemaal onderaan staat
+              <strong>Open hele ronde in Google Maps</strong>
+              . De route en looptijd passen zich aan als we van plek wisselen.
+            </p>
             <p class="punch">Reken op maximaal twee uur lopen. Bergschoenen kunnen thuisblijven.</p>
           </section>
         </div>
@@ -143,7 +286,11 @@
           <button class="onboarding-back" id="onboardingBack" type="button" aria-label="Terug naar naam">←</button>
           <button class="onboarding-next" id="onboardingNext" type="button">Volgende</button>
           <div class="onboarding-progress" id="onboardingProgress" aria-hidden="true">
-            <i class="active"></i><i></i><i></i><i></i><i></i>
+            <i class="active"></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
           </div>
         </div>
       </div>

@@ -403,7 +403,7 @@ function herdMoment(){if(!user||!currentStop||participants.length!==6||!particip
 function renderFinalResult(){
 var box=$('#finalResult'),title=$('#resultStageTitle');if(!box)return;
 var isFinal=resultsFinalized&&currentStop==='finish';
-if(title)title.textContent=isFinal?'Eindstand':'Tussenstand';
+if(title)title.textContent=isFinal?'KLOTENEINDSTAND':'KLOTENTUSSENSTAND';
 var scored=participants.map(function(p){return{p:p,r:participantResult(p)}}).filter(function(x){return x.r.avg!==null});
 var clearResult=function(nameEl,scoreEl,barEl){var n=$(nameEl),s=$(scoreEl),b=$(barEl);if(n)n.textContent='—';if(s)s.textContent='—';if(b){b.style.width='0%';b.style.background='transparent'}};
 box.hidden=false;
