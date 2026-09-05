@@ -18,7 +18,6 @@ De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, i
 - Google Maps-navigatie per locatie
 - Eén Google Places-foto per actieve stopkaart, direct boven de locatienaam; wissel je naar een alternatief, dan wisselt de foto automatisch mee
 - **Open hele ronde in Google Maps** met actuele route en looptijd
-- Zwevende bottom navigation met **De dag · Tussenstand · Route** en eigen line-icons in dezelfde appstijl
 - Drie alternatieven bij wisselbare stops
 - **Info** voor locatie-informatie en **Boek** bij gereserveerde locaties
 - **Check in ✓**-knop per stop
@@ -51,8 +50,6 @@ Na het invoeren van een naam verschijnt een onboarding met vijf vaste slides:
 De slides gebruiken echte onderdelen uit de live interface als still. Niet-relevante onderdelen worden subtiel gedimd zodat de belangrijkste interactie duidelijk blijft zonder de rest van de app onleesbaar te maken.
 
 De terugknop op slide 1 gaat terug naar het naamveld. De ingevoerde naam blijft daarbij alvast ingevuld.
-
-Na afronden of overslaan van de onboarding opent de app altijd **helemaal bovenaan**, zodat `UTCA // FÜR DIE MÄNNER`, de datum, ingelogde groep en Zon/Regen direct in beeld staan. Browser-scrollrestauratie wordt daarbij bewust genegeerd.
 
 ---
 
@@ -418,7 +415,7 @@ Deze release bouwt rechtstreeks voort op v67. De bestaande kleuren, glass/liquid
 - de Google API-key staat uitsluitend server-side als Cloudflare secret `GOOGLE_MAPS_API_KEY`;
 - foto’s laden lazy via `IntersectionObserver`, zodat niet alle stops direct netwerkverkeer veroorzaken;
 - als bij een wisselbare stop een alternatief wordt gekozen, rendert de kaart opnieuw en wordt automatisch de foto van die nieuwe venue opgehaald;
-- als Google Places nog niet is ingesteld of geen foto teruggeeft, blijft het gereserveerde fotovak bewust leeg; zodra de API beschikbaar is vult dezelfde plek zich automatisch met de locatie-foto;
+- als Google Places geen foto teruggeeft of de key niet is ingesteld, wordt geen leeg fotovak getoond en blijft de oude v67-layout intact;
 - de foto bevat een zichtbare **Google Maps**-bronvermelding en opent bij tikken de bronfoto in Google Maps wanneer Google die link meestuurt;
 - Google photo-resource-names worden niet opgeslagen of gecachet;
 - PWA assetversie verhoogd naar `v=68` en service-worker shell-cache naar `utca-shell-v18`.
@@ -490,37 +487,3 @@ Deze release verandert uitsluitend de snelheid van de Indiana-Jones-achtige tijd
 - De node-arrival gebeurt nog steeds pas nadat de tracer de volgende stop bereikt.
 - `prefers-reduced-motion` blijft gerespecteerd.
 - PWA assetversie verhoogd naar `v=71` en service-worker shell-cache naar `utca-shell-v21`, zodat bestaande homescreen-installaties de nieuwe timing ophalen.
-
----
-
-## v72 — bottom navigation, top-open & photo placeholder
-
-Deze release bouwt rechtstreeks voort op v71. De route-data, check-in-logica, cinematic timeline, Naar de klote-meter, EINDUITSLAG, D1/API-contracten en Google Places-endpoints zijn niet gewijzigd.
-
-### Bottom navigation
-
-- Nieuwe zwevende glass-tabbar onderaan met drie compacte tabs: **De dag**, **Tussenstand** en **Route**.
-- De iconen zijn als lichte inline SVG line-icons opgebouwd en gebruiken dezelfde stroke, afgeronde vormen en lime/blauwe actieve accentkleur als de rest van de app.
-- **De dag** gebruikt een timeline/list-icoon, **Tussenstand** een meter/gauge en **Route** een route/pin-icoon.
-- Tikken op een tab scrolt vloeiend naar het bestaande relevante onderdeel; er is geen nieuwe pagina, router of framework toegevoegd.
-- De actieve tab volgt de scrollpositie.
-- De tabbar gebruikt iOS/Android safe-area padding en extra onderruimte zodat hij geen content afdekt.
-
-### Openen vanaf boven
-
-- Na de laatste onboarding-slide, **Overslaan** of een nieuwe sessie opent de app op scrollpositie 0.
-- Browser `scrollRestoration` staat op `manual` om te voorkomen dat Safari/Chrome de PWA halverwege de vorige route terugzet.
-- Dit verandert niets aan de bestaande knop/actie waarmee een gebruiker later bewust naar een specifieke stop springt.
-
-### Google Places-fotovak
-
-- Het bestaande Google Places-fotovak uit v68-v71 blijft nu **zichtbaar als een leeg, rustig glass-vak** zolang `GOOGLE_MAPS_API_KEY` nog niet is ingesteld.
-- Er staat geen placeholdertekst, foutmelding of Google-label in het lege vak.
-- Zodra de API later is ingesteld, laadt dezelfde plek automatisch de Google Places-foto en verschijnt de vereiste Google Maps-bronvermelding.
-- Bij het wisselen van venue blijft de bestaande logica gelden: het fotovak wordt opnieuw gekoppeld aan de gekozen locatie en haalt daarvan de foto op.
-
-### Versie/cache
-
-- PWA assetversie verhoogd naar `v=72`.
-- Service-worker shell-cache verhoogd naar `utca-shell-v22`.
-
