@@ -1,5 +1,15 @@
 # UTCA // FÜR DIE MÄNNER
 
+## v77 — Tussenstand / Eindstand
+
+- Bottom navigation is nu **Hier · Tussenstand · De rest**; de middelste tab springt rechtstreeks naar het scoreblok.
+- Het voormalige **Einduitslag**-blok is gedurende de dag zichtbaar als **Tussenstand** en toont live de actuele percentages uit de Naar-de-klote-meter.
+- Op de laatste stop blijft het blok **Tussenstand** totdat op **KLAAR** wordt gedrukt; daarna verandert de kop in **Eindstand** en wordt naar het blok gescrold.
+- De drie bestaande uitslagkaarten en labels blijven visueel intact en worden met de actuele scores bijgewerkt.
+- De losse Google Maps-knop, eenvoudige linker tijdlijn, rustige v67-stijl check-in, Google-photo placeholder en overige functionaliteit zijn ongewijzigd.
+- PWA-assets naar `v=76`; shell-cache naar `utca-shell-v25`.
+
+
 Mobiele webapp voor de vriendendag in Utrecht op **zaterdag 26 september 2026**.
 
 De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, inchecken, zien waar de rest is, alternatieven kiezen en na iedere relevante stop de **Naar de klote-meter** invullen.
@@ -9,6 +19,15 @@ De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, i
 > Dit is een vrienden-try-out / MVP. De pagina is bewust ingesteld op `noindex` en is bedoeld om via de directe link te gebruiken.
 
 ---
+
+## v75 — rustige check-in terug (v67-gedrag)
+
+- Check-in kaartanimatie/reflow verwijderd; geen beweging meer van beneden naar boven.
+- Check-in knop wisselt weer rustig/direct van status zoals in v67; tekst `Check in ✓` blijft altijd zichtbaar.
+- De eenvoudige linker tijdlijn uit v75/v65 blijft behouden: afgelegde segmenten zijn volledig lime (of blauw in Regen).
+- Na check-in wordt de actieve stopkaart zonder scrollanimatie alleen zo nodig in beeld gezet.
+- Bottom navigation, Google-photo placeholders, top-open gedrag en overige functionaliteit blijven intact.
+
 
 ## Wat de app doet
 
@@ -30,7 +49,7 @@ De app is het gezamenlijke draaiboek voor de dag: programma volgen, navigeren, i
 - Tussentijdse dagstand en groepsgemiddelde
 - Korte meterreactie in de bestaande tone of voice (`Verdacht fris` → `Balzak.`), waarbij score 4 bewust **Ik hier?** blijft
 - Bij 6/6 op dezelfde stop verandert de actieve check-in-knop één keer kort naar **Grupo completo ✓**
-- Bij de finish verschijnt **EINDUITSLAG** met drie losse scorekaarten en bijbehorende kleurbalken: **THE ABSOLUTE BOLLOCKS** — *ZONDAG BESTAAT NIET*, **DE KLOOTZAK** — *BEST OF BOTH WORLDS* en **THE LIONEL RICHIE** — *EASY LIKE A SONNTAG MORGEN*. **DE KLOOTZAK** is degene wiens eindpercentage het dichtst bij het exacte midden tussen de hoogste en laagste eindscore ligt
+- Bij de finish verschijnt **EINDUITSLAG** met drie losse scorekaarten en bijbehorende kleurbalken: **THE ABSOLUTE BOLLOCKS** — *ZONDAG?*, **DE KLOOTZAK** — *BEST OF BOTH WORLDS* en **THE LIONEL RICHIE** — *EASY LIKE A SONNTAG MORGEN*. **DE KLOOTZAK** is degene wiens eindpercentage het dichtst bij het exacte midden tussen de hoogste en laagste eindscore ligt
 - Vijfdelige onboarding bij iedere nieuwe login
 - Mobile-first, donkere glass/liquid-interface
 - Installeerbaar als **standalone webapp/PWA** op Android (Chrome) en iPhone
@@ -389,7 +408,7 @@ Een stop overslaan verandert dit niet: check je direct bij lunch in, dan staat d
 
 - Alleen het **EINDUITSLAG**-blok is visueel aangepast; de berekening en overige functionaliteit zijn ongewijzigd.
 - Nieuwe labels en subtitels:
-  - **THE ABSOLUTE BOLLOCKS** — *ZONDAG BESTAAT NIET*
+  - **THE ABSOLUTE BOLLOCKS** — *ZONDAG?*
   - **DE KLOOTZAK** — *BEST OF BOTH WORLDS*
   - **THE LIONEL RICHIE** — *EASY LIKE A SONNTAG MORGEN*
 - De subtitels staan als compacte secundaire tekst onder de groene resultaatslabels.
@@ -569,7 +588,7 @@ Deze release bouwt rechtstreeks voort op v72 en houdt dezelfde HTML/CSS/vanilla-
 - PWA assetversie verhoogd naar `v=73`.
 - Service-worker shell-cache verhoogd naar `utca-shell-v23`.
 
-## v74 — eenvoudige linker tijdlijn + stabiele check-in viewport
+## v75 — eenvoudige linker tijdlijn + stabiele check-in viewport
 
 Deze release bouwt voort op v73 en wijzigt alleen de linker navigatielijn en het gedrag rond het in beeld houden van een zojuist ingecheckte stop.
 
