@@ -99,7 +99,7 @@ function bandForValue(v){return meterBands[Math.max(1,Math.min(5,Math.round(Numb
 function percentFromAverage(avg){return Math.round(Math.max(0,Math.min(100,((avg-1)/4)*100)))}
 function averageFromRatings(obj){obj=obj||ratings;var allowed={};meterStops().forEach(function(s){allowed[s.id]=true});var vals=[];for(var k in obj){if(Object.prototype.hasOwnProperty.call(obj,k)&&allowed[k]&&Number(obj[k])>=1&&Number(obj[k])<=5)vals.push(Number(obj[k]))}if(!vals.length)return{avg:null,count:0,total:Object.keys(allowed).length};var sum=0;vals.forEach(function(v){sum+=v});return{avg:sum/vals.length,count:vals.length,total:Object.keys(allowed).length}}
 function persistRatings(){storeSet('utca-ratings',JSON.stringify(ratings))}
-function renderUser(){var n=$('#userName'),chip=$('#userChip'),overlay=$('#loginOverlay'),shell=$('#bottomNavShell');if(n)n.textContent=user;if(chip)chip.classList.toggle('show',!!user);if(overlay)overlay.classList.toggle('show',!user);if(shell)shell.classList.toggle('show',!!user)}
+function renderUser(){var n=$('#userName'),chip=$('#userChip'),overlay=$('#loginOverlay'),shell=$('#bottomNavShell'),rt=$('#rosterToggle'),rw=$('#rosterWrap');if(n)n.textContent=user;if(chip)chip.classList.toggle('show',!!user);if(overlay)overlay.classList.toggle('show',!user);if(shell)shell.classList.toggle('show',!!user);if(rt)rt.classList.toggle('show',!!user);if(rw&&!user)rw.classList.remove('open')}
 function externalAttrs(url){return url&&url.indexOf('tel:')===0?'':' target="_blank" rel="noopener"'}
 function venueOptions(x){
 var primary={name:x.optionName||x.name,note:x.optionNote||x.addr,desc:x.desc,addr:x.addr,geo:x.geo,info:x.info,reserve:x.reserve||''};
@@ -244,7 +244,7 @@ var nextStop=arr[nextIdx],next=activeVenue(nextStop),w=walkMinutes(now,next);
 if(nextEl)nextEl.textContent=next.name;
 var t=sch[nextIdx]&&sch[nextIdx].start!==null?fmtTime(sch[nextIdx].start):'';
 if(metaEl)metaEl.textContent=(t?t+' · ':'')+'± '+w+' min lopen';
-if(navEl){navEl.onclick=null;navEl.href=nav(next.addr);navEl.classList.remove('disabled','done');navEl.textContent='NAVIGEER'}
+if(navEl){navEl.onclick=null;navEl.href=nav(next.addr);navEl.classList.remove('disabled','done');navEl.textContent='Navigeer'}
 }
 function ensureNoConsecutiveDuplicate(){
 var arr=itinerary(),changed=false;
@@ -320,7 +320,7 @@ html+='<span class="stop-person-chip '+(isMe?'me':'')+'">'+escapeHtml(p.name)+(i
 html+='</div>';
 return html;
 }
-function meterHtml(x){if(!x.meter)return'';var v=Number(ratings[x.id]||0),band=v?bandForValue(v):null,buttons='';for(var n=1;n<=5;n++)buttons+='<button data-rate="'+x.id+'" data-value="'+n+'" class="'+(v===n?'active':'')+'" aria-pressed="'+(v===n?'true':'false')+'" aria-label="Score '+n+'">'+n+'</button>';return '<div class="stop-meter"><div class="stop-meter-head"><div class="stop-meter-title">Naar de klote meter</div><div class="stop-meter-state">'+(v?v+'/5':'Nog invullen')+'</div></div><div class="stop-meter-buttons">'+buttons+'</div><div class="meter-scale-labels"><span>Fris</span><span>Naar de klote</span></div><div class="stop-meter-copy">'+(band?'<strong>'+band.label+'</strong>':'Tik 1–5 na dit onderdeel.')+'</div></div>'}
+function meterHtml(x){if(!x.meter)return'';var v=Number(ratings[x.id]||0),band=v?bandForValue(v):null,buttons='';for(var n=1;n<=5;n++)buttons+='<button data-rate="'+x.id+'" data-value="'+n+'" class="'+(v===n?'active':'')+'" aria-pressed="'+(v===n?'true':'false')+'" aria-label="Score '+n+'">'+n+'</button>';return '<div class="stop-meter"><div class="stop-meter-head"><div class="stop-meter-title">Naar de klote-meter</div><div class="stop-meter-state">'+(v?v+'/5':'Nog invullen')+'</div></div><div class="stop-meter-buttons">'+buttons+'</div><div class="meter-scale-labels"><span>Fris</span><span>Naar de klote</span></div><div class="stop-meter-copy">'+(band?'<strong>'+band.label+'</strong>':'Tik 1–5 na dit onderdeel.')+'</div></div>'}
 function updateMeterUi(id){var meter=document.querySelector('.card[data-stop="'+id+'"] .stop-meter');if(!meter)return;var v=Number(ratings[id]||0),band=v?bandForValue(v):null;meter.querySelectorAll('[data-rate]').forEach(function(b){var on=Number(b.getAttribute('data-value'))===v;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on?'true':'false')});var state=meter.querySelector('.stop-meter-state'),copy=meter.querySelector('.stop-meter-copy');if(state)state.textContent=v?v+'/5':'Nog invullen';if(copy)copy.innerHTML=band?'<strong>'+band.label+'</strong>':'Tik 1–5 na dit onderdeel.'}
 function renderStopPeople(){$$('.card[data-stop]').forEach(function(card){var id=card.getAttribute('data-stop'),old=card.querySelector('.stop-people'),html=peopleAtStopHtml(id);if(old){if(html)old.outerHTML=html;else old.remove()}else if(html){var meter=card.querySelector('.stop-meter');if(meter)meter.insertAdjacentHTML('beforebegin',html);else card.insertAdjacentHTML('beforeend',html)}})}
 var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.6 4.5L19 6.5"/></svg>';
@@ -363,7 +363,7 @@ var walkState=(st.cur>=0&&i<=st.cur)?'done':'todo';
 if(wd.walk>0||(wd.depart!==null&&wd.start!==null&&wd.start>wd.depart))html+='<div class="tl-row walkrow '+walkState+'"><span class="tl-rail" aria-hidden="true"></span><div class="walk"><span>'+range+'</span><div class="rule"></div><span>'+wd.text+'</span></div></div>';
 }
 var v=activeVenue(x),timeLabel=displayStopTime(x,sch[i]);
-html+='<div class="tl-row stop '+states[i]+'">'+railHtml(states[i],x.id)+'<article class="card '+(currentStop===x.id?'current':'')+'" data-stop="'+x.id+'"><div class="top"><div class="topleft">'+stopBadge(x.icon)+'<div class="time">'+timeLabel+'</div></div><a class="navbtn" href="'+nav(v.addr)+'" target="_blank" rel="noopener">NAVIGEER</a></div>'+placePhotoHtml(v,(st.cur>=0?(i===st.cur||i===st.cur+1):i<2)?'high':'auto')+'<div class="name">'+escapeHtml(v.name)+'</div><p class="desc">'+escapeHtml(v.desc)+'</p><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="12" r="6.4"/><path d="M12 3.4v2.2M12 18.4v2.2M3.4 12h2.2M18.4 12h2.2"/></svg> '+escapeHtml(v.addr)+'</div>'+alternativesHtml(x)+'<div class="row"><div class="circles"><a class="round" href="'+v.info+'" target="_blank" rel="noopener" aria-label="Google Maps reviews">Info</a>'+(v.reserve?'<a class="round r" href="'+v.reserve+'"'+externalAttrs(v.reserve)+' aria-label="Reserveren">Boek</a>':'')+'</div><button class="here '+(currentStop===x.id?'active':'')+'" data-here="'+x.id+'" aria-pressed="'+(currentStop===x.id?'true':'false')+'" '+(user?'':'disabled')+'><span class="here-label">Check in ✓</span></button></div>'+peopleAtStopHtml(x.id)+meterHtml(x)+'</article></div>';
+html+='<div class="tl-row stop '+states[i]+'">'+railHtml(states[i],x.id)+'<article class="card '+(currentStop===x.id?'current':'')+'" data-stop="'+x.id+'"><div class="card-media">'+placePhotoHtml(v,(st.cur>=0?(i===st.cur||i===st.cur+1):i<2)?'high':'auto')+'<div class="media-scrim"></div><div class="media-top"><span class="media-time">'+stopBadge(x.icon)+'<span class="time">'+timeLabel+'</span></span><span class="media-index">Stop '+(i+1)+' · '+arr.length+'</span></div><div class="media-title"><div class="name">'+escapeHtml(v.name)+'</div><div class="location">'+escapeHtml(v.addr)+'</div></div></div><div class="card-body"><p class="desc">'+escapeHtml(v.desc)+'</p><div class="row"><div class="circles"><a class="round" href="'+v.info+'" target="_blank" rel="noopener" aria-label="Google Maps reviews">Info</a>'+(v.reserve?'<a class="round r" href="'+v.reserve+'"'+externalAttrs(v.reserve)+' aria-label="Reserveren">Boek</a>':'')+'</div><a class="navbtn" href="'+nav(v.addr)+'" target="_blank" rel="noopener">Navigeer</a></div><button class="here '+(currentStop===x.id?'active':'')+'" data-here="'+x.id+'" aria-pressed="'+(currentStop===x.id?'true':'false')+'" '+(user?'':'disabled')+'><span class="here-label">Check in ✓</span></button>'+alternativesHtml(x)+peopleAtStopHtml(x.id)+meterHtml(x)+'</div></article></div>';
 });
 $('#timeline').innerHTML=html;
 initPlacePhotos();
@@ -379,7 +379,7 @@ var wrap=$('#tlProgress'),bar=$('#tlProgressBar'),label=$('#tlProgressLabel');
 if(!wrap)return;
 if(!user||!position){wrap.hidden=true;return}
 wrap.hidden=false;
-label.innerHTML='<strong>'+position+'</strong> van '+total+' afgelegd';
+label.innerHTML='<strong>'+position+'</strong> / '+total;
 bar.style.width=Math.round(position/total*100)+'%';
 }
 function renderDayResult(){var r=averageFromRatings(),pct=$('#dayPercent'),bar=$('#dayBar'),copy=$('#dayCopy'),meta=$('#dayMeta');if(r.avg===null){pct.textContent='—';bar.style.width='0%';bar.style.background=meterBands[1].color;copy.textContent='Vul onder een onderdeel de meter in. Alleen ingevulde meters tellen mee.';meta.textContent='0 van '+r.total+' onderdelen ingevuld';return}var p=percentFromAverage(r.avg),band=meterBands[bandForScore(r.avg)];pct.textContent=p+'%';bar.style.width=p+'%';bar.style.background=band.color;copy.innerHTML='<strong>'+band.label+'</strong>';meta.textContent='Gemiddeld '+r.avg.toFixed(1)+'/5 · '+r.count+' van '+r.total+' onderdelen ingevuld'}
@@ -404,7 +404,7 @@ function herdMoment(){if(!user||!currentStop||participants.length!==6||!particip
 function renderFinalResult(){
 var box=$('#finalResult'),title=$('#resultStageTitle');if(!box)return;
 var isFinal=resultsFinalized&&currentStop==='finish';
-if(title)title.textContent=isFinal?'KLOTENEINDSTAND':'KLOTENTUSSENSTAND';
+if(title)title.textContent=isFinal?'EINDSTAND':'TUSSENSTAND';
 var scored=participants.map(function(p){return{p:p,r:participantResult(p)}}).filter(function(x){return x.r.avg!==null});
 var clearResult=function(nameEl,scoreEl,barEl){var n=$(nameEl),s=$(scoreEl),b=$(barEl);if(n)n.textContent='—';if(s)s.textContent='—';if(b){b.style.width='0%';b.style.background='transparent'}};
 box.hidden=false;
@@ -418,8 +418,17 @@ setResult('#finalMidName','#finalMidScore','#finalMidBar',escapeHtml(balance.p.n
 setResult('#finalLowName','#finalLowScore','#finalLowBar',names(lo),lo);
 }
 function renderRoster(){
-var box=$('#roster'),count=$('#rosterCount');
+var box=$('#roster'),count=$('#rosterCount'),countFull=$('#rosterCountFull'),stack=$('#rosterStack'),toggle=$('#rosterToggle');
 if(count)count.textContent=participants.length+'/6';
+if(countFull)countFull.textContent=participants.length+'/6';
+if(toggle)toggle.classList.toggle('show',!!user);
+if(stack){
+var av='';
+participants.slice(0,3).forEach(function(p){var isMe=user&&p.name.toLowerCase()===user.toLowerCase();av+='<span class="roster-avatar '+(isMe?'me':'')+'" aria-hidden="true">'+escapeHtml(p.name.charAt(0))+'</span>'});
+if(participants.length>3)av+='<span class="roster-avatar more" aria-hidden="true">+'+(participants.length-3)+'</span>';
+if(!av)av='<span class="roster-avatar more" aria-hidden="true">·</span>';
+stack.innerHTML=av;
+}
 if(!box)return;
 if(!participants.length){box.innerHTML='<span class="roster-empty">Nog niemand zichtbaar.</span>';return}
 var html='';
@@ -665,11 +674,9 @@ var options=$('[data-onboarding-visual="options"] .ob-canvas');
 var route=$('[data-onboarding-visual="route"] .ob-canvas');
 if(!program||!here||!meter||!options||!route)return;
 program.innerHTML='';here.innerHTML='';meter.innerHTML='';options.innerHTML='';route.innerHTML='';
-var switcher=$('.switcher'),journey=$('#journeyBar'),sectionTitle=$('.section-title'),progress=$('#tlProgress'),firstStop=$('.tl-row.stop');
-if(switcher){var s=onboardingClone(switcher);if(s)program.appendChild(s)}
-if(journey){var j=onboardingClone(journey);if(j)program.appendChild(j)}
+var journey=$('#journeyBar'),sectionTitle=$('.section-title'),firstStop=$('.tl-row.stop');
+if(journey){var j=onboardingClone(journey);if(j){var jp=j.querySelector('.tl-progress');if(jp){jp.hidden=false;var jpb=jp.querySelector('i');if(jpb)jpb.style.width='18%';var jpl=jp.querySelector('span:last-child');if(jpl)jpl.innerHTML='<strong>2</strong> / 11'}program.appendChild(j)}}
 if(sectionTitle){var st=onboardingClone(sectionTitle);if(st)program.appendChild(st)}
-if(progress){var p=onboardingClone(progress);if(p){p.hidden=false;program.appendChild(p)}}
 if(firstStop){var fs=onboardingClone(firstStop);if(fs)program.appendChild(fs)}
 var hereCard=$('.card[data-stop="'+weatherStop[mode].id+'"]')||$('.card[data-stop="lunch"]');
 var hc=onboardingClone(hereCard);
@@ -678,7 +685,7 @@ hc.classList.add('current');
 var hb=hc.querySelector('.here');
 if(hb){hb.classList.add('active');setHereButtonLabel(hb,'Check in ✓')}
 here.appendChild(hc);
-var hp=hc.querySelector('[data-place-photo]');if(hp)setStaticOnboardingPhoto(hp,'/onboarding-checkin.webp?v=88','Foto van Kanoverhuur Utrecht','https://maps.google.com/?q=Kanoverhuur+Utrecht+Oudegracht+aan+de+Werf+275+Utrecht')
+var hp=hc.querySelector('[data-place-photo]');if(hp)setStaticOnboardingPhoto(hp,'/onboarding-checkin.webp?v=89','Foto van Kanoverhuur Utrecht','https://maps.google.com/?q=Kanoverhuur+Utrecht+Oudegracht+aan+de+Werf+275+Utrecht')
 }
 var meterCard=$('.card[data-stop="'+weatherStop[mode].id+'"] .stop-meter')||$('.card[data-stop="lunch"] .stop-meter');
 var mc=onboardingClone(meterCard);
@@ -707,7 +714,7 @@ meter.appendChild(dr);
 var optionCard=$('.card[data-stop="bars"]')||$('.card[data-stop="lunch"]');
 var oc=onboardingClone(optionCard);
 if(oc){
-var op=oc.querySelector('.venue-photo');if(op)setStaticOnboardingPhoto(op,'/onboarding-options.webp?v=88','Foto van Café De Morgenster','https://maps.google.com/?q=Caf%C3%A9+De+Morgenster+Oudegracht+323+Utrecht')
+var op=oc.querySelector('.venue-photo');if(op)setStaticOnboardingPhoto(op,'/onboarding-options.webp?v=89','Foto van Café De Morgenster','https://maps.google.com/?q=Caf%C3%A9+De+Morgenster+Oudegracht+323+Utrecht')
 var details=oc.querySelector('.alternatives');if(details)details.setAttribute('open','');
 options.appendChild(oc);
 }
@@ -812,7 +819,8 @@ toast('Hoi '+user+'. Succes ermee.');
 setTimeout(function(){openOnboarding()},90);
 }
 function bind(){
-var loginBtn=$('#loginBtn'),nameInput=$('#nameInput'),logout=$('#logout');
+var loginBtn=$('#loginBtn'),nameInput=$('#nameInput'),logout=$('#logout'),rosterToggle=$('#rosterToggle');
+if(rosterToggle)rosterToggle.onclick=function(){var w=$('#rosterWrap');if(!w)return;var open=w.classList.toggle('open');rosterToggle.setAttribute('aria-expanded',open?'true':'false')};
 if(loginBtn)loginBtn.onclick=login;
 if(nameInput)nameInput.addEventListener('keydown',function(e){if(e.key==='Enter'||e.keyCode===13)login()});
 if(logout)logout.onclick=function(){

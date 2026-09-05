@@ -1,5 +1,5 @@
-const CACHE_NAME='utca-shell-v36';
-const APP_SHELL=['/','/app.css?v=88','/app.js?v=88'];
+const CACHE_NAME='utca-shell-v37';
+const APP_SHELL=['/','/app.css?v=89','/app.js?v=89'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)).catch(()=>undefined));
   self.skipWaiting();

@@ -1,4 +1,51 @@
-# UTCA // FÜR DIE MÄNNER
+# DE RONDE // FÜR DIE MÄNNER
+
+## v89 — consistentie & verfraaiing
+
+Deze release voert de goedgekeurde design-review door. Route-data, check-ins, Naar-de-klote-meter, Google Places-fotologica, D1/API-contracten en onboardingflow zijn functioneel ongewijzigd.
+
+### Eén naam
+- De app heet overal **DE RONDE**: login, header, onboarding, manifest, `<title>` en iOS-webapptitel.
+- `UTCA // FÜR DIE MÄNNER` als losse header-merknaam is vervallen; de datumregel is `ZA 26 SEP 2026 · UTRECHT`.
+
+### Stopkaart
+- De venuefoto is **full-bleed** bovenaan de kaart in plaats van een kader binnen een kader.
+- Tijd + stopicoon staan in een glass-pill over de foto, rechtsboven het stopnummer (`Stop 2 · 11`).
+- Locatienaam en adres staan over de onderkant van de foto met een donkere scrim, dus altijd leesbaar — ook zonder Places-foto.
+- `Info`, `Boek` en `Navigeer` zijn nu drie gelijke secundaire knoppen van 44 px; `Check in ✓` is de enige primaire actie en staat op volle breedte (52 px).
+- `Navigeer` was 40 px en haalt nu de 44 px tapnorm.
+
+### Naar de klote-meter
+- De vijf verzadigde pillen zijn vervangen door **één schaal**: neutrale cijfers in een track, waarbij alleen de gekozen score zijn semantische kleur (groen → rood) krijgt.
+- Titel consequent `Naar de klote-meter` (met streepje), scoretekst als `3/5`.
+
+### Kop & statuskaart
+- Merkregel, deelnemerslijst, Zon/Regen en HUIDIGE/VOLGENDE waren vier losse stroken en zijn nu één blok: circa 120 px korter.
+- De ingelogde groep staat als **avatarstack** in de topbalk; tikken opent de volledige lijst met de bestaande × per deelnemer.
+- Zon/Regen is een compacte toggle ín de statuskaart en werkt exact als voorheen.
+- De dagvoortgang (`2 / 11`) is opgenomen in de statuskaart in plaats van als losse regel boven de tijdlijn.
+
+### Stand
+- `KLOTENTUSSENSTAND` / `KLOTENEINDSTAND` zijn op verzoek weer **TUSSENSTAND** / **EINDSTAND**.
+- De drie uitslagkaarten vormen een podium met rangcijfer 1/2/3; alleen nummer 1 krijgt de accentrand.
+- De balken erven de meterkleuren; namen, percentages en de berekening van **DE KLOOTZAK** zijn ongewijzigd.
+
+### Bottom navigation
+- De losse ronde Maps-knop is vervangen door een vierde tab **Route** in dezelfde balk: **Hier · Stand · De rest · Route**.
+- Vier gelijke targets van 56 px, één radius-familie (26/20), actieve tab in dezelfde lime vulling als Zon/Regen en `Check in ✓`.
+
+### Token-ladder (CSS-opruiming, geen zichtbare functiewijziging)
+- Knophoogtes terug van zeven naar drie: **44 px** secundair, **52 px** primair, **56 px** navigatie.
+- Radii terug van negen naar vier: **12 / 16 / 22 / pill** (plus `28` voor sheets).
+- Tekstkleuren terug van vijf naar drie: `--text`, `--text2`, `--text3`; `--muted` en `--faint` zijn samengevoegd.
+- Accentregel: **lime = actie** (check-in, navigeer, actieve tab, huidige stop). Merknaam en kopjes zijn wit.
+- De dubbele overrides van `.here`, `.journey-nav` en `.tl-rail` onderaan `app.css` zijn samengevoegd; het bestand is opnieuw geordend per component.
+- De inline critical CSS in `index.html` gebruikt exact dezelfde tokenwaarden als `app.css`, dus geen drift meer tussen de twee.
+
+### Versie/cache
+- PWA-assets naar `v=89`; shell-cache naar `utca-shell-v37`.
+- `_worker.js`, D1/API-contracten, Places-proxy en `robots.txt` zijn ongewijzigd.
+
 
 ## v88 — bottom navigation lager + CSS cleanup
 
