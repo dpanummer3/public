@@ -568,3 +568,29 @@ Deze release bouwt rechtstreeks voort op v72 en houdt dezelfde HTML/CSS/vanilla-
 
 - PWA assetversie verhoogd naar `v=73`.
 - Service-worker shell-cache verhoogd naar `utca-shell-v23`.
+
+## v74 — eenvoudige linker tijdlijn + stabiele check-in viewport
+
+Deze release bouwt voort op v73 en wijzigt alleen de linker navigatielijn en het gedrag rond het in beeld houden van een zojuist ingecheckte stop.
+
+### Linker navigatielijn
+
+- De cinematic/Indiana-Jones tekenanimatie van de **verticale lijn links van de stopkaarten** is verwijderd.
+- De lijn gebruikt weer het eenvoudige gedrag van v65: alle segmenten tot en met de huidige stop zijn direct volledig lime in Zon-modus en blauw in Regen-modus.
+- Afgelegde stops tonen weer de bestaande checkmark-node; toekomstige segmenten blijven grijs.
+- Dit heeft geen invloed op de horizontale dagvoortgangsbalk of andere animaties in de app.
+
+### Check-in / kaartpositie
+
+- Na een check-in wordt de gekozen stopkaart direct in de beschikbare viewport geplaatst, rekening houdend met de sticky huidige-stopbalk en de onderste navigatie.
+- Als de hele kaart past, wordt hij volledig zichtbaar gecentreerd in de vrije ruimte; bij een zeer hoge kaart wordt de bovenkant netjes onder de sticky balk geplaatst.
+- De bestaande zachte check-in/button- en kaart-expansieanimaties blijven behouden.
+- De tekst **Check in ✓** blijft zichtbaar tijdens en na de kleurovergang.
+
+### Ongewijzigd
+
+- Hier / De dag / De rest + losse Maps-knop.
+- Google Places-fotovakken en API-koppeling.
+- Naar de klote-meter, EINDUITSLAG, locaties, alternatieven, D1/API-contracten en app-iconen.
+- Service-worker shell-cache verhoogd naar `utca-shell-v24`; assets naar `v=74`.
+
