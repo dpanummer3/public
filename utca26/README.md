@@ -1,5 +1,65 @@
 # UTCA // FÜR DIE MÄNNER
 
+## v84 — clean source + cachebare CSS/JS
+
+- `index.html` is opgeschoond van circa **117 KB naar circa 12 KB** en bevat nu vooral nette, geneste HTML. Daardoor is **View Page Source** veel overzichtelijker.
+- De bestaande styling staat ongewijzigd in `app.css`; één CSS-regel per selector/block houdt het bestand compact maar leesbaar.
+- De bestaande clientlogica staat ongewijzigd in `app.js` en wordt met `defer` parallel met de HTML geladen. Geen framework of bundler toegevoegd.
+- `app.css` en `app.js` krijgen via Cloudflare een **1 jaar immutable browsercache** met versiequery `v=84`. Na de eerste load hoeven die bestanden dus bij normale herhaalbezoeken niet opnieuw gedownload te worden.
+- De service-worker shell bevat de twee kritieke app-assets ook voor de offline/PWA-fallback.
+- Eerste HTML-response is veel kleiner; CSS en JavaScript kunnen ondertussen parallel worden opgehaald. Dit verlaagt parsewerk en verbetert vooral herhaalbezoeken zonder design of functionaliteit te wijzigen.
+- De live Google Places-foto-optimalisaties, no-reload bij meter/check-in, statische onboardingfoto's, bottom navigation en sticky header blijven exact zoals in v83.
+- `_worker.js`, `app.js`, `sw.js` en manifest zijn op syntax/validiteit gecontroleerd.
+- PWA-assets naar `v=84`; shell-cache naar `utca-shell-v32`.
+
+## v83 — bottom navigation gelijkgetrokken met sticky header
+
+- De onderste navigatie behoudt exact dezelfde structuur, afmetingen, iconen en interactie.
+- Alleen de **glass/transparency-laag** is subtiel gelijkgetrokken met de bovenste sticky `HUIDIGE STOP / VOLGENDE`-header.
+- Bottom pill en losse Maps-cirkel gebruiken nu dezelfde `rgba(20,22,23,.68)` achtergrond, `saturate(120%) blur(30px)` en dezelfde rustigere schaduw als de sticky header.
+- De actieve lime/blauwe tabstate, safe-area, scrolltargets en functionaliteit zijn ongewijzigd.
+- Geen JavaScript- of backendwijzigingen; dit is bewust alleen een kleine CSS-consistency update.
+- PWA-assets naar `v=83`; shell-cache naar `utca-shell-v31`.
+
+## v82 — check-in zonder foto-reload + pagespeed cleanup
+
+- **Check in ✓** bouwt de tijdlijn niet meer opnieuw op. Alleen de bestaande DOM-states worden bijgewerkt: actieve kaart, linker tijdlijn, check-in knop, aanwezige deelnemers, voortgang en HUIDIGE/VOLGENDE.
+- Daardoor blijft het bestaande Google Places-`<img>` element bij check-in en uitchecken intact: de foto knippert niet en wordt niet opnieuw opgevraagd.
+- De huidige en volgende venuefoto worden na de state-wissel alleen geprioriteerd als ze nog niet geladen waren. Een reeds geladen foto blijft onaangeroerd.
+- Het invoeren/wissen van de Naar-de-klote-meter behoudt de v81 optimalisatie en rerendert de foto evenmin.
+- Venue wisselen, Zon/Regen wisselen en andere wijzigingen die de locatie-inhoud echt veranderen mogen de tijdlijn nog wel opnieuw opbouwen.
+- PageSpeed: de twee onboarding-WebP's worden niet meer op de eerste pageload gepreload of in de install-kritische service-worker shell opgehaald. Ze worden pas geladen wanneer de onboarding wordt opgebouwd na login, ruim vóór slide 2/4 in beeld komt.
+- De statische onboarding-WebP's krijgen via `_worker.js` langdurige immutable browsercache. Google Places-media blijft bewust buiten deze cachelogica.
+- Geen framework/dependency toegevoegd; ontwerp, backend/D1 en Google Places API-contract blijven intact.
+- PWA-assets naar `v=82`; shell-cache naar `utca-shell-v30`.
+
+## v81 — meter-updates zonder foto-reload
+
+- Een klik op de **Naar de klote-meter** rerendert niet langer de volledige tijdlijn. Alleen de gekozen meterknop, scoretekst en meter-copy worden in-place bijgewerkt.
+- Daardoor blijft de bestaande Google Places-afbeelding in dezelfde DOM-node staan en wordt hij niet opnieuw opgevraagd of opnieuw ingefaded wanneer je een cijfer kiest of weer uitzet.
+- Ook periodieke groepsupdates vervangen de tijdlijn niet meer. Alleen de deelnemerschips op de relevante stopkaarten worden bijgewerkt. Dat voorkomt onnodige foto/API-reloads bij de 15-seconden sync.
+- Check-in en venue-wissels blijven de tijdlijn wel opnieuw renderen waar dat functioneel nodig is.
+- Live tussenstand en groepsinformatie blijven direct bijgewerkt; backend/D1-contracten zijn niet gewijzigd.
+- PWA-assets naar `v=81`; shell-cache naar `utca-shell-v29`.
+
+## v80 — strakkere onboarding + verdere cleanup
+
+- Slide 2 en slide 4 behouden de vaste lokale WebP-foto’s uit v79, maar de onboarding-compositie is iets strakker gemaakt: minder loze padding, rustiger marges en een betere focus/crop binnen de bestaande kaart.
+- De live app en live Google Places-foto’s zijn visueel en functioneel niet gewijzigd.
+- Oude placeholder-CSS voor onboardingfoto’s verwijderd; die code werd sinds v79 niet meer gebruikt.
+- De helper voor vaste onboardingfoto’s is compacter gemaakt zonder de werking te veranderen.
+- Geen framework, dependency of nieuwe runtimecode toegevoegd.
+- PWA-assets naar `v=80`; shell-cache naar `utca-shell-v28`.
+
+## v79 — onboardingfoto's vast en direct zichtbaar
+
+- Onboarding **slide 2 / Check-in** gebruikt nu een vaste lokale crop van de door jou gekozen **Kanoverhuur Utrecht**-foto. Daardoor staat die preview direct in beeld en wacht hij niet meer op de Places API.
+- Onboarding **slide 4 / Wisselen** gebruikt nu een vaste lokale crop van de door jou gekozen **Café De Morgenster**-foto. Ook deze preview staat daardoor instant in beeld.
+- Beide onboardingfoto's zijn gecomprimeerde lokale WebP-assets en worden in de `<head>` al gepreload voor snellere zichtbaarheid.
+- De live Google Places-foto's in de echte stopkaarten blijven verder ongewijzigd en lazy/direct geladen zoals in v78.
+- Kleine cleanup: vaste onboardingfoto's lopen nu via één compacte helperfunctie in plaats van losse placeholderlogica.
+- PWA-assets naar `v=79`; shell-cache naar `utca-shell-v27`.
+
 ## v78 — snellere Places-foto’s + rustige onboarding-stills
 
 - De bestaande stopkaarten en het design zijn ongewijzigd; alleen de fotoloading en onboarding-preview zijn geoptimaliseerd.
@@ -81,7 +141,7 @@ Na het invoeren van een naam verschijnt een onboarding met vijf vaste slides:
 4. **Wisselen** — drie alternatieven op loopafstand
 5. **Hele route** — volledige ronde in Google Maps
 
-De slides gebruiken echte onderdelen uit de live interface als still. Slide 2 gebruikt de live Kanoverhuur-foto uit Google Places; slide 4 gebruikt een vaste lokale UI-preview zodat die slide niet op de Places API hoeft te wachten. Niet-relevante onderdelen worden subtiel gedimd.
+De slides gebruiken echte onderdelen uit de live interface als still. Slide 2 gebruikt een vaste lokale crop van de Kanoverhuur-foto; slide 4 gebruikt een vaste lokale crop van Café De Morgenster. Daardoor zijn beide onboardingbeelden direct zichtbaar en niet afhankelijk van een Places API-call. Niet-relevante onderdelen worden subtiel gedimd.
 
 De terugknop op slide 1 gaat terug naar het naamveld. De ingevoerde naam blijft daarbij alvast ingevuld.
 
@@ -132,6 +192,8 @@ Er is geen framework, bundler of build-step nodig.
 ```text
 /
 ├── index.html
+├── app.css
+├── app.js
 ├── _worker.js
 ├── manifest.webmanifest
 ├── sw.js
@@ -142,10 +204,12 @@ Er is geen framework, bundler of build-step nodig.
 ├── apple-touch-icon.png
 ├── favicon-32.png
 ├── robots.txt
+├── onboarding-checkin.webp
+├── onboarding-options.webp
 └── README.md
 ```
 
-`index.html` bevat de interface, styling, programma-data en client-side logica.
+`index.html` bevat de semantische interface. `app.css` bevat alle styling en `app.js` bevat programma-data en client-side logica.
 
 `_worker.js` verzorgt `/api/state`, de D1-koppeling, de Google Places-fotoproxy (`/api/place-photo`), asset-responses, correcte PWA-headers en de `X-Robots-Tag`. De Google API-key blijft server-side als Cloudflare secret en komt niet in de browser of repository terecht.
 
