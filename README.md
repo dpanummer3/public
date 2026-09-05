@@ -473,3 +473,17 @@ Deze release vervangt alleen de motionlaag uit v69. **Design, kleuren, route-dat
 - `prefers-reduced-motion` blijft gerespecteerd.
 - PWA assetversie verhoogd naar `v=70` en service-worker shell-cache naar `utca-shell-v20`, zodat bestaande homescreen-installaties de nieuwe motionlaag ophalen.
 - Google Places-foto's blijven optioneel. Zonder `GOOGLE_MAPS_API_KEY` werkt de hele app en alle motion gewoon; alleen de venuefoto's blijven verborgen.
+
+
+---
+
+## v71 — cinematic timeline at half speed
+
+Deze release verandert uitsluitend de snelheid van de Indiana-Jones-achtige tijdlijnanimatie uit v70. Design, check-in-logica, Google Places-foto's, route-data, Naar de klote-meter, EINDUITSLAG, backend en overige functionaliteit blijven gelijk.
+
+- De tracer tekent het nieuwe traject nu op **50% van de vorige snelheid**.
+- De animatieduur is verdubbeld van circa **1,25–1,95 seconde** naar circa **2,5–3,9 seconden**, afhankelijk van de afstand tussen de stops.
+- De bewegende tracer-kop en de lime lijn blijven exact synchroon.
+- De node-arrival gebeurt nog steeds pas nadat de tracer de volgende stop bereikt.
+- `prefers-reduced-motion` blijft gerespecteerd.
+- PWA assetversie verhoogd naar `v=71` en service-worker shell-cache naar `utca-shell-v21`, zodat bestaande homescreen-installaties de nieuwe timing ophalen.
