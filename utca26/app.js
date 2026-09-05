@@ -642,12 +642,13 @@ if(group&&group.getBoundingClientRect().top<=probe)return'rest';
 if(here){var r=here.getBoundingClientRect();if(r.top<=probe&&r.bottom>=110)return'hier'}
 return'hier';
 }
+function updateJourneyCompact(){var bar=$('#journeyBar');if(!bar)return;bar.classList.toggle('compact',(window.scrollY||document.documentElement.scrollTop||0)>40)}
 function bindBottomTabs(){
 var buttons=$$('[data-tab-target]');if(!buttons.length)return;
 buttons.forEach(function(b){b.onclick=function(){scrollToNavTarget(b.getAttribute('data-tab-target'))}});
 var ticking=false;
-window.addEventListener('scroll',function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){ticking=false;setBottomTabActive(detectBottomTab())})},{passive:true});
-setBottomTabActive(user?detectBottomTab():'hier');
+window.addEventListener('scroll',function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){ticking=false;updateJourneyCompact();setBottomTabActive(detectBottomTab())})},{passive:true});
+updateJourneyCompact();setBottomTabActive(user?detectBottomTab():'hier');
 }
 
 var onboardingStep=0;
@@ -675,7 +676,7 @@ var route=$('[data-onboarding-visual="route"] .ob-canvas');
 if(!program||!here||!meter||!options||!route)return;
 program.innerHTML='';here.innerHTML='';meter.innerHTML='';options.innerHTML='';route.innerHTML='';
 var journey=$('#journeyBar'),sectionTitle=$('.section-title'),firstStop=$('.tl-row.stop');
-if(journey){var j=onboardingClone(journey);if(j){var jp=j.querySelector('.tl-progress');if(jp){jp.hidden=false;var jpb=jp.querySelector('i');if(jpb)jpb.style.width='18%';var jpl=jp.querySelector('span:last-child');if(jpl)jpl.innerHTML='<strong>2</strong> / 11'}program.appendChild(j)}}
+if(journey){var j=onboardingClone(journey);if(j){j.classList.remove('compact');var jp=j.querySelector('.tl-progress');if(jp){jp.hidden=false;var jpb=jp.querySelector('i');if(jpb)jpb.style.width='18%';var jpl=jp.querySelector('span:last-child');if(jpl)jpl.innerHTML='<strong>2</strong> / 11'}program.appendChild(j)}}
 if(sectionTitle){var st=onboardingClone(sectionTitle);if(st)program.appendChild(st)}
 if(firstStop){var fs=onboardingClone(firstStop);if(fs)program.appendChild(fs)}
 var hereCard=$('.card[data-stop="'+weatherStop[mode].id+'"]')||$('.card[data-stop="lunch"]');

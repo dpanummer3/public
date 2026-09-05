@@ -25,6 +25,12 @@ Deze release voert de goedgekeurde design-review door. Route-data, check-ins, Na
 - Zon/Regen is een compacte toggle ín de statuskaart en werkt exact als voorheen.
 - De dagvoortgang (`2 / 11`) is opgenomen in de statuskaart in plaats van als losse regel boven de tijdlijn.
 
+### Sticky header die meekrimpt
+- Bovenaan de pagina blijft de statuskaart volledig zichtbaar (merk, Zon/Regen, huidige stop, straks, navigeer, voortgang).
+- Zodra je naar beneden scrollt, klapt hij samen naar een compacte balk van circa **70 px** — vergelijkbaar met de bottom navigation, ongeveer de helft van de volle hoogte.
+- In de compacte staat blijven behouden: huidige stop, `Straks` + volgende locatie, tijd + looptijd, de `Navigeer`-knop en een dunne voortgangslijn onderaan de balk.
+- `Zon / Regen` verdwijnt uit de compacte staat en komt terug zodra je weer bovenaan bent.
+
 ### Stand
 - `KLOTENTUSSENSTAND` / `KLOTENEINDSTAND` zijn op verzoek weer **TUSSENSTAND** / **EINDSTAND**.
 - De drie uitslagkaarten vormen een podium met rangcijfer 1/2/3; alleen nummer 1 krijgt de accentrand.
