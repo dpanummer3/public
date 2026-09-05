@@ -1,5 +1,18 @@
 # UTCA // FÜR DIE MÄNNER
 
+## v87 — PageSpeed without design/function changes
+
+Deze release richt zich uitsluitend op de Lighthouse/PageSpeed-waarschuwingen van de eerste login-load. Design, route, check-ins, Naar-de-klote-meter, Places-foto's na login, bottom navigation, D1 en overige functionaliteit blijven gelijk.
+
+- Kleine **critical CSS** voor het login-scherm staat inline zodat de eerste zichtbare interface niet meer hoeft te wachten op het volledige stylesheet.
+- `app.css` wordt daarna parallel als preload/stylesheet geladen; de volledige app gebruikt exact dezelfde bestaande CSS zodra die klaar is.
+- Google Places-foto's worden op het login-scherm niet meer achter de overlay opgehaald. Ze starten pas nadat een gebruiker is ingelogd. Dit voorkomt onzichtbare image-downloads tijdens de Lighthouse initial-load en pakt de audit **Improve image delivery** aan.
+- De bottom-tab init leest op het login-scherm geen layout meer uit, waardoor een onnodige initiële forced reflow is verwijderd.
+- De service-worker install-shell is teruggebracht tot alleen HTML/CSS/JS; app-iconen worden niet meer onnodig tijdens de eerste service-worker-install in de cache getrokken.
+- `app.css` en `app.js` blijven immutable/cachebaar en de source blijft netjes opgesplitst en leesbaar.
+- PWA-assets naar `v=87`; shell-cache naar `utca-shell-v35`.
+- `noindex,nofollow,noarchive` blijft bewust staan. Daardoor kan de Lighthouse **SEO**-score lager blijven; dat is voor deze besloten vrienden-MVP geen PageSpeed-fout.
+
 ## v86 — clean source, PageSpeed-pass & klotenstanden
 
 - De scorecontainer heet tijdens de dag **KLOTENTUSSENSTAND** en na **KLAAR** **KLOTENEINDSTAND**. De bottom-tab blijft bewust **Tussenstand**, zodat de navigatie kort en duidelijk blijft.

@@ -298,6 +298,7 @@ promise.then(function(data){applyPlacePhoto(el,data)}).catch(function(){el.class
 }
 function initPlacePhotos(){
 if(placePhotoObserver){placePhotoObserver.disconnect();placePhotoObserver=null}
+if(!user)return;
 var photos=$$('[data-place-photo]');if(!photos.length)return;
 var lazy=[];photos.forEach(function(el){if(el.getAttribute('data-photo-priority')==='high')loadPlacePhoto(el);else lazy.push(el)});
 if(!lazy.length)return;
@@ -637,7 +638,7 @@ var buttons=$$('[data-tab-target]');if(!buttons.length)return;
 buttons.forEach(function(b){b.onclick=function(){scrollToNavTarget(b.getAttribute('data-tab-target'))}});
 var ticking=false;
 window.addEventListener('scroll',function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){ticking=false;setBottomTabActive(detectBottomTab())})},{passive:true});
-setBottomTabActive(detectBottomTab());
+setBottomTabActive(user?detectBottomTab():'hier');
 }
 
 var onboardingStep=0;
@@ -677,7 +678,7 @@ hc.classList.add('current');
 var hb=hc.querySelector('.here');
 if(hb){hb.classList.add('active');setHereButtonLabel(hb,'Check in ✓')}
 here.appendChild(hc);
-var hp=hc.querySelector('[data-place-photo]');if(hp)setStaticOnboardingPhoto(hp,'/onboarding-checkin.webp?v=83','Foto van Kanoverhuur Utrecht','https://maps.google.com/?q=Kanoverhuur+Utrecht+Oudegracht+aan+de+Werf+275+Utrecht')
+var hp=hc.querySelector('[data-place-photo]');if(hp)setStaticOnboardingPhoto(hp,'/onboarding-checkin.webp?v=87','Foto van Kanoverhuur Utrecht','https://maps.google.com/?q=Kanoverhuur+Utrecht+Oudegracht+aan+de+Werf+275+Utrecht')
 }
 var meterCard=$('.card[data-stop="'+weatherStop[mode].id+'"] .stop-meter')||$('.card[data-stop="lunch"] .stop-meter');
 var mc=onboardingClone(meterCard);
@@ -706,7 +707,7 @@ meter.appendChild(dr);
 var optionCard=$('.card[data-stop="bars"]')||$('.card[data-stop="lunch"]');
 var oc=onboardingClone(optionCard);
 if(oc){
-var op=oc.querySelector('.venue-photo');if(op)setStaticOnboardingPhoto(op,'/onboarding-options.webp?v=83','Foto van Café De Morgenster','https://maps.google.com/?q=Caf%C3%A9+De+Morgenster+Oudegracht+323+Utrecht')
+var op=oc.querySelector('.venue-photo');if(op)setStaticOnboardingPhoto(op,'/onboarding-options.webp?v=87','Foto van Café De Morgenster','https://maps.google.com/?q=Caf%C3%A9+De+Morgenster+Oudegracht+323+Utrecht')
 var details=oc.querySelector('.alternatives');if(details)details.setAttribute('open','');
 options.appendChild(oc);
 }
