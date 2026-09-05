@@ -1,5 +1,15 @@
 # UTCA // FÜR DIE MÄNNER
 
+## v88 — bottom navigation lager + CSS cleanup
+
+- De zwevende bottom navigation staat subtiel lager op iOS en Android, zonder de iOS/Android safe-area te negeren.
+- De afstand tot de onderrand gebruikt nu één compacte safe-area formule: `max(4px, safe-area - 8px)`. Op iPhones met home-indicator komt de bar daardoor circa 8–16 px lager te staan; op Android zonder inset circa 4–6 px lager.
+- Dit werkt zowel in de geïnstalleerde PWA als in Safari/Chrome met browserbalk onderin; de browser visual viewport blijft leidend, zodat de navigatie niet onder de URL-balk wordt geschoven.
+- Vorm, hoogte, iconen, actieve states, glass-transparency en functionaliteit van de navigatie zijn ongewijzigd.
+- CSS opgeschoond: dubbele `.app`-padding en dubbele standalone bottom-nav overrides zijn samengevoegd. Minder cascade-overrides, zelfde layout.
+- Geen JavaScript-, D1-, Places-, check-in- of meterlogica gewijzigd.
+- PWA-assets naar `v=88`; shell-cache naar `utca-shell-v36`.
+
 ## v87 — PageSpeed without design/function changes
 
 Deze release richt zich uitsluitend op de Lighthouse/PageSpeed-waarschuwingen van de eerste login-load. Design, route, check-ins, Naar-de-klote-meter, Places-foto's na login, bottom navigation, D1 en overige functionaliteit blijven gelijk.
