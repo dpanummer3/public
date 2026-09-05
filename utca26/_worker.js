@@ -60,49 +60,39 @@ return json(await getParticipants(env));
 return json({error:'Method not allowed'},405);
 }
 
+async function googleJson(url,key,options={}){
+const headers=new Headers(options.headers||{});headers.set('X-Goog-Api-Key',key);
+const response=await fetch(url,{...options,headers});
+if(!response.ok)throw new Error('google_'+response.status);
+return response.json();
+}
 async function handlePlacePhoto(request,env,url){
 if(request.method!=='GET')return json({error:'Method not allowed'},405);
-const key=String(env.GOOGLE_MAPS_API_KEY||'');
-if(!key)return json({error:'Google Places photos not configured'},503);
-const q=String(url.searchParams.get('q')||'').trim().slice(0,220);
-if(!q)return json({error:'Locatie ontbreekt'},400);
+const key=String(env.GOOGLE_MAPS_API_KEY||'');if(!key)return json({error:'Google Places photos not configured'},503);
+const q=String(url.searchParams.get('q')||'').trim().slice(0,220),placeId=String(url.searchParams.get('placeId')||'').trim();
 const lat=Number(url.searchParams.get('lat')),lng=Number(url.searchParams.get('lng'));
-if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat<52.02||lat>52.17||lng<5.02||lng>5.23||!/utrecht/i.test(q))return json({error:'Locatie buiten Utrecht'},400);
-const body={textQuery:q,languageCode:'nl',locationBias:{circle:{center:{latitude:lat,longitude:lng},radius:700}}};
-let searchResponse;
+if(!q||!Number.isFinite(lat)||!Number.isFinite(lng)||lat<52.02||lat>52.17||lng<5.02||lng>5.23||!/utrecht/i.test(q))return json({error:'Locatie buiten Utrecht'},400);
+let place;
 try{
-searchResponse=await fetch('https://places.googleapis.com/v1/places:searchText',{
-method:'POST',
-headers:{'content-type':'application/json','X-Goog-Api-Key':key,'X-Goog-FieldMask':'places.photos'},
-body:JSON.stringify(body)
-});
+if(placeId&&/^[A-Za-z0-9_-]{10,255}$/.test(placeId)){
+place=await googleJson('https://places.googleapis.com/v1/places/'+encodeURIComponent(placeId),key,{headers:{'X-Goog-FieldMask':'id,photos'}});
+}else{
+const body={textQuery:q,languageCode:'nl',locationBias:{circle:{center:{latitude:lat,longitude:lng},radius:700}}};
+const data=await googleJson('https://places.googleapis.com/v1/places:searchText',key,{method:'POST',headers:{'content-type':'application/json','X-Goog-FieldMask':'places.id,places.photos'},body:JSON.stringify(body)});
+place=data&&data.places&&data.places[0];
+}
 }catch{return json({error:'Google Places tijdelijk niet bereikbaar'},502)}
-if(!searchResponse.ok)return json({error:'Google Places zoekopdracht mislukt'},502);
-let data;
-try{data=await searchResponse.json()}catch{return json({error:'Ongeldig antwoord van Google Places'},502)}
-const photo=data&&data.places&&data.places[0]&&data.places[0].photos&&data.places[0].photos[0];
-if(!photo||!photo.name)return json({error:'Geen locatie-foto gevonden'},404);
-return json({
-src:'/api/place-photo/media?name='+encodeURIComponent(photo.name),
-googleMapsUri:String(photo.googleMapsUri||'')
-});
+const photo=place&&place.photos&&place.photos[0];if(!photo||!photo.name)return json({error:'Geen locatie-foto gevonden'},404);
+return json({placeId:String(place.id||placeId||''),src:'/api/place-photo/media?name='+encodeURIComponent(photo.name),googleMapsUri:String(photo.googleMapsUri||'')});
 }
 async function handlePlacePhotoMedia(request,env,url){
 if(request.method!=='GET')return new Response(null,{status:405});
-const key=String(env.GOOGLE_MAPS_API_KEY||'');
-if(!key)return new Response(null,{status:503});
-const name=String(url.searchParams.get('name')||'');
-if(!/^places\/[^/]+\/photos\/[^/]+$/.test(name))return new Response(null,{status:400});
+const key=String(env.GOOGLE_MAPS_API_KEY||'');if(!key)return new Response(null,{status:503});
+const name=String(url.searchParams.get('name')||'');if(!/^places\/[^/]+\/photos\/[^/]+$/.test(name))return new Response(null,{status:400});
 let upstream;
-try{
-upstream=await fetch('https://places.googleapis.com/v1/'+name+'/media?maxWidthPx=1200&maxHeightPx=720&key='+encodeURIComponent(key),{redirect:'follow'});
-}catch{return new Response(null,{status:502})}
+try{upstream=await fetch('https://places.googleapis.com/v1/'+name+'/media?maxWidthPx=900&maxHeightPx=420&key='+encodeURIComponent(key),{redirect:'follow'})}catch{return new Response(null,{status:502})}
 if(!upstream.ok)return new Response(null,{status:upstream.status===404?404:502});
-const headers=new Headers();
-headers.set('content-type',upstream.headers.get('content-type')||'image/jpeg');
-headers.set('cache-control','private, no-store');
-headers.set('X-Content-Type-Options','nosniff');
-headers.set('X-Robots-Tag','noindex, nofollow, noarchive');
+const headers=new Headers();headers.set('content-type',upstream.headers.get('content-type')||'image/jpeg');headers.set('cache-control','private, no-store');headers.set('X-Content-Type-Options','nosniff');headers.set('X-Robots-Tag','noindex, nofollow, noarchive');
 return new Response(upstream.body,{status:200,headers});
 }
 export default {async fetch(request,env){

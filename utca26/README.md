@@ -1,5 +1,19 @@
 # UTCA // FÜR DIE MÄNNER
 
+## v78 — snellere Places-foto’s + rustige onboarding-stills
+
+- De bestaande stopkaarten en het design zijn ongewijzigd; alleen de fotoloading en onboarding-preview zijn geoptimaliseerd.
+- De huidige en eerstvolgende stop starten hun foto-opvraag direct; overige foto’s blijven demand-based en beginnen eerder wanneer je ernaartoe scrollt.
+- Google Place IDs worden lokaal bewaard (`utca-placeids-v1`). Google staat langdurige opslag van Place IDs toe; Google-foto’s en photo-resource-names worden niet opgeslagen.
+- Na de eerste succesvolle lookup kan een volgende sessie de preciezere Place Details-route gebruiken in plaats van opnieuw een Text Search te doen.
+- Place Photos worden op maximaal 900×420 px aangevraagd, passend bij het mobiele fotovak en lichter dan de eerdere 1200×720 response.
+- Dubbele gelijktijdige aanvragen voor dezelfde zichtbare locatie worden binnen dezelfde pagina samengevoegd.
+- Onboarding slide 2 (Kanoverhuur) gebruikt dezelfde live Google Places-foto en krijgt hoge laadprioriteit.
+- Onboarding slide 4 is bewust API-onafhankelijk gemaakt met een vaste, lokale UI-preview. Een Google Places-foto is niet permanent in de repository opgeslagen, omdat Google Places-content niet als statisch asset mag worden gebundeld.
+- De beeldfade is verkort van 280 ms naar 120 ms zodat een ontvangen foto vrijwel direct zichtbaar wordt.
+- PWA-assets naar `v=78`; shell-cache naar `utca-shell-v26`.
+- Geen framework of nieuwe dependency toegevoegd; HTML/CSS/vanilla JS blijft de architectuur.
+
 ## v77 — Tussenstand / Eindstand
 
 - Bottom navigation is nu **Hier · Tussenstand · De rest**; de middelste tab springt rechtstreeks naar het scoreblok.
@@ -67,7 +81,7 @@ Na het invoeren van een naam verschijnt een onboarding met vijf vaste slides:
 4. **Wisselen** — drie alternatieven op loopafstand
 5. **Hele route** — volledige ronde in Google Maps
 
-De slides gebruiken echte onderdelen uit de live interface als still. Niet-relevante onderdelen worden subtiel gedimd zodat de belangrijkste interactie duidelijk blijft zonder de rest van de app onleesbaar te maken.
+De slides gebruiken echte onderdelen uit de live interface als still. Slide 2 gebruikt de live Kanoverhuur-foto uit Google Places; slide 4 gebruikt een vaste lokale UI-preview zodat die slide niet op de Places API hoeft te wachten. Niet-relevante onderdelen worden subtiel gedimd.
 
 De terugknop op slide 1 gaat terug naar het naamveld. De ingevoerde naam blijft daarbij alvast ingevuld.
 
@@ -223,7 +237,7 @@ en voor locatie-foto’s:
 env.GOOGLE_MAPS_API_KEY
 ```
 
-De foto’s worden pas vlak voordat een stop in beeld komt opgevraagd. De app bewaart geen Google photo-resource-names en de worker stuurt fotoresponses met `no-store`. Iedere foto linkt terug naar de individuele bronfoto in Google Maps en toont binnen het fotovak de tekst **Google Maps** als bronvermelding.
+De huidige en eerstvolgende stop worden direct geladen; overige foto’s worden demand-based geladen zodra ze binnen ongeveer 900 px van de viewport komen. De app bewaart alleen Google Place IDs, geen Google photo-resource-names of fotobestanden. De worker stuurt fotoresponses met `no-store`. Iedere foto linkt terug naar de individuele bronfoto in Google Maps en toont binnen het fotovak de tekst **Google Maps** als bronvermelding.
 
 ---
 
