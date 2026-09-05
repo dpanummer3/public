@@ -622,6 +622,7 @@ requestAnimationFrame(function(){try{window.scrollTo(0,0)}catch(e){}root.scrollT
 function setBottomTabActive(id){
 $$('[data-tab-target]').forEach(function(b){var on=b.getAttribute('data-tab-target')===id;b.classList.toggle('active',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
 }
+var navLock=0;
 function hereTarget(){
 var card=currentStop?document.querySelector('.card[data-stop="'+currentStop+'"]'):null;
 return card||document.querySelector('#timeline .card[data-stop]')||$('#journeyBar');
@@ -632,6 +633,7 @@ if(id==='hier')el=hereTarget();
 else if(id==='stand')el=$('#finalResult');
 else if(id==='rest')el=$('#groep');
 if(!el)return;
+navLock=Date.now()+900;
 setBottomTabActive(id);
 el.scrollIntoView({behavior:motionAllowed()?'smooth':'auto',block:'start'});
 }
@@ -647,7 +649,7 @@ function bindBottomTabs(){
 var buttons=$$('[data-tab-target]');if(!buttons.length)return;
 buttons.forEach(function(b){b.onclick=function(){scrollToNavTarget(b.getAttribute('data-tab-target'))}});
 var ticking=false;
-window.addEventListener('scroll',function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){ticking=false;updateJourneyCompact();setBottomTabActive(detectBottomTab())})},{passive:true});
+window.addEventListener('scroll',function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){ticking=false;updateJourneyCompact();if(Date.now()>navLock)setBottomTabActive(detectBottomTab())})},{passive:true});
 updateJourneyCompact();setBottomTabActive(user?detectBottomTab():'hier');
 }
 

@@ -103,7 +103,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 
 /* sticky header: compact state on scroll */
 .journeybar{transition:padding .22s ease,border-radius .22s ease}
-.journeybar.compact{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;align-items:center;padding:8px 8px 11px 14px}
+.journeybar.compact{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;align-content:center;height:70px;padding:0 8px 0 14px}
 .journeybar.compact .journey-head{display:none}
 .journeybar.compact .journeycopy{grid-column:1;grid-row:1;margin:0}
 .journeybar.compact .journey-now{font-size:13px;line-height:1.15;letter-spacing:-.01em}
@@ -114,7 +114,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{o
 .journeybar.compact .journey-next{flex:1 1 auto;min-width:0;margin-top:0;font-size:15px}
 .journeybar.compact .journey-meta{flex:1 0 100%;margin-top:1px;font-size:11px}
 .journeybar.compact .journey-nav{grid-column:2;grid-row:1/span 2;align-self:center;min-width:92px;height:var(--h-sec);padding:0 14px;font-size:11px}
-.journeybar.compact .tl-progress{position:absolute;left:1px;right:1px;bottom:0;margin:0;padding:0 13px 6px}
+.journeybar.compact .tl-progress{position:absolute;left:1px;right:1px;bottom:0;margin:0;padding:0 13px 7px}
 .journeybar.compact .tl-progress-track{height:3px}
 .journeybar.compact #tlProgressLabel{display:none}
 
