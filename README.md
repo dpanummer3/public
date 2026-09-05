@@ -442,3 +442,34 @@ Deze release bouwt rechtstreeks voort op v68 en **verandert geen route-data, kle
 - `prefers-reduced-motion` wordt gerespecteerd: gebruikers die systeemanimaties hebben verminderd krijgen de directe, niet-geanimeerde state-wissel.
 
 De motion is met CSS en vanilla JavaScript uitgevoerd; er is **geen React Native, framework, animatie-library of extra build-step** toegevoegd.
+
+---
+
+## v70 — cinematic timeline draw + smoother check-in
+
+Deze release vervangt alleen de motionlaag uit v69. **Design, kleuren, route-data, locaties, alternatieven, Google Places-foto's, Naar de klote-meter, EINDUITSLAG, D1/API-contracten en overige appfunctionaliteit blijven intact.**
+
+### Indiana-Jones-achtige tijdlijn
+
+- Bij een check-in naar een volgende stop verschijnt de nieuwe lime route **niet vooraf al ingevuld**.
+- De reeds afgelegde route blijft zichtbaar; alleen het nieuwe traject blijft eerst grijs.
+- Na de check-in/card-transition vertrekt een kleine lime tracer vanaf de huidige tijdlijnnode en **tekent de lijn fysiek van begin tot eind** naar de volgende stop.
+- De tracer heeft een subtiele heldere kop zodat de beweging te volgen is, zonder het bestaande minimalistische ontwerp te veranderen.
+- Het traject duurt afhankelijk van de afstand ongeveer **1,25–1,95 seconde**; bij het overslaan van meerdere stops loopt dezelfde tracer door over het hele nieuwe traject.
+- Pas wanneer de tracer de bestemming bereikt, wordt het nieuwe traject permanent lime, springt de nieuwe node subtiel in en krijgt de vorige node zijn vinkje.
+- In Regen-modus gebruikt dezelfde motionlaag de bestaande blauwe accentkleur.
+
+### Check-in motion
+
+- De bestaande `Check in ✓`-knop krijgt eerst een korte tactiele compressie voordat de state wordt vastgelegd.
+- De actieve kleur vloeit daarna geleidelijk in, in plaats van op dezelfde paint direct te verschijnen.
+- De eigen deelnemer wordt visueel direct in de nieuwe stopkaart getoond terwijl de bestaande backend-sync ongewijzigd doorloopt. Daardoor kan de kaart meteen vloeiend expanderen zonder op de netwerkresponse te wachten.
+- Kaart-expansie/collapse is verlengd en gebruikt dezelfde rustige easing als de rest van de interface.
+- De netwerkpayload, D1-opslag en gedeelde deelnemerslogica zijn niet gewijzigd; de onmiddellijke eigen chip is alleen een optimistische UI-weergave.
+
+### Techniek
+
+- Vanilla JavaScript + Web Animations API en CSS; **geen React Native of extra dependency**.
+- `prefers-reduced-motion` blijft gerespecteerd.
+- PWA assetversie verhoogd naar `v=70` en service-worker shell-cache naar `utca-shell-v20`, zodat bestaande homescreen-installaties de nieuwe motionlaag ophalen.
+- Google Places-foto's blijven optioneel. Zonder `GOOGLE_MAPS_API_KEY` werkt de hele app en alle motion gewoon; alleen de venuefoto's blijven verborgen.
