@@ -392,7 +392,6 @@ function renderRoute(){
 var mins=totalWalkMinutes(),walkLabel='± '+mins+' min';
 var routeWalk=$('#routeWalk');
 if(routeWalk)routeWalk.textContent=walkLabel;
-
 var fullRoute=$('#fullRoute');
 if(fullRoute){
 var arr=itinerary(),origin=activeVenue(arr[0]).addr,destination=activeVenue(arr[arr.length-1]).addr,points=[];
@@ -616,7 +615,6 @@ renderGroup();
 syncState(false);
 toast(clearing?'Meter gewist':bandForValue(value).label);
 }
-
 function scrollAppTop(){
 var root=document.documentElement,old=root.style.scrollBehavior;
 root.style.scrollBehavior='auto';
@@ -657,7 +655,6 @@ var ticking=false;
 window.addEventListener('scroll',function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){ticking=false;updateJourneyCompact();if(Date.now()>navLock)setBottomTabActive(detectBottomTab())})},{passive:true});
 updateJourneyCompact();setBottomTabActive(user?detectBottomTab():'hier');
 }
-
 var onboardingStep=0;
 function onboardingClone(el){
 if(!el)return null;

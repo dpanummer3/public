@@ -59,7 +59,6 @@ return json(await getParticipants(env));
 }
 return json({error:'Method not allowed'},405);
 }
-
 async function googleJson(url,key,options={}){
 const headers=new Headers(options.headers||{});headers.set('X-Goog-Api-Key',key);
 const response=await fetch(url,{...options,headers});
