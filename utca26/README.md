@@ -1,5 +1,23 @@
 # DE RONDE // FÜR DIE MÄNNER
 
+## v91 — compactere stopacties + foto als Info
+
+Deze release bouwt voort op v90 en verandert alleen de actie-indeling in de stopkaarten. Route-data, check-ins, meter, D1/API-contracten en Places-fotologica blijven gelijk.
+
+### Stopkaart-acties
+- De losse **Info**-knop onder de hoofdfoto is verwijderd; tikken op de Google Places-foto blijft de exacte Google Maps-plaatsdetails openen.
+- **Info** blijft wél staan bij de alternatieve locaties onder **3 andere opties**.
+- De oude **Navigeer**-actie verhuist naar de voormalige Info-positie en heet compact **Nav**.
+- **Check in ✓** schuift één rij omhoog en neemt de voormalige plek van **Navigeer** in.
+- **Boek** blijft op exact dezelfde plekken staan waar reserveren relevant is.
+- De bestaande spacing boven de scheidingslijn van de **Naar de klote-meter** blijft behouden.
+
+### Ruimte / performance
+- Er is één volledige knoppenrij uit iedere stopkaart verdwenen, waardoor cards compacter worden en er meer ruimte overblijft wanneer deelnemers inchecken.
+- Geen extra DOM, library of netwerkrequest toegevoegd; de bestaande PageSpeed-optimalisaties blijven behouden.
+- Overbodige `.navbtn`-CSS is verwijderd.
+- PWA-assets naar `v=91`; shell-cache naar `utca-shell-v39`.
+
 ## v90 — consistency pass + exact Google Maps place links
 
 Deze release is een kleine UX/consistentie-pass bovenop v89. De route-data, check-ins, Naar-de-klote-meter, D1/API-contracten en Places-fotologica blijven functioneel hetzelfde.
