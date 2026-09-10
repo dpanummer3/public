@@ -1,10 +1,6 @@
-## v97.3 — continuous left rail
+## v97.4 — v90 timeline rail restore
 
-Deze hotfix verandert alleen de verticale tijdlijnrail links. De lijn wordt nu als één vaste doorlopende basislijn gerenderd in één kleur, in plaats van als losse segmenten per rij. Daardoor zie je op mobiel/Safari geen onderbrekingen of kleurwissels meer tussen stops en loopblokken. Functioneel verandert er niets. CSS cache-buster verhoogd naar **v97.3** en service-worker shell naar **utca-shell-v47**.
-
-## v97.2 — timeline rail continuity fix
-
-Deze hotfix verandert niets aan functionaliteit, planning, onboarding of layoutmaten. Alleen de verticale tijdlijnrail links is visueel rechtgetrokken: er staat nu een doorlopende basislijn achter de timeline, zodat de linker rail op mobiel niet meer optisch onderbroken raakt tussen kaarten en loopblokken. Cacheversies zijn verhoogd naar **v97.2** en service-worker shell **utca-shell-v46** zodat de fix direct wordt opgehaald.
+Deze release is bewust geen nieuwe timeline-iteratie. De timeline-rail is teruggezet naar de bewezen v90-opbouw met segmenten die exact op elkaar aansluiten. De latere `content-visibility`-optimalisatie is voor timeline-rijen verwijderd omdat die mobiele/Safari rendering kon verstoren. De rail blijft overal één neutrale kleur (`#31353a`); alleen de nodes tonen status. Alle overige v97.1-functionaliteit, reserveringstijden, onboarding en performance-optimalisaties blijven ongewijzigd. CSS cache-buster: **v97.4**; service-worker shell: **utca-shell-v48**.
 
 ## v97.1 — bugfix
 
