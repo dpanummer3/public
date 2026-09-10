@@ -1,3 +1,14 @@
+## v95 — sticky chrome consistency
+
+Deze release gebruikt de compacte sticky statusbalk als visuele basis voor de onderste navigatie.
+
+- Onderste navigatie: dezelfde glass background, border, blur, shadow en 24px buitenradius als de sticky statusbalk.
+- Mobiele zijmarges sluiten nu exact aan op de 11px contentmarge; vanaf grotere schermen volgt de navigatie de 14px appmarge met een max-width van 560px.
+- Actieve tab gebruikt dezelfde lime primary treatment, rand en liftschaduw als de primaire knop in de sticky statusbalk.
+- Hoogte en interne padding zijn opnieuw uitgebalanceerd voor vier tabs zonder wijzigingen aan labels, iconen of navigatiegedrag.
+- Reserveringsankers uit v94 blijven ongewijzigd.
+- CSS assetversie: `v=95`; service-worker shell-cache: `utca-shell-v43`.
+
 # DE RONDE
 
 Mobiele webapp/PWA voor de vriendendag in Utrecht op **26 september 2026**.
