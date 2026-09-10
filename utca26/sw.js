@@ -1,6 +1,6 @@
-const SHELL_CACHE='utca-shell-v46';
+const SHELL_CACHE='utca-shell-v47';
 const PHOTO_CACHE='utca-place-photo-v1';
-const APP_SHELL=['/','/app.css?v=97.2','/app.js?v=97.2','/manifest.webmanifest?v=97.2','/onboarding-checkin.webp?v=97.2','/onboarding-options.webp?v=97.2'];
+const APP_SHELL=['/','/app.css?v=97.3','/app.js?v=97.2','/manifest.webmanifest?v=97.2','/onboarding-checkin.webp?v=97.2','/onboarding-options.webp?v=97.2'];
 const STATIC_PATHS=new Set(['/app.css','/app.js','/manifest.webmanifest','/onboarding-checkin.webp','/onboarding-options.webp','/apple-touch-icon.png','/favicon-32.png','/icon-192.png','/icon-512.png','/icon-maskable-192.png','/icon-maskable-512.png']);
 self.addEventListener('install',event=>{event.waitUntil(caches.open(SHELL_CACHE).then(cache=>cache.addAll(APP_SHELL)).catch(()=>undefined));self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>![SHELL_CACHE,PHOTO_CACHE].includes(key)).map(key=>caches.delete(key)))).then(()=>self.clients.claim()))});

@@ -1,3 +1,7 @@
+## v97.3 — continuous left rail
+
+Deze hotfix verandert alleen de verticale tijdlijnrail links. De lijn wordt nu als één vaste doorlopende basislijn gerenderd in één kleur, in plaats van als losse segmenten per rij. Daardoor zie je op mobiel/Safari geen onderbrekingen of kleurwissels meer tussen stops en loopblokken. Functioneel verandert er niets. CSS cache-buster verhoogd naar **v97.3** en service-worker shell naar **utca-shell-v47**.
+
 ## v97.2 — timeline rail continuity fix
 
 Deze hotfix verandert niets aan functionaliteit, planning, onboarding of layoutmaten. Alleen de verticale tijdlijnrail links is visueel rechtgetrokken: er staat nu een doorlopende basislijn achter de timeline, zodat de linker rail op mobiel niet meer optisch onderbroken raakt tussen kaarten en loopblokken. Cacheversies zijn verhoogd naar **v97.2** en service-worker shell **utca-shell-v46** zodat de fix direct wordt opgehaald.
