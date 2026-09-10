@@ -1,3 +1,20 @@
+## v96 — performance + motion polish
+
+Deze release trekt de twee vorige iteraties technisch recht zonder de inhoud of UX-logica te veranderen. De vaste reserveringen blijven exact **Kanoverhuur 10:00–11:45**, **Pool 14:00–15:00**, **JEU 17:00–18:00** en **De Poort 19:00–21:00**; de boekknoppen en overige itinerary-functionaliteit zijn ongewijzigd.
+
+- JavaScript compacter gemaakt en dynamische timeline-interacties samengebracht via event delegation, zodat her-renders geen nieuwe set kliklisteners hoeven op te bouwen.
+- Eén motion-systeem voor snelle feedback (`140ms`), normale UI-overgangen (`220ms`) en panel/sheet-beweging (`320ms`) met consistente easing.
+- Subtiele press-feedback op interactieve controls; vloeiende open/dicht-transities voor deelnemers, alternatieven, login, onboarding, toast en bottom navigation.
+- Weer- en locatiekeuzes gebruiken waar ondersteund de View Transition API, met een normale fallback op browsers zonder ondersteuning.
+- Offscreen timeline-onderdelen gebruiken `content-visibility:auto` waar ondersteund om onnodig renderwerk te beperken.
+- Polling wordt overgeslagen zolang het tabblad verborgen is.
+- `background-attachment: fixed` verwijderd om mobiel scrollen/compositing lichter te houden.
+- Service worker cachet de statische CSS/JS-shell; versie: `utca-shell-v44`.
+- `prefers-reduced-motion` wordt gerespecteerd: beweging en smooth scrolling vallen dan terug naar direct gedrag.
+- CSS assetversie: `v=96`; JavaScript assetversie: `v=96`.
+
+De optimalisaties zijn statisch gevalideerd; deze release claimt bewust geen specifieke Lighthouse/PageSpeed-score zonder een meting op de uiteindelijke productie-URL.
+
 ## v95 — sticky chrome consistency
 
 Deze release gebruikt de compacte sticky statusbalk als visuele basis voor de onderste navigatie.
