@@ -1,3 +1,7 @@
+## v97.2 — timeline rail continuity fix
+
+Deze hotfix verandert niets aan functionaliteit, planning, onboarding of layoutmaten. Alleen de verticale tijdlijnrail links is visueel rechtgetrokken: er staat nu een doorlopende basislijn achter de timeline, zodat de linker rail op mobiel niet meer optisch onderbroken raakt tussen kaarten en loopblokken. Cacheversies zijn verhoogd naar **v97.2** en service-worker shell **utca-shell-v46** zodat de fix direct wordt opgehaald.
+
 ## v97.1 — bugfix
 
 Hotfix op v97. Alleen de foutieve aanroep naar `warmOnboardingAssets()` is verwijderd. De v97-prefetch van onboardingbeelden blijft intact. Om te voorkomen dat een browser/PWA de defecte v97-JavaScript uit cache blijft gebruiken, heeft alleen `app.js` cache-buster `v=97.1` gekregen en is de service-worker shell-cache verhoogd naar `utca-shell-v46`. Design, functionaliteit, tijden, containers, animaties en onboardingtekst zijn verder ongewijzigd.
