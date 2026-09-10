@@ -1,3 +1,7 @@
+## v97.1 — bugfix
+
+Hotfix op v97. Alleen de foutieve aanroep naar `warmOnboardingAssets()` is verwijderd. De v97-prefetch van onboardingbeelden blijft intact. Om te voorkomen dat een browser/PWA de defecte v97-JavaScript uit cache blijft gebruiken, heeft alleen `app.js` cache-buster `v=97.1` gekregen en is de service-worker shell-cache verhoogd naar `utca-shell-v46`. Design, functionaliteit, tijden, containers, animaties en onboardingtekst zijn verder ongewijzigd.
+
 ## v97 — extra speed pass + onboarding route stat
 
 Deze release bouwt direct voort op v96 en verandert geen functionaliteit of layoutstructuur. De app blijft werken zoals v96, maar met een extra optimalisatieslag voor laadsnelheid, runtime caching en onboarding. De vaste reserveringen blijven exact **Kanoverhuur 10:00–11:45**, **Pool 14:00–15:00**, **JEU 17:00–18:00** en **De Poort 19:00–21:00**.
