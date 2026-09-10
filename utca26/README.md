@@ -1,3 +1,17 @@
+## v97 — extra speed pass + onboarding route stat
+
+Deze release bouwt direct voort op v96 en verandert geen functionaliteit of layoutstructuur. De app blijft werken zoals v96, maar met een extra optimalisatieslag voor laadsnelheid, runtime caching en onboarding. De vaste reserveringen blijven exact **Kanoverhuur 10:00–11:45**, **Pool 14:00–15:00**, **JEU 17:00–18:00** en **De Poort 19:00–21:00**.
+
+- Onboarding slide **5 · Hele route** toont nu in de twee bestaande dashboard-tegels **109 min / HELE RONDE LOPEN** en **11 stops / ALLES GEREGELD**. De tegelgrootte en layout blijven identiek aan v96; alleen de tekst is aangepast.
+- Onboarding-beelden worden na de eerste paint alvast rustig voorverwarmd in idle-tijd, zodat de onboarding sneller opent zonder de eerste render te blokkeren.
+- Lokale onboarding-WebP's en manifest worden meegenomen in de shell-cache; shell-cacheversie verhoogd naar `utca-shell-v45`.
+- Service worker gebruikt voor statische assets een snelle stale-while-revalidate-strategie en bewaart `/api/place-photo` responses in een aparte runtime cache voor snellere herhaalbezoeken.
+- Venuefoto-`img` krijgt vaste `width`/`height` mee om layout-instabiliteit verder te beperken; lazy venuefoto's worden iets eerder gepakt via ruimere observer-marge.
+- Extra `content-visibility:auto` toegevoegd voor zware, offscreen secties onder de timeline.
+- Assetversies verhoogd naar **v97** voor CSS/JS/manifest en onboardingbeelden.
+
+Net als v96 is deze release statisch gevalideerd; een echte Lighthouse/PageSpeed-score moet nog op de live productie-URL gemeten worden.
+
 ## v96 — performance + motion polish
 
 Deze release trekt de twee vorige iteraties technisch recht zonder de inhoud of UX-logica te veranderen. De vaste reserveringen blijven exact **Kanoverhuur 10:00–11:45**, **Pool 14:00–15:00**, **JEU 17:00–18:00** en **De Poort 19:00–21:00**; de boekknoppen en overige itinerary-functionaliteit zijn ongewijzigd.
