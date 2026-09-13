@@ -1,3 +1,29 @@
+## v98 — UX-overhaul (checkpoint na 19 iteraties)
+
+Verzamel-release voor de lopende UX/design-overhaul (zie `STATUS.md` in het
+projectarchief voor de volledige, iteratie-voor-iteratie onderbouwing).
+Belangrijkste wijzigingen t.o.v. v97.4: stopkaart-tijdlijn checkt niet meer
+per ongeluk in bij het lezen van tekst; tijdlijnrail kleurt mee met
+voortgang; stopkaart-herontwerp (grotere foto, rustigere metadata-regel,
+geen "Stop N"-label meer op de foto); onboarding-dialoog heeft nu een
+focus-trap en correct focusbeheer; login-/onboarding-overlay dekt de
+achtergrond ook op WebKit/Safari goed af; diverse aanraakdoelen naar
+44×44px; minder "template"-uitstraling (afgeronde rechthoeken i.p.v.
+volledige pillen, geen decoratieve gloed-achtergrond, gerichter gebruik van
+backdrop-blur); tussenstand-labels "DE BALZAK"/"DE LIONEL RICHIE". Vaste
+reserveringen ongewijzigd: **Kanoverhuur 10:00–11:45**, **Pool 14:00–15:00**,
+**JEU 17:00–18:00**, **De Poort 19:00–21:00**.
+
+**Belangrijk voor deploy:** `app.css`/`app.js` staan bij `_worker.js` op een
+one-year immutable cache-control-header — zonder een nieuwe cache-buster
+zou een browser die de site al eerder bezocht deze wijzigingen nooit te
+zien krijgen. Cache-buster daarom verhoogd naar **v=98** voor zowel
+`app.css` als `app.js` (in `index.html`, `sw.js` en `test-local.html`);
+service-worker shell-cache verhoogd naar `utca-shell-v49`. Bij een volgende
+release: bump deze versies wéér zodra `app.css`/`app.js` wijzigen, ook als
+het maar een kleine iteratie is — dat werd tijdens deze negentien iteraties
+per ongeluk overgeslagen (pas ontdekt en hersteld in iteratie 20).
+
 ## v97.4 — v90 timeline rail restore
 
 Deze release is bewust geen nieuwe timeline-iteratie. De timeline-rail is teruggezet naar de bewezen v90-opbouw met segmenten die exact op elkaar aansluiten. De latere `content-visibility`-optimalisatie is voor timeline-rijen verwijderd omdat die mobiele/Safari rendering kon verstoren. De rail blijft overal één neutrale kleur (`#31353a`); alleen de nodes tonen status. Alle overige v97.1-functionaliteit, reserveringstijden, onboarding en performance-optimalisaties blijven ongewijzigd. CSS cache-buster: **v97.4**; service-worker shell: **utca-shell-v48**.
