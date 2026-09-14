@@ -79,11 +79,11 @@
       }
       html.css-ready .app > :not(#loginOverlay) { visibility: visible; }
     </style>
-    <link rel="preload" href="/app.css?v=100" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet';document.documentElement.classList.add('css-ready')" />
-    <noscript><link rel="stylesheet" href="/app.css?v=100" /></noscript>
+    <link rel="preload" href="/app.css?v=114" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet';document.documentElement.classList.add('css-ready')" />
+    <noscript><link rel="stylesheet" href="/app.css?v=114" /></noscript>
     <link rel="prefetch" as="image" href="/onboarding-checkin.webp?v=97" />
     <link rel="prefetch" as="image" href="/onboarding-options.webp?v=97" />
-    <script defer src="/app.js?v=100"></script>
+    <script defer src="/app.js?v=114"></script>
   </head>
   <body>
     <main class="app">
@@ -294,6 +294,7 @@
         </h2>
         <p>Alleen je voornaam is genoeg. Daarmee zien de anderen waar je bent en hoe dramatisch je daggemiddelde ervoor staat.</p>
         <input id="nameInput" maxlength="24" autocomplete="nickname" placeholder="Voornaam" />
+        <div class="name-hint" id="nameHint" aria-live="polite"></div>
         <button id="loginBtn">Start de dag</button>
         <div class="privacy">Geen accountgedoe. × naast je naam = uitloggen en opnieuw beginnen.</div>
       </div>
