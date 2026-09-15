@@ -2620,6 +2620,97 @@ verversen), `app.css`/`app.js`-versienummers ongewijzigd.
   Lighthouse, gaat over `llms.txt` en AI-crawlers) is niet relevant voor
   een besloten vriendengroep-app; bewust genegeerd.
 
+## Ontwerpbesluiten (vervolg 61) — directe gebruikersfeedback, rank-cirkels
+
+**Gebruiker (met eigen iPhone-screenshot, rode markering om de
+DEGRADATIESTRIJD-ranglijst):** *"Dit is niet mooi het rondje met de
+cijfer erin voor de naam ziet eruit alsof het niet in balans is. Voor
+het menselijk oog is het uit balans en niet rechtlijnig genoeg."*
+
+**Onderzoek:** de rangnummer-cirkels (`.final-rank`, de "1"/"2"/"3" naast
+elke naam) bleken inderdaad meetbaar uit het lood te staan — niet qua
+vorm (34×34px, dus een perfecte cirkel), maar qua **positie van het
+cijfer erin**. Met een Playwright-meting (`Range.getBoundingClientRect()`
+op de tekstinhoud t.o.v. de cirkel) bleek het cijfer op Chromium 7,33px
+ruimte boven en 8,67px ruimte onder over te laten — het cijfer stond dus
+zichtbaar iets hoger dan het midden, exact het soort detail dat het
+menselijke oog wel opvalt zonder dat je meteen kunt benoemen waarom.
+Oorzaak: de cirkel erft de globale `line-height:1.29`, en font-ascent/
+descent van cijfers is nooit symmetrisch rond de basislijn — bij
+`display:grid;place-items:center` wordt daardoor de hele *regelbox*
+gecentreerd, niet het zichtbare cijfer zelf. Bijkomend probleem: zonder
+`font-variant-numeric:tabular-nums` is het cijfer "1" een stuk smaller
+dan "2"/"3", waardoor de drie cirkels ook onderling niet gelijk aanvoelen.
+
+**Fix:** `.final-rank` kreeg `line-height:1` (regelbox laten samenvallen
+met de fontgrootte in plaats van de globale 1,29) en
+`font-variant-numeric:tabular-nums` (alle cijfers even breed). Resultaat
+gemeten: op **WebKit (het toestel van de gebruiker) nu perfect
+gecentreerd** (8,17px boven én onder, exact gelijk); op Chromium nog een
+verwaarloosbare rest-asymmetrie van 1px (7,5 vs 8,5, <3% van de
+cirkeldiameter) — een resterend lettertype-metriek-verschil tussen de
+twee renderers dat geen verdere handmatige pixel-correctie waard is (dat
+zou het al perfecte WebKit-resultaat juist weer verstoren). Horizontaal
+zijn alle drie cijfers nu exact even breed en gelijk gecentreerd op
+beide engines. Geverifieerd met een visuele voor/na-vergelijking op hoge
+zoom en de volledige `capture.js`-regressievlucht, foutloos op Chromium +
+WebKit. Alleen `app.css` inhoudelijk gewijzigd → cache-buster verhoogd
+naar `app.css?v=121` (app.js blijft op `v=120`, dat bestand is niet
+aangeraakt), `SHELL_CACHE` naar `utca-shell-v76`.
+
+## Ontwerpbesluiten (vervolg 62) — lime-accent getemperd via Adobe Color
+
+**Gebruiker:** *"Okay ik vind de kleuren op zich wel goed, maar het lime
+green bij de knoppen en de tijdslijn wellicht iets te fel. Zou je de app
+ook even door deze site halen, om de kleuren goed te krijgen:
+https://color.adobe.com/create/color-wheel"*
+
+**Analyse:** de basis-lime (`--lime:#bdf53a`) bleek in HSV H=78°
+(geel-groen) S=76% **V=96%** — de zeer hoge Value (helderheid) in
+combinatie met een geel-groene tint (het hue-bereik waar het menselijk
+oog het meest gevoelig voor is) verklaart waarom het als "fel"/neon
+aanvoelt, ook al is de saturatie zelf niet extreem.
+
+**Adobe Color Wheel gebruikt** (color.adobe.com/create/color-wheel, geen
+account nodig, alleen bekeken/gebruikt als kleurgereedschap): de exacte
+huidige hex `#BDF53A` ingevoerd op het kleurenwiel, en vervolgens de
+Value in de saturatie/helderheid-kiezer bewust iets teruggedraaid (van
+96% naar 87%, S licht mee omlaag van 76% naar 74%) — resultaat
+`#ADDE3A`. Dezelfde tint (H≈78°) dus zelfde merkidentiteit, alleen
+minder "neon"/schreeuwerig.
+
+**Consistente toepassing:** niet alleen `--lime` zelf, maar ook de drie
+afgeleide tinten (`--limeText`, `--limeTextHover`, en de twee
+kleurstops van de `--prim`-knopgradient) opnieuw berekend door voor elk
+exact dezelfde HSV-verhouding t.o.v. de oude basis-lime toe te passen op
+de nieuwe basis-lime — zodat de onderlinge verhoudingen (hover iets
+lichter, tekstvariant iets gedempter) intact blijven. Ook alle 14
+losse plekken in `app.css` die de oude lime-RGB rechtstreeks
+hardcodeerden (randen, gloeieffecten, achtergrondtints) systematisch
+vervangen. Contrast tegen de knoptekst (`--primInk`) en de
+achtergrondkleur blijft ruim boven WCAG AAA (12,6:1 / 11,7:1, was 15,4:1
+/ 14,3:1) — meer dan genoeg leesbaarheid overgehouden ondanks de
+verlaagde helderheid. De blauwe "regenmodus"-kleuren (`body.rain-mode`)
+bewust niet aangeraakt, dat is een apart, functioneel kleurenschema.
+
+**Kritieke check:** de inline kritieke CSS in `index.html`/
+`test-local.html` (dezelfde login-knop-gradient als in `app.css`, voor
+de non-blocking-CSS-truc uit iteratie 60) hier ook meteen consistent
+bijgewerkt — anders was precies dezelfde CLS-val als iteratie 60
+opnieuw ontstaan, nu voor kleur i.p.v. layout. Geverifieerd met dezelfde
+"app.css geblokkeerd vs. geladen"-vergelijkingstest: de knop-kleur is nu
+byte-voor-byte identiek vóór en na het laden van `app.css`.
+
+**Getest:** visuele screenshots van login-knop, tijdlijn-knoppen
+("NAVIGEER", "Hier"-tab, "3 andere opties") en de DEGRADATIESTRIJD-
+ranglijst (de rank-1-cirkel uit iteratie 61) op zowel Chromium als
+WebKit — merkbaar rustiger, nog steeds duidelijk lime en goed leesbaar.
+Volledige `capture.js`-regressievlucht foutloos op beide engines,
+inclusief regenmodus (ongewijzigd blauw, ter controle). `app.css` en de
+inline kritieke CSS in `index.html`/`test-local.html` gewijzigd →
+cache-buster verhoogd naar `app.css?v=122`, `SHELL_CACHE` naar
+`utca-shell-v77` (`app.js` ongewijzigd op `v=120`).
+
 ## Resterende problemen
 - "Minder AI visual style" (iteraties 18-19: radius, achtergrondvlekken,
   gerichter backdrop-blur op kaarten). Nog resterend, bewust NIET zonder
@@ -2676,30 +2767,34 @@ vangnet voor de acties die toch al harde grenzen waren: `git push*`,
 ## Eerstvolgende actie
 (Deze sectie was sinds iteratie 23 niet meer bijgewerkt en verwees nog naar
 `v=99`/`v51` — gecorrigeerd bij iteratie 54, nogmaals bij iteratie 57, bij
-iteratie 59 na de Luifel-naamsfix, en opnieuw bij iteratie 60 na de
-PageSpeed/CLS-fix.)
+iteratie 59 na de Luifel-naamsfix, bij iteratie 60 na de PageSpeed/CLS-fix,
+bij iteratie 61 na de rank-cirkel-fix, en opnieuw bij iteratie 62 na het
+temperen van de lime-accentkleur.)
 
-Alle designfeedback t/m iteratie 56 is verwerkt: altijd een locatievisual
+Alle designfeedback t/m iteratie 62 is verwerkt: altijd een locatievisual
 (iteratie 47), tijdlijn-rail-nodes (iteraties 48-49, en nogmaals bevestigd
-in iteratie 57 — alle drie statussen kloppen visueel op beide engines),
-en de "naar de klote"-onderschriften bij de ranglijst-percentages
-(iteratie 56, met screenshot-feedback). Sinds iteratie 60 is ook expliciet
-gevraagde PageSpeed-optimalisatie gedaan: de grote CLS-regressie (1,364 →
-verwacht rond de 0,03) is gevonden en gefixt (ontbrekende `.name-hint`
-in de inline kritieke CSS). Geen openstaande onbeantwoorde designvraag op
-dit moment. Sinds iteratie 30 is de nadruk verschoven van "AI-stijl
-polijsten" naar systematisch bug-jagen — dat leverde meerdere échte,
-niet-triviale bugs op (silent-state-bugs rond tabblad-highlighting in
-iteraties 30/33/41/43/44/48, een kritiek zwart-scherm-probleem via echte
-gebruikersmelding in iteratie 45, een dubbele-naam-dataverlies-bug in
-iteratie 51, een verouderde bedrijfsnaam bij een alternatieve locatie in
-iteratie 59, een echte CLS-regressie in iteratie 60). Kandidaten voor een
-volgende iteratie, in aflopende prioriteit: (1) een nieuwe PageSpeed-run
-tegen de live site DOEN ZODRA de gebruiker deze iteratie zelf heeft
-gedeployed, om te bevestigen dat de CLS-score in de praktijk ook echt
-daalt (dit kon deze iteratie niet zelf worden geverifieerd — er wordt
-nooit gedeployed vanuit deze sessie); (2) de nog openstaande, bewust
-uitgestelde punten hierboven in "Resterende problemen"
+in iteratie 57), de "naar de klote"-onderschriften bij de
+ranglijst-percentages (iteratie 56), de scheefstaande rangnummer-cirkels
+bij de DEGRADATIESTRIJD-ranglijst (iteratie 61), en de te felle lime-
+accentkleur bij knoppen/tijdlijn (iteratie 62, met Adobe Color Wheel als
+hulpmiddel — `#bdf53a` → `#adde3a`, zelfde tint maar V 96%→87%). Sinds
+iteratie 60 is ook expliciet gevraagde PageSpeed-optimalisatie gedaan: de
+grote CLS-regressie (1,364 → verwacht rond de 0,03) is gevonden en gefixt
+(ontbrekende `.name-hint` in de inline kritieke CSS). Geen openstaande
+onbeantwoorde designvraag op dit moment. Sinds iteratie 30 is de nadruk
+verschoven van "AI-stijl polijsten" naar systematisch bug-jagen — dat
+leverde meerdere échte, niet-triviale bugs op (silent-state-bugs rond
+tabblad-highlighting in iteraties 30/33/41/43/44/48, een kritiek
+zwart-scherm-probleem via echte gebruikersmelding in iteratie 45, een
+dubbele-naam-dataverlies-bug in iteratie 51, een verouderde bedrijfsnaam
+bij een alternatieve locatie in iteratie 59, een echte CLS-regressie in
+iteratie 60, een meetbare tekst-centrering-fout in iteratie 61).
+Kandidaten voor een volgende iteratie, in aflopende prioriteit: (1) een
+nieuwe PageSpeed-run tegen de live site DOEN ZODRA de gebruiker deze
+iteraties zelf heeft gedeployed, om te bevestigen dat de CLS-score in de
+praktijk ook echt daalt (kon deze sessie niet zelf worden geverifieerd —
+er wordt nooit gedeployed vanuit deze sessie); (2) de nog openstaande,
+bewust uitgestelde punten hierboven in "Resterende problemen"
 (venuenaam-per-kijker, lange namen) als ze daadwerkelijk voorkomen; (3)
 de resterende ~8 alternatieve-locatie `info`-links stuk voor stuk
 nalopen (iteraties 57-59 deden er samen tien, waarvan één een echte
@@ -2707,8 +2802,8 @@ naamsfout opleverde); (4) "Avoid non-composited animations" (97
 elementen, PageSpeed-diagnostiek zonder score-impact, iteratie 60 zag dit
 maar pakte het bewust niet op). Blijf bij elke wijziging aan
 `app.css`/`app.js` de cache-buster-conventie uit iteratie 20 volgen
-(huidige versies: `app.css?v=120`, `app.js?v=120`,
-`SHELL_CACHE='utca-shell-v75'` — verhoog verder bij de eerstvolgende
+(huidige versies: `app.css?v=122`, `app.js?v=120`,
+`SHELL_CACHE='utca-shell-v77'` — verhoog verder bij de eerstvolgende
 wijziging aan die bestanden; controleer bij twijfel altijd `git log` en
 de `?v=`-nummers in `index.html` voor de werkelijk actuele stand, niet
 alleen deze sectie).
