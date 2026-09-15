@@ -68,6 +68,7 @@
       .login .minihead { font-size: 11px; font-weight: 600; letter-spacing: .08em; color: var(--limeText); text-transform: uppercase; }
       .login h2 { margin: 10px 0; font-size: 28px; line-height: 1.07; letter-spacing: -.028em; font-weight: 700; }
       .login p { margin: 0 0 18px; color: var(--text2); font-size: 15px; line-height: 1.4; }
+      .name-hint { min-height: 16px; margin-top: 6px; font-size: 12px; line-height: 1.3; color: var(--text3); }
       .login input, .login button { width: 100%; height: var(--h-prim); font: inherit; }
       .login input { padding: 0 16px; border: 1px solid var(--hairStrong); border-radius: var(--r-md); outline: 0; background: rgba(0, 0, 0, .32); color: #fff; }
       .login button { margin-top: 10px; border: 1px solid var(--limeLine); border-radius: var(--r-pill); background: linear-gradient(180deg, rgba(199, 244, 83, .94), rgba(181, 233, 57, .86)); color: var(--primInk); font-size: 17px; font-weight: 600; }
@@ -79,12 +80,12 @@
       }
       html.css-ready .app > :not(#loginOverlay) { visibility: visible; }
     </style>
-    <link rel="preload" href="/app.css?v=118" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet';document.documentElement.classList.add('css-ready')" onerror="document.documentElement.classList.add('css-ready')" />
-    <noscript><link rel="stylesheet" href="/app.css?v=118" /></noscript>
+    <link rel="preload" href="/app.css?v=120" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet';document.documentElement.classList.add('css-ready')" onerror="document.documentElement.classList.add('css-ready')" />
+    <noscript><link rel="stylesheet" href="/app.css?v=120" /></noscript>
     <script>setTimeout(function(){document.documentElement.classList.add('css-ready')},2500);setTimeout(function(){if(window.__appJsLoaded)return;var b=document.getElementById('bootError');if(b)b.style.cssText='display:block!important;visibility:visible!important;position:fixed;left:12px;right:12px;top:12px;z-index:999;padding:14px 15px;border:1px solid rgba(255,120,130,.5);border-radius:12px;background:#2a1214;color:#ffc3c9;font:14px/1.45 -apple-system,sans-serif'},3500);</script>
     <link rel="prefetch" as="image" href="/onboarding-checkin.webp?v=97" />
     <link rel="prefetch" as="image" href="/onboarding-options.webp?v=97" />
-    <script defer src="/app.js?v=118"></script>
+    <script defer src="/app.js?v=120"></script>
   </head>
   <body>
     <main class="app">
@@ -208,6 +209,7 @@
                 <strong id="finalTopName">—</strong>
                 <span id="finalTopScore">—</span>
               </div>
+              <div class="final-stat-caption" id="finalTopCaption"></div>
               <div class="final-stat-bar">
                 <i id="finalTopBar"></i>
               </div>
@@ -220,6 +222,7 @@
                 <strong id="finalMidName">—</strong>
                 <span id="finalMidScore">—</span>
               </div>
+              <div class="final-stat-caption" id="finalMidCaption"></div>
               <div class="final-stat-bar">
                 <i id="finalMidBar"></i>
               </div>
@@ -232,6 +235,7 @@
                 <strong id="finalLowName">—</strong>
                 <span id="finalLowScore">—</span>
               </div>
+              <div class="final-stat-caption" id="finalLowCaption"></div>
               <div class="final-stat-bar">
                 <i id="finalLowBar"></i>
               </div>
