@@ -3067,6 +3067,44 @@ engines. Alleen `app.css` gewijzigd → cache-buster verhoogd naar
 `app.css?v=126`, `SHELL_CACHE` naar `utca-shell-v84` (`app.js`
 ongewijzigd op `v=124`).
 
+## Ontwerpbesluiten (vervolg 71) — todo-icoontjes op de tijdslijn te vaag om te zien
+
+**Gebruiker:** *"Vind de tijdslijn overigens nog steeds niet mooi en
+consistent en bolletjes die niet geactiveerd zijn niet goed zichtbaar
+met icoontje."*
+
+**Analyse:** iteratie 70 loste de maat-/afstandsinconsistentie op, maar
+er bleef een REST-inconsistentie over die de gebruiker hier terecht
+oppikt: een groot verschil in visueel gewicht tussen de statussen. Een
+volledig gerenderde screenshot van de tijdlijn liet zien dat de
+"todo"-cirkels (nog niet bezocht) een venue-icoontje toonden op
+10×10px, met een dunne lijndikte (1.6) en een gedempte kleur
+(`rgba(235,235,245,.5)`, zo'n 50% dekking) — tegenover het vetgedrukte
+lime vinkje (done) en de heldere lime ring+stip (current). Bij een
+DUN icoon met weinig "inkt" op zo'n klein formaat werkt dezelfde
+opaciteit die voor gewone TEKST prima leesbaar is, in de praktijk veel
+zwakker: er is simpelweg te weinig gekleurd oppervlak om 50% dekking
+zichtbaar te maken. Bovenal: de gedempte stijl suggereert onbedoeld ook
+"uitgeschakeld/niet beschikbaar", terwijl een nog-niet-bezochte stop
+juist volledig interactief en aanklikbaar is — het verkeerde signaal.
+
+**Fix:** de todo-icoontjes teruggebracht naar dezelfde grootte als de
+andere statussen (11×11px, was 10×10px), lijndikte verhoogd van 1.6
+naar 2, en de kleur naar `rgba(255,255,255,.88)` (bijna volle
+dekking) — status wordt nu uitsluitend via KLEUR onderscheiden (lime
+voor bereikt/huidig, wit/neutraal voor nog te gaan), niet meer via
+opaciteit/dofheid, wat ook beter aansluit bij "nog te gaan = gewoon
+klikbaar" i.p.v. "uitgeschakeld". Ook de basis-cirkel (achtergrond/rand,
+gebruikt door de todo-status) iets steviger gemaakt
+(achtergrond .09→.13, rand .24→.36) voor een beter gedefinieerde ring.
+
+**Geverifieerd**: op hoge zoom (4x device-scale) is het icoon nu
+scherp en duidelijk afleesbaar tegen een goed gedefinieerde ring, op
+zowel Chromium als WebKit, en ook in regenmodus. Volledige
+`capture.js`-regressievlucht foutloos op beide engines. Alleen
+`app.css` gewijzigd → cache-buster verhoogd naar `app.css?v=127`,
+`SHELL_CACHE` naar `utca-shell-v85` (`app.js` ongewijzigd op `v=124`).
+
 ## Resterende problemen
 - "Minder AI visual style" (iteraties 18-19: radius, achtergrondvlekken,
   gerichter backdrop-blur op kaarten). Nog resterend, bewust NIET zonder
@@ -3126,10 +3164,11 @@ van correcties zie de git-log van dit bestand zelf. Vanaf iteratie 68
 bewust ingekort: alleen de ECHTE actuele stand, niet elke eerdere
 correctie-van-een-correctie.)
 
-**Stand van zaken (na iteratie 70):** alle bekende designfeedback is
+**Stand van zaken (na iteratie 71):** alle bekende designfeedback is
 verwerkt (locatievisual, tijdlijn-rail-nodes — inclusief de
-maat/afstand-consistentiefix van iteratie 70, ranglijst-onderschriften
-en -rangcirkels, lime-accentkleur — zie git-log iteraties 47-70 voor
+maat/afstand-consistentiefix van iteratie 70 én de
+todo-icoon-zichtbaarheidsfix van iteratie 71, ranglijst-onderschriften
+en -rangcirkels, lime-accentkleur — zie git-log iteraties 47-71 voor
 details). Sinds iteratie 30 is de nadruk vooral op systematisch
 bug-jagen komen te liggen; een terugkerend, nuttig patroon dat hierbij
 hielp: een losse "update-plek" die een deel van de logica van een volledige
@@ -3153,7 +3192,8 @@ GEEN dode CSS (blijkt actief gebruikt in `test-local.html` — niet
 opruimen); venue-selectielogica en routebouw doorgelicht, geen bug
 (iteratie 69); verouderde-check-in-chips op stopkaarten gefixt
 (iteratie 69); tijdlijn-rail-nodes één vaste maat + symmetrische
-lijnafstand gemaakt (iteratie 70, directe gebruikersfeedback).
+lijnafstand gemaakt (iteratie 70) en todo-icoontjes duidelijk zichtbaar
+gemaakt (iteratie 71) — beide directe gebruikersfeedback.
 
 **Kandidaten voor een volgende iteratie, in aflopende prioriteit:**
 1. Een nieuwe PageSpeed-run tegen de live site zodra de gebruiker deze
@@ -3173,8 +3213,8 @@ lijnafstand gemaakt (iteratie 70, directe gebruikersfeedback).
    zouden moeten toepassen maar dat vergeten).
 
 Blijf bij elke wijziging aan `app.css`/`app.js` de cache-buster-conventie
-uit iteratie 20 volgen (huidige versies: `app.css?v=126`, `app.js?v=124`,
-`SHELL_CACHE='utca-shell-v84'` — verhoog verder bij de eerstvolgende
+uit iteratie 20 volgen (huidige versies: `app.css?v=127`, `app.js?v=124`,
+`SHELL_CACHE='utca-shell-v85'` — verhoog verder bij de eerstvolgende
 wijziging aan die bestanden; controleer bij twijfel altijd `git log` en
 de `?v=`-nummers in `index.html` voor de werkelijk actuele stand, niet
 alleen deze sectie).
