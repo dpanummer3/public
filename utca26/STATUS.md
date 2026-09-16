@@ -2711,6 +2711,316 @@ inline kritieke CSS in `index.html`/`test-local.html` gewijzigd →
 cache-buster verhoogd naar `app.css?v=122`, `SHELL_CACHE` naar
 `utca-shell-v77` (`app.js` ongewijzigd op `v=120`).
 
+## Ontwerpbesluiten (vervolg 63) — rangnummer-cirkel top-uitgelijnd met naam/percentage
+
+**Gebruiker:** *"Denk dat het mooier is dat het bolletje waar de cijfer
+instaat, de bovenkant van de naam raakt en de bovenkant van het
+percentage raakt. Maar ik ben niet de allerbeste (UX) designer. Dus als
+je betere ideeën hebt voor maar uit."*
+
+**Analyse:** `.final-stat` gebruikte `align-items:center`, wat de
+rank-cirkel verticaal centreert tegen de VOLLEDIGE hoogte van de rij
+(naam+percentage, onderschrift, voortgangsbalk samen) — daardoor hing de
+cirkel zichtbaar lager dan de naam/het percentage. Gemeten met
+Playwright: de cirkel stond 9,5px lager dan de bovenkant van de naam en
+8,5px lager dan de bovenkant van het percentage. Het idee van de
+gebruiker (boven laten samenvallen) is hier ook design-technisch de
+juiste keuze: een rangnummer hoort optisch bij de naam die het rangschikt,
+niet bij het geheel van naam+onderschrift+balk.
+
+**Bijvangst:** een eerste poging met alleen `align-items:flex-start`
+schoot juist 5-6px door (cirkel te hoog t.o.v. de naam). Oorzaak: een
+vergeten `margin-top:5px` op `.final-stat-main`, over uit een eerdere
+ontwerpversie met een `.final-stat-label`-kicker-tekst erboven die niet
+meer in de huidige HTML voorkomt (`.final-stat-label` wordt nergens meer
+gebruikt in `index.html`/`app.js`) — een echte, kleine orphaned-CSS-bug.
+
+**Fix:** `.final-stat` naar `align-items:flex-start`, en de overbodige
+`margin-top:5px` op `.final-stat-main` verwijderd. Resultaat gemeten:
+de bovenkant van de cirkel valt nu exact samen met de bovenkant van de
+naam (0px verschil) en nagenoeg exact met de bovenkant van het
+percentage (1px, door het kleine fontgrootteverschil tussen naam-21px en
+percentage-18px — geen reëel probleem). Visueel gecontroleerd op zowel
+een korte naam (Stef) als een lange, tweeregelige naam
+("Maximiliaan-Alexander") op Chromium + WebKit: blijft in beide gevallen
+goed leesbaar en netjes uitgelijnd, ook de nog-niet-gescoorde
+plek-2/3-rijen. Volledige `capture.js`-regressievlucht foutloos. Alleen
+`app.css` inhoudelijk gewijzigd → cache-buster verhoogd naar
+`app.css?v=123`, `SHELL_CACHE` naar `utca-shell-v78` (`app.js`
+ongewijzigd op `v=120`).
+
+## Ontwerpbesluiten (vervolg 64) — rank-cirkel vergroot tot naam+onderschrift-hoogte
+
+**Gebruiker (vervolg op iteratie 63, mid-turn):** *"Even over de
+screenshot ik wil dat het bolletje met de cijfer groter wordt. Bovenkant
+van de tekst van de ingelogde naam, onderkant van de bol naar de
+onderkant van de tekst -> 'naar de klote'. Zo is het nog meer in
+balans. Maar nogmaals ik ben nu de hele tijd aan het bijsturen. Dit kan
+je toch ook wel zelf verzinnen dat het er mooier uitziet."*
+
+De laatste zin is terechte, bruikbare feedback: de gebruiker moet dit nu
+een paar keer preciezer specificeren dan nodig zou moeten zijn.
+Meegenomen voor volgende ontwerp-iteraties: bij een concrete "dit klopt
+optisch niet"-melding eerst zelf een stap verder redeneren over de
+onderliggende oorzaak/verhouding, niet alleen de letterlijke coördinaten
+fixen.
+
+**Overwogen aanpak:** een CSS Grid-herstructurering waarbij de cirkel
+via `align-self:stretch` + `aspect-ratio:1` precies de hoogte van
+naam+onderschrift van élke rij afzonderlijk zou volgen, bewust NIET
+gekozen — dat zou de cirkel bij rijen zónder score (plek 2/3, geen
+onderschrift) een ander formaat geven dan bij plek 1, wat de ranglijst
+juist onrustiger/inconsistenter zou maken. In plaats daarvan: één vaste,
+grotere maat voor alle drie de cirkels (uniform, zoals een ranglijst
+hoort te zijn), afgemeten op het gangbare geval (naam op één regel +
+onderschrift).
+
+**Fix:** `.final-rank` van 34×34px naar 44×44px, lettergrootte van het
+cijfer van 15px naar 18px (proportioneel meegeschaald). Omdat de cirkel
+al boven aan de rij was uitgelijnd (iteratie 63), hoefde alleen de
+hoogte te groeien om ook de onderkant te laten samenvallen. Gemeten: de
+bovenkant van de cirkel valt nog steeds exact samen met de bovenkant van
+de naam (0px), en de onderkant valt nu op ~1px van de onderkant van
+"naar de klote" — op zowel Chromium als WebKit. De optische
+cijfer-centrering uit iteratie 61 (line-height:1 + tabular-nums) blijft
+correct werken op de nieuwe grootte (WebKit zelfs weer pixel-perfect
+symmetrisch). Bij een lange, tweeregelige naam blijft het resultaat prima
+leesbaar (de cirkel haalt dan de onderkant van het onderschrift niet
+meer, maar er ontstaat geen overlap of layoutbreuk — een acceptabele,
+bewuste afwijking t.o.v. het edge-case-alternatief van per-rij dynamische
+hoogtes). Volledige `capture.js`-regressievlucht foutloos op Chromium +
+WebKit. Alleen `app.css` gewijzigd → cache-buster verhoogd naar
+`app.css?v=124`, `SHELL_CACHE` naar `utca-shell-v79` (`app.js`
+ongewijzigd op `v=120`).
+
+## Ontwerpbesluiten (vervolg 65) — tijdlijn-rail-nodes: geen zoom meer bij foto-laden
+
+**Gebruiker:** *"Bij de tijdslijn de bolletjes. Als je check in doet,
+dan zoom je in. Niet meer doen. Behoudt dezelfde image van het bolletje
+maar geef er een beetje shadow of gradient over. Wat het beste werkt met
+de rest van de app. Check voor consistentie. En ook voor binnen het
+bolletje geef behulp van een icoontje aan dat je daar bent net zo
+minimaal als de rest van icoontjes nadat je al verder bent met de check
+ins."*
+
+**Root cause gevonden:** zodra de locatiefoto voor een stop klaar is met
+laden (`syncRailPhoto()`), kreeg het bijbehorende rail-bolletje de klasse
+`has-photo`, en die klasse verhoogde de afmeting fors t.o.v. de normale
+status-grootte: todo 17px→26px, done 19px→28px, current 21px→30px — een
+sprong van 9px (40-50%) met een CSS-transitie erop, precies zichtbaar als
+een "inzoomende" cirkel. Omdat de foto voor de huidige stop meestal
+ongeveer rond het moment van inchecken klaar is met laden, viel dit
+moment in de praktijk vaak samen met het inchecken zelf — vandaar de
+waarneming "als je check in doet, dan zoom je in".
+
+**Bijvangst:** bij de "current"-status werd bovendien de kleine lime
+stip (`::after`, het "je bent hier"-signaal) volledig verborgen zodra er
+een foto bijkwam (`content:none`) — zonder vervanging. Zodra de foto voor
+je huidige stop laadt, verdween dus het enige signaal dat je daar
+ingecheckt stond, wat precies aansluit bij het tweede deel van de
+gebruikersvraag (een icoontje dat aangeeft dat je er bent, ook met foto).
+
+**Fix:**
+1. Alle `has-photo`-afmetingsverhogingen verwijderd (`width`/`height`
+   voor de basis-, done- en current-varianten) — de cirkel houdt nu
+   altijd zijn normale statusgrootte (17/19/21px), foto of niet foto.
+2. Een donkere gradient-scrim toegevoegd over de foto zelf, in
+   `syncRailPhoto()` (`app.js`): `linear-gradient(180deg,rgba(5,6,7,.32),
+   rgba(5,6,7,.62))` vóór de foto-URL in dezelfde `background-image`.
+   Bewust dezelfde kleurwaarde (`rgba(5,6,7,…)`) als de bestaande
+   `.media-scrim` op de grote kaartfoto's, voor visuele consistentie met
+   de rest van de app — geen losse, nieuwe kleur verzonnen.
+3. De `content:none`-onderdrukking van de lime "je bent hier"-stip bij
+   current+foto verwijderd, en dezelfde `drop-shadow`-legibiliteitsfix
+   die het vinkje/icoontje al had uitgebreid naar deze stip
+   (`.tl-node.has-photo svg,.tl-node.has-photo::after{filter:...}`) — nu
+   blijft er in élke status een minimaal icoontje/stip zichtbaar boven op
+   de foto, consistent met hoe het vinkje dat al deed.
+
+**Getest:** omdat de echte Google Places-foto's een backend nodig hebben
+(niet beschikbaar in lokale tests), is `has-photo` + een placeholder-
+achtergrond programmatisch gesimuleerd via Playwright. Gemeten: de
+afmeting van elk bolletje is exact hetzelfde vóór en na het toevoegen van
+`has-photo` (17/19/21px, geen sprong meer) op zowel Chromium als WebKit.
+Visueel gecontroleerd: het vinkje (done) en de "je bent hier"-stip
+(current) blijven beide duidelijk zichtbaar boven op de foto dankzij de
+schaduw, en de gradient geeft een rustige, met de rest van de app
+consistente donkere waas over de foto. Volledige
+`capture.js`-regressievlucht foutloos op Chromium + WebKit, inclusief
+regenmodus (ongewijzigd). `app.css` én `app.js` gewijzigd →
+cache-buster verhoogd naar `app.css?v=125`, `app.js?v=121`,
+`SHELL_CACHE` naar `utca-shell-v80`.
+
+## Ontwerpbesluiten (vervolg 66) — weersomslag-desync: check-in werd niet gedeeld bij wisselen zon/regen
+
+**Frisse code-doorloop** van een nog niet eerder bekeken hoek:
+`applyWeatherTheme()`/`renderWeatherSwitcher()` en de click-handler van de
+zon/regen-schakelaar in `bindOnboarding`/`bindDynamicUi`.
+
+**Bug gevonden:** de schakelaar migreert `currentStop` correct wanneer je
+op het weer-afhankelijke onderdeel bent ingecheckt (bv. je stond
+ingecheckt bij "Kanoverhuur Utrecht" onder zon, en schakelt naar regen —
+`currentStop` wordt lokaal keurig `weather-rain`, en dat wordt ook naar
+`localStorage` weggeschreven). Maar in tegenstelling tot **elke andere**
+plek die `currentStop` wijzigt (`setHere()`, login, initiale laadbeurt),
+ontbrak hier de `syncState()`-aanroep die dit naar de gedeelde
+`/api/state`-database pusht. Het exacte patroon dat deze sessie al vaker
+heeft blootgelegd (iteraties 30/33/41/43/44/48/65): een losse
+update-plek die de rest van de logica niet volledig spiegelt. Concreet
+gevolg: als iemand van weer wisselt terwijl hij op de weerstop staat
+ingecheckt, blijven zijn vrienden (via `/api/state`, en de 15-seconden-
+polling-`refreshState()`, die alleen leest en nooit schrijft) zijn OUDE
+locatie zien totdat hij toevallig een andere actie doet die wél
+synchroniseert.
+
+**Fix:** één regel toegevoegd — `syncState(true)` direct na de
+`currentStop`-migratie, alleen in de tak waar dat ook daadwerkelijk
+gebeurt (dus geen overbodige netwerkaanroep als je niet op de weerstop
+stond). Geverifieerd met een Playwright-test die de daadwerkelijke
+`POST /api/state`-aanvraag onderschept: na check-in bij Kanoverhuur en
+wisselen naar regen verschijnt correct een POST met
+`"currentStop":"weather-rain"`, op zowel Chromium als WebKit; zonder
+check-in bij de weerstop blijft de POST terecht uit (geen onnodige
+sync). Volledige `capture.js`-regressievlucht foutloos op beide engines.
+Alleen `app.js` inhoudelijk gewijzigd → cache-buster verhoogd naar
+`app.js?v=122`, `SHELL_CACHE` naar `utca-shell-v81` (`app.css`
+ongewijzigd op `v=125`).
+
+## Ontwerpbesluiten (vervolg 67) — opvolging iteratie 66, plus een landmine in de onboarding-navigatie
+
+**Opvolging van iteratie 66's eigen prioriteit (6):** alle plekken die
+`currentStop`/`ratings` wijzigen nagelopen op ontbrekende `syncState()`-
+aanroepen. Vijf mutatieplekken gevonden; alle vijf bleken correct (de
+initiële laadbeurt en de logout-flow horen bewust NIET te synchroniseren
+— syncen bij logout zou je eigen check-in/rating-geschiedenis bij
+iedereen wissen, puur omdat je zelf uitlogt). Geen nieuwe bug hier, maar
+wel een nuttige bevestiging dat iteratie 66's fix compleet was.
+
+**Frisse code-doorloop van de onboarding-flow** (nog niet eerder
+bekeken): een echte landmine gevonden, nog niet actief gebroken maar wel
+een zichzelf-herhalend patroon uit deze sessie (parallelle logica die
+niet gesynchroniseerd blijft — zie iteraties 30/33/41/43/44/48/65/66).
+De "Volgende"-knop (`next.onclick`) berekent het aantal slides dynamisch
+uit de DOM (`$$('[data-onboarding-slide]').length`), maar de
+swipe-gebaar-handler en de `ArrowRight`-toetsenbordnavigatie hadden de
+laatste-slide-grens hardgecodeerd op `onboardingStep<4`. Toevallig klopt
+dat nu precies (5 slides, index 0-4), dus zichtbaar geen bug vandaag —
+maar zodra een toekomstige iteratie een slide toevoegt of verwijdert
+zonder deze twee losse `4`'s te vinden, zou swipen/pijltjestoetsen
+vastlopen vóór de laatste slide terwijl de knop wél tot de echte laatste
+slide komt.
+
+**Fix:** beide hardgecodeerde `4`'s vervangen door dezelfde dynamische
+berekening die de knop al gebruikt
+(`$$('[data-onboarding-slide]').length-1`) — nu delen alle drie de
+navigatiewegen (knop, swipe, toetsenbord) precies dezelfde bron van
+waarheid. Geverifieerd met Playwright op Chromium + WebKit: 7×
+`ArrowRight` op 5 slides eindigt correct op index 4 (niet verder), 7×
+`ArrowLeft` sluit de onboarding correct af via `onboardingBackToName()`;
+7× swipe-links eindigt eveneens correct op index 4. Gedrag is identiek
+aan vóór de fix — dit is een preventieve fix, geen zichtbare
+gedragsverandering. Volledige `capture.js`-regressievlucht foutloos op
+beide engines. Alleen `app.js` gewijzigd → cache-buster verhoogd naar
+`app.js?v=123`, `SHELL_CACHE` naar `utca-shell-v82`.
+
+## Ontwerpbesluiten (vervolg 68) — resterende locatielinks afgerond + grote test-local.html-drift gevonden
+
+**Alternatieve-locatielinks afgerond**: de laatste drie nog niet
+gecontroleerde alternatieven (Café Le Journal, Café de Zaak, Graaf
+Floris) geverifieerd tegen de echte Google Maps-data — alle drie
+correct. Hiermee zijn nu alle ~13 alternatieve locaties uit het
+programma stuk voor stuk gecontroleerd sinds iteratie 57 (één echte
+naamsfout gevonden en gefixt, in iteratie 59); dit punt kan van de
+prioriteitenlijst af.
+
+**Grote drift in `test-local.html` gevonden.** Bij het routinematig
+controleren van de al langer als "dood" bekende `.final-stat-label`-
+CSS-regel (kandidaat-opruiming uit iteratie 63) bleek deze WEL nog
+gebruikt te worden — alleen in `test-local.html`, niet in `index.html`.
+Verdere vergelijking van de twee bestanden (die byte-voor-byte gelijk
+zouden moeten zijn op de absolute/relatieve pad-prefixes na) legde een
+flinke opeenstapeling van niet-gesynchroniseerde inhoud bloot,
+kennelijk van vóór deze sessie of van vroeg in deze sessie, nooit
+opgemerkt omdat het geen `app.css`/`app.js`-wijzigingen betrof:
+- `--r-pill` stond op `999px` (volledig pil-vormig) i.p.v. de echte
+  `16px` — alle pil-knoppen zouden in `test-local.html` zichtbaar
+  anders (extremer rond) ogen dan in het echte `index.html`.
+- De `#groep`-sectiekop was een oudere versie ("Waar is iedereen?" +
+  losse ondertitel) i.p.v. de huidige "Laatste check-ins &
+  tussenstand".
+- **`#nameHint` ontbrak volledig uit de HTML** — exact het element
+  waarvan de ontbrekende CSS in iteratie 60 de grote CLS-regressie
+  veroorzaakte. Met het element zelf afwezig kon die hele fix nooit
+  zichtbaar getest worden via `test-local.html`.
+- De ranglijst-sectie (`#finalResult`) miste de drie
+  `.final-stat-caption`-elementen uit iteratie 56 volledig, en had in
+  plaats daarvan nog de oude, allang losgelaten `.final-stat-label`/
+  `.final-stat-sub`-grapjestekst ("THE ABSOLUTE BOLLOCKS", "DE
+  KLOOTZAK", "THE LIONEL RICHIE", "EASY LIKE A SONNTAG MORGEN" etc.) —
+  de hele "naar de klote"-onderschriftfunctie uit iteratie 56 was dus
+  onzichtbaar bij lokaal testen via dit bestand.
+- Twee stukjes onboarding-copy (de derde slide) waren een oudere
+  formulering die niet meer overeenkwam met `index.html`.
+
+**Fix:** alle bovenstaande punten één-op-één overgenomen uit
+`index.html`. Geverifieerd met `diff` (paden genormaliseerd) dat de
+twee bestanden nu weer volledig identiek zijn. Met Playwright via
+`file://` bevestigd dat `test-local.html` foutloos laadt op Chromium +
+WebKit, dat `#nameHint` nu bestaat, en dat de "naar de klote"-caption nu
+wél verschijnt. (WebKit toont wat CORS-waarschuwingen voor
+`/api/place-photo`-aanvragen bij het openen via `file://` — een
+al eerder gedocumenteerde, onvermijdelijke beperking van lokaal
+`file://`-testen zonder server, geen regressie.) Geen `app.css`/
+`app.js`-wijziging, dus geen cache-buster nodig (`test-local.html`
+zit niet in `sw.js`'s precache-lijst).
+
+**Les voor vervolgiteraties**: de conventie "werk `test-local.html`
+synchroon bij met elke `index.html`-wijziging" is dit sessie voor de
+EIGEN wijzigingen steeds gevolgd, maar deze drift bewijst dat er
+kennelijk oudere content is blijven hangen die nooit is meegenomen. Bij
+twijfel voortaan een snelle `diff` tussen de twee bestanden trekken
+(paden even normaliseren) in plaats van aan te nemen dat ze synchroon
+lopen.
+
+## Ontwerpbesluiten (vervolg 69) — verouderde check-ins bleven als "aanwezig" op de stopkaart hangen
+
+**Frisse code-doorloop** van de deelnemers-/aanwezigheidslogica
+(`venueOptions`/`selectVenue`/`renderRoute`/`peopleAtStopHtml` — nog niet
+eerder in deze sessie bekeken). Geen bug in de eerste drie (de
+dubbele-locatie-check in `selectVenue()` en de proactieve versie in
+`ensureNoConsecutiveDuplicate()` zijn correct van elkaar gescheiden voor
+hun eigen triggers; `renderRoute()`'s Google Maps-routebouw gebruikt
+consequent `activeVenue()` en dus ook de door de gebruiker gekozen
+alternatieven).
+
+**Bug gevonden in `peopleAtStopHtml()`.** De "Laatste check-ins &
+tussenstand"-lijst (`renderGroup()`) markeert een check-in ouder dan 30
+minuten al langer correct als "verouderd" (via `checkinIsStale()`,
+zichtbaar in de screenshot die de gebruiker eerder deelde: "1 d
+geleden · verouderd"). Maar de kleine naam-chips die onder een
+STOP-KAART verschijnen ("wie is hier") gebruikten diezelfde
+`checkinIsStale()`-functie helemaal niet — die bestond en werd elders al
+gebruikt, maar was hier vergeten toe te passen. Gevolg: als iemand na
+zijn eerste check-in nooit meer expliciet incheckt (bv. telefoon leeg,
+simpelweg vergeten), bleef zijn naam-chip voor de rest van de dag
+permanent op die EERSTE stopkaart staan, terwijl de check-ins-lijst
+elders al netjes "verouderd" toonde. Precies het soort verwarring dat
+deze app juist moet voorkomen — vrienden die denken dat iemand nog ergens
+is terwijl de data allang niet meer klopt.
+
+**Fix:** `peopleAtStopHtml()`'s filter uitgebreid met
+`&&!checkinIsStale(p)` voor andere deelnemers (je eigen chip blijft
+ongemoeid, die komt uit je eigen live lokale status, nooit uit
+mogelijk-verouderde serverdata). Geverifieerd met een Playwright-test
+die de `/api/state`-respons mockt met een verse (1 min oud) en een
+verouderde (40 min oud) nepdeelnemer op dezelfde stop: de verse chip
+verschijnt correct onder de stopkaart, de verouderde niet — op zowel
+Chromium als WebKit — terwijl de "Laatste check-ins"-lijst beide nog
+gewoon toont (met "verouderd" bij de oude). Volledige
+`capture.js`-regressievlucht foutloos. Alleen `app.js` gewijzigd →
+cache-buster verhoogd naar `app.js?v=124`, `SHELL_CACHE` naar
+`utca-shell-v83`.
+
 ## Resterende problemen
 - "Minder AI visual style" (iteraties 18-19: radius, achtergrondvlekken,
   gerichter backdrop-blur op kaarten). Nog resterend, bewust NIET zonder
@@ -2765,45 +3075,58 @@ vangnet voor de acties die toch al harde grenzen waren: `git push*`,
 `publish*`. Dit hoeft niet opnieuw ingesteld te worden.
 
 ## Eerstvolgende actie
-(Deze sectie was sinds iteratie 23 niet meer bijgewerkt en verwees nog naar
-`v=99`/`v51` — gecorrigeerd bij iteratie 54, nogmaals bij iteratie 57, bij
-iteratie 59 na de Luifel-naamsfix, bij iteratie 60 na de PageSpeed/CLS-fix,
-bij iteratie 61 na de rank-cirkel-fix, en opnieuw bij iteratie 62 na het
-temperen van de lime-accentkleur.)
+(Deze sectie liep herhaaldelijk stale — voor de volledige geschiedenis
+van correcties zie de git-log van dit bestand zelf. Vanaf iteratie 68
+bewust ingekort: alleen de ECHTE actuele stand, niet elke eerdere
+correctie-van-een-correctie.)
 
-Alle designfeedback t/m iteratie 62 is verwerkt: altijd een locatievisual
-(iteratie 47), tijdlijn-rail-nodes (iteraties 48-49, en nogmaals bevestigd
-in iteratie 57), de "naar de klote"-onderschriften bij de
-ranglijst-percentages (iteratie 56), de scheefstaande rangnummer-cirkels
-bij de DEGRADATIESTRIJD-ranglijst (iteratie 61), en de te felle lime-
-accentkleur bij knoppen/tijdlijn (iteratie 62, met Adobe Color Wheel als
-hulpmiddel — `#bdf53a` → `#adde3a`, zelfde tint maar V 96%→87%). Sinds
-iteratie 60 is ook expliciet gevraagde PageSpeed-optimalisatie gedaan: de
-grote CLS-regressie (1,364 → verwacht rond de 0,03) is gevonden en gefixt
-(ontbrekende `.name-hint` in de inline kritieke CSS). Geen openstaande
-onbeantwoorde designvraag op dit moment. Sinds iteratie 30 is de nadruk
-verschoven van "AI-stijl polijsten" naar systematisch bug-jagen — dat
-leverde meerdere échte, niet-triviale bugs op (silent-state-bugs rond
-tabblad-highlighting in iteraties 30/33/41/43/44/48, een kritiek
-zwart-scherm-probleem via echte gebruikersmelding in iteratie 45, een
-dubbele-naam-dataverlies-bug in iteratie 51, een verouderde bedrijfsnaam
-bij een alternatieve locatie in iteratie 59, een echte CLS-regressie in
-iteratie 60, een meetbare tekst-centrering-fout in iteratie 61).
-Kandidaten voor een volgende iteratie, in aflopende prioriteit: (1) een
-nieuwe PageSpeed-run tegen de live site DOEN ZODRA de gebruiker deze
-iteraties zelf heeft gedeployed, om te bevestigen dat de CLS-score in de
-praktijk ook echt daalt (kon deze sessie niet zelf worden geverifieerd —
-er wordt nooit gedeployed vanuit deze sessie); (2) de nog openstaande,
-bewust uitgestelde punten hierboven in "Resterende problemen"
-(venuenaam-per-kijker, lange namen) als ze daadwerkelijk voorkomen; (3)
-de resterende ~8 alternatieve-locatie `info`-links stuk voor stuk
-nalopen (iteraties 57-59 deden er samen tien, waarvan één een echte
-naamsfout opleverde); (4) "Avoid non-composited animations" (97
-elementen, PageSpeed-diagnostiek zonder score-impact, iteratie 60 zag dit
-maar pakte het bewust niet op). Blijf bij elke wijziging aan
-`app.css`/`app.js` de cache-buster-conventie uit iteratie 20 volgen
-(huidige versies: `app.css?v=122`, `app.js?v=120`,
-`SHELL_CACHE='utca-shell-v77'` — verhoog verder bij de eerstvolgende
+**Stand van zaken (na iteratie 69):** alle bekende designfeedback is
+verwerkt (locatievisual, tijdlijn-rail-nodes, ranglijst-onderschriften
+en -rangcirkels, lime-accentkleur — zie git-log iteraties 47-65 voor
+details). Sinds iteratie 30 is de nadruk vooral op systematisch
+bug-jagen komen te liggen; een terugkerend, nuttig patroon dat hierbij
+hielp: een losse "update-plek" die een deel van de logica van een volledige
+render-/sync-functie dupliceert, maar niet meesynchroniseert als die
+basislogica verandert (tabblad-highlighting-bugs iteraties 30/33/41/
+43/44/48, weersomslag-syncbug iteratie 66, onboarding-navigatie-landmine
+iteratie 67, verouderde-check-in-chips iteratie 69: `checkinIsStale()`
+bestond en werd elders al gebruikt, maar was in `peopleAtStopHtml()`
+vergeten). **Bij visuele/uitlijning-meldingen**: eerst zelf een stap
+verder redeneren over de onderliggende verhouding/oorzaak, niet alleen
+letterlijk genoemde coördinaten fixen (expliciete gebruikerswens,
+iteratie 64) — en bij twijfel of twee bestanden die "hetzelfde" horen te
+zijn (zoals `index.html`/`test-local.html`) dat ook echt zijn, gewoon
+even `diff` trekken in plaats van aannemen (iteratie 68 vond zo een
+grote, langlopende drift die zonder die check onopgemerkt was gebleven).
+
+**Nu al afgerond, dus GEEN kandidaat meer:** alle ~13 alternatieve-
+locatielinks gecontroleerd (iteraties 57-59, 68); `test-local.html` weer
+volledig gelijk aan `index.html` (iteratie 68); `.final-stat-label` is
+GEEN dode CSS (blijkt actief gebruikt in `test-local.html` — niet
+opruimen); venue-selectielogica en routebouw doorgelicht, geen bug
+(iteratie 69); verouderde-check-in-chips op stopkaarten gefixt
+(iteratie 69).
+
+**Kandidaten voor een volgende iteratie, in aflopende prioriteit:**
+1. Een nieuwe PageSpeed-run tegen de live site zodra de gebruiker deze
+   iteraties zelf heeft gedeployed, om te bevestigen dat de CLS-score
+   in de praktijk ook echt daalt (kon deze sessie niet zelf worden
+   geverifieerd — er wordt nooit gedeployed vanuit deze sessie).
+2. De bewust uitgestelde punten in "Resterende problemen" hierboven
+   (venuenaam-per-kijker, lange namen) als ze daadwerkelijk voorkomen.
+3. "Avoid non-composited animations" (97 elementen, PageSpeed-
+   diagnostiek zonder score-impact, bewust nog niet opgepakt — een
+   volledige refactor naar alleen transform/opacity-transities is een
+   te grote, risicovolle ingreep voor de marginale winst).
+4. Een frisse code-doorloop van een nog niet bekeken hoek van `app.js`
+   (bv. `removeParticipant`, `onboardingClone`/`buildOnboardingStills`,
+   of `_worker.js` nog eens met de kennis van iteratie 69's bugtype in
+   het achterhoofd — andere plekken die een status/leeftijd-check
+   zouden moeten toepassen maar dat vergeten).
+
+Blijf bij elke wijziging aan `app.css`/`app.js` de cache-buster-conventie
+uit iteratie 20 volgen (huidige versies: `app.css?v=125`, `app.js?v=124`,
+`SHELL_CACHE='utca-shell-v83'` — verhoog verder bij de eerstvolgende
 wijziging aan die bestanden; controleer bij twijfel altijd `git log` en
 de `?v=`-nummers in `index.html` voor de werkelijk actuele stand, niet
 alleen deze sectie).
