@@ -3021,6 +3021,52 @@ gewoon toont (met "verouderd" bij de oude). Volledige
 cache-buster verhoogd naar `app.js?v=124`, `SHELL_CACHE` naar
 `utca-shell-v83`.
 
+## Ontwerpbesluiten (vervolg 70) — tijdlijn-rail-nodes: één maat, symmetrische afstand tot de lijn
+
+**Gebruiker:** *"De tijdslijn met bolletjes ziet er nog steeds niet mooi
+en consistent uit. [...] de bolletjes hebben ook verschillende groottes
+nu, de lijnen vanaf de bolletje hebben verschillende afstanden. Dat wil
+niet zeggen dat ik wil dat de lijnen de bolletjes raken daar kan wel een
+heel klein beetje afstand tussen zitten."*
+
+**Eerst gemeten, niet aangenomen** (zelfde methode als eerdere
+optische-uitlijnfixes): met Playwright de daadwerkelijke gerenderde
+maten en de computed `top`/`height` van de `.tl-rail::before`/`::after`-
+lijnsegmenten opgevraagd voor alle drie statussen. Bevestigde exact wat
+de gebruiker zag:
+- De bolletjes waren inderdaad drie verschillende maten: todo 17px,
+  done 19px, current 21px.
+- De lijnsegmenten zelf hadden een VASTE positie (`top:-5px;height:32px`
+  boven, `top:57px` onder) die niet meebewoog met de bolletje-maat — dus
+  hoe groter het bolletje, hoe kleiner de resterende afstand: de ruimte
+  boven een bolletje varieerde van 3px (current) tot 5px (todo), de
+  ruimte onder van 7px (done/current) tot 8px (todo) — en de ruimte
+  boven was sowieso al structureel kleiner dan de ruimte onder,
+  ongeacht de bolletje-maat (scheve, niet-symmetrische afstand rond elk
+  bolletje).
+
+**Fix:** alle drie statussen (todo/done/current, incl. de
+foto-achtergrond-variant uit iteratie 65 en de blauwe regenmodus-
+kleuren) naar één vaste maat van 20px — status blijft duidelijk
+onderscheiden via kleur/vulling/icoon (grijs+icoon voor todo,
+lime-ring+stip voor current, lime-vlak+vinkje voor done), niet meer via
+grootte. Vervolgens de lijnsegmenten herberekend voor exact 6px
+symmetrische afstand aan beide kanten van dat ene, vaste formaat
+(`::before` 3px korter, `::after` 1px later beginnend). Dit sluit ook
+aan bij de eerder vastgelegde "Polarsteps-richting" (project-notitie):
+Polarsteps' eigen tijdlijn gebruikt ook doorgaans één vaste
+marker-grootte, status alleen via kleur/icoon.
+
+**Geverifieerd**: na de fix meten alle drie statussen exact 20px en
+exact 6px ruimte boven én onder, op zowel Chromium als WebKit — ook met
+een gesimuleerde locatiefoto (uit iteratie 65) blijft dit gelijk.
+Visueel gecontroleerd op hoge zoom: de rail oogt nu als één
+doorlopende, gelijkmatige lijn met gelijk-grote stopmarkeringen, ook in
+regenmodus. Volledige `capture.js`-regressievlucht foutloos op beide
+engines. Alleen `app.css` gewijzigd → cache-buster verhoogd naar
+`app.css?v=126`, `SHELL_CACHE` naar `utca-shell-v84` (`app.js`
+ongewijzigd op `v=124`).
+
 ## Resterende problemen
 - "Minder AI visual style" (iteraties 18-19: radius, achtergrondvlekken,
   gerichter backdrop-blur op kaarten). Nog resterend, bewust NIET zonder
@@ -3080,9 +3126,10 @@ van correcties zie de git-log van dit bestand zelf. Vanaf iteratie 68
 bewust ingekort: alleen de ECHTE actuele stand, niet elke eerdere
 correctie-van-een-correctie.)
 
-**Stand van zaken (na iteratie 69):** alle bekende designfeedback is
-verwerkt (locatievisual, tijdlijn-rail-nodes, ranglijst-onderschriften
-en -rangcirkels, lime-accentkleur — zie git-log iteraties 47-65 voor
+**Stand van zaken (na iteratie 70):** alle bekende designfeedback is
+verwerkt (locatievisual, tijdlijn-rail-nodes — inclusief de
+maat/afstand-consistentiefix van iteratie 70, ranglijst-onderschriften
+en -rangcirkels, lime-accentkleur — zie git-log iteraties 47-70 voor
 details). Sinds iteratie 30 is de nadruk vooral op systematisch
 bug-jagen komen te liggen; een terugkerend, nuttig patroon dat hierbij
 hielp: een losse "update-plek" die een deel van de logica van een volledige
@@ -3105,7 +3152,8 @@ volledig gelijk aan `index.html` (iteratie 68); `.final-stat-label` is
 GEEN dode CSS (blijkt actief gebruikt in `test-local.html` — niet
 opruimen); venue-selectielogica en routebouw doorgelicht, geen bug
 (iteratie 69); verouderde-check-in-chips op stopkaarten gefixt
-(iteratie 69).
+(iteratie 69); tijdlijn-rail-nodes één vaste maat + symmetrische
+lijnafstand gemaakt (iteratie 70, directe gebruikersfeedback).
 
 **Kandidaten voor een volgende iteratie, in aflopende prioriteit:**
 1. Een nieuwe PageSpeed-run tegen de live site zodra de gebruiker deze
@@ -3125,8 +3173,8 @@ opruimen); venue-selectielogica en routebouw doorgelicht, geen bug
    zouden moeten toepassen maar dat vergeten).
 
 Blijf bij elke wijziging aan `app.css`/`app.js` de cache-buster-conventie
-uit iteratie 20 volgen (huidige versies: `app.css?v=125`, `app.js?v=124`,
-`SHELL_CACHE='utca-shell-v83'` — verhoog verder bij de eerstvolgende
+uit iteratie 20 volgen (huidige versies: `app.css?v=126`, `app.js?v=124`,
+`SHELL_CACHE='utca-shell-v84'` — verhoog verder bij de eerstvolgende
 wijziging aan die bestanden; controleer bij twijfel altijd `git log` en
 de `?v=`-nummers in `index.html` voor de werkelijk actuele stand, niet
 alleen deze sectie).
