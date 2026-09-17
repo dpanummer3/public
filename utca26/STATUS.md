@@ -4121,3 +4121,60 @@ met resterende beperkingen) is bij de gebruiker afgeleverd. De laatst
 verstuurde zip (commit `dd375bc`) is functioneel identiek aan deze
 laatste stand — de iteraties 89-91 bevatten alleen documentatie-
 correcties, geen codewijzigingen.
+
+## Ontwerpbesluiten (vervolg 92) — na de deadline: directe gebruikersfeedback op een echt toestel, tijdlijn-bolletjes definitief vereenvoudigd
+
+**Gebruikersmelding, met screenshot van een echt toestel**: "Still no
+consistency after all those iterations. I like the above one better
+just straight black background and lime green ✓. Fix it please. Also
+with cache. switching around. Now it's just a mess."
+
+**Root cause**: sinds iteratie 65 kregen tijdlijn-rail-nodes een kleine
+achtergrondfoto van de locatie zodra Google Places een foto voor die
+venue vond (`syncRailPhoto()` zette dan de `has-photo`-klasse +
+`background-image`). Als voor een bepaalde locatie GEEN foto gevonden
+werd (of nog niet geladen was op het moment van bekijken), bleef die
+rail-node gewoon een vlak, donker bolletje — zonder foto-textuur. Op een
+echt toestel, met wisselende netwerk-omstandigheden en niet voor elke
+locatie een beschikbare Google-foto, ontstond zo precies het
+"inconsistente" beeld dat de gebruiker meldde: sommige bolletjes met een
+subtiele fototextuur erachter, andere plat zwart — ook al was het
+onderliggende vinkje/icoontje zelf (sinds de iteratie-88-fix) intern
+altijd correct.
+
+**Besluit**: op expliciet, direct verzoek van de gebruiker de
+fototextuur-behandeling van rail-nodes volledig verwijderd — alle
+rail-nodes zijn nu ALTIJD een vlak, donker bolletje met alleen het
+lime-icoontje/vinkje, ongeacht of er een locatiefoto beschikbaar is.
+Dit is bewust een designwijziging (vereenvoudiging), niet enkel een
+bugfix: de fototextuur was een deliberate keuze uit iteratie 65 (richting
+Polarsteps' "ronde foto-markers"), maar de gebruiker geeft nu expliciet
+de voorkeur aan de eenvoudigere, altijd-consistente variant.
+
+**Uitgevoerd**: `syncRailPhoto()` en de aanroepen ervan verwijderd uit
+`app.js` (in `applyPlacePhoto()` en `loadPlacePhoto()`); de bijbehorende
+`.tl-node.has-photo{...}`-CSS-regels verwijderd uit `app.css`. Geen enkele
+verwijzing naar `has-photo` resteert in de codebase (gecontroleerd met
+grep).
+
+**Test**: empirisch bevestigd met Playwright (locatiefoto kunstmatig
+laten laden, daarna gecontroleerd dat de rail-node GEEN `has-photo`-
+klasse of `background-image` krijgt) op zowel Chromium als WebKit.
+Volledige `capture.js`-regressiereeks (11 stappen) opnieuw gedraaid op
+beide engines: geen fouten. Visueel gecontroleerd via screenshot: het
+checked-in bolletje toont nu een consistente, lime-omrande cirkel met
+vinkje, exact zoals de gebruiker aangaf.
+
+**Over de "cache switching around"-opmerking**: dit is vermoedelijk niet
+een letterlijke nieuwe cachingbug, maar het gevolg van het feit dat deze
+sessie nooit zelf naar de productiesite mag/kan deployen — de gebruiker
+bekeek waarschijnlijk een eerder gedeployde, oudere versie van de app
+(van vóór de iteratie-88-fix, of zelfs van vóór iteratie 65's introductie
+van de fototextuur), waardoor twee verschillende bolletje-stijlen door
+elkaar leken te lopen. Nu de fototextuur volledig is verwijderd, is dit
+sowieso opgelost zodra de gebruiker deze nieuwste versie zelf publiceert
+en de PWA op het toestel eenmaal volledig sluit en heropent (zoals ook
+in `OPLEVERING.md`/`README.md` staat).
+
+Cache-buster: `app.css?v=128`, `app.js?v=134`,
+`SHELL_CACHE='utca-shell-v96'`.

@@ -1,13 +1,13 @@
 # OPLEVERING — DE RONDE UX-overhaul
 
-**Laatste functionele codewijziging:** iteratie 88 (commit `46833fe`,
-tijdlijn-icoontje bevroor na foto-laden — zie hieronder). De laatst naar
-de gebruiker verstuurde zip is gebaseerd op commit `dd375bc` (dezelfde
-code als `46833fe`, alleen een documentatiecorrectie erbovenop) en is
-dus functioneel identiek aan de huidige `master`-stand: de iteraties
-89-91 waren bewuste verificatierondes zonder codewijziging (zie
-STATUS.md), dus is er sindsdien geen nieuwe zip nodig geweest.
-**Deadline van deze opdracht:** 2026-09-17T10:41:38Z.
+**Laatste functionele codewijziging:** iteratie 92 (commit `601ec7f`,
+tijdlijn-bolletjes definitief vereenvoudigd naar altijd een vlak, donker
+bolletje met lime-icoontje/vinkje — geen fototextuur meer, zie
+hieronder). Dit was direct-gemelde feedback van de gebruiker op een
+screenshot van een echt toestel, NA de oorspronkelijke deadline van
+2026-09-17T10:41:38Z.
+**Deadline van deze opdracht:** 2026-09-17T10:41:38Z (opgeleverd; deze
+sessie werkt sindsdien op verzoek door aan directe gebruikersfeedback).
 **Volledige, iteratie-voor-iteratie onderbouwing:** zie [`STATUS.md`](STATUS.md) —
 dit document is een beknopte samenvatting daarvan, geen vervanging.
 
@@ -48,6 +48,16 @@ WebKit voordat die gecommit werd.
   tonen i.p.v. het vinkje. Niet letterlijk een cache-bug, maar wel een
   "bevroren weergave die niet meebeweegt"-symptoom dat er zo uitzag.
   Gefixt door de overbodige uitzondering te verwijderen.
+- **Tijdlijn-bolletjes: fototextuur volledig verwijderd** (iteratie 92,
+  op een echt toestel gemeld ná de deadline: "still no consistency...
+  I like the above one better — just straight black background and lime
+  green ✓"): sinds iteratie 65 kregen rail-nodes een kleine
+  achtergrondfoto zodra Google Places een foto voor die locatie vond;
+  ontbrak zo'n foto, dan bleef het bolletje plat zwart. Op een echt
+  toestel, met wisselende foto-beschikbaarheid, ontstond zo een zichtbaar
+  inconsistent beeld. Op expliciet verzoek is de fototextuur-behandeling
+  helemaal verwijderd: alle rail-nodes zijn nu altijd een vlak, donker
+  bolletje met alleen het lime-icoontje/vinkje.
 - **Kleurstijl blijft de eigen, donkere DE RONDE-identiteit** — de
   Polarsteps-richting (op gebruikersverzoek onderzocht) is toegepast op
   informatiehiërarchie/kaartpatronen, niet als volledige paletomkering
