@@ -3800,6 +3800,128 @@ laatste weken: de CSS-laag van de eindstand/leaderboard, en nogmaals
    gezien het vertrouwde, kleine-vriendengroep-gebruiksmodel van deze
    app (geen adversariale gebruikers). Geen wijziging nodig.
 
+## Ontwerpbesluiten (vervolg 88) — directe gebruikersfeedback: echte databug, tijdlijn-icoontje bevroor na foto-laden
+
+**Gebruikersmelding**: "de ene keer is het een vinkje... de andere keer is
+het dat icoontje... lijkt ook wel een caching probleem te zijn." Dit was
+géén losse designwens maar een concrete waarneming op een echt gebruikt
+toestel.
+
+**Root cause gevonden**: `syncRailPhoto()` zet bij het laden van een
+locatiefoto de klasse `has-photo` op de tijdlijn-rail-node (om de
+achtergrondfoto te tonen). `updateCheckinUi()` — de lichte, incrementele
+update die bij elke check-in draait — had daarnaast de voorwaarde
+`if(node&&!node.classList.contains('has-photo'))` vóórdat het node-
+icoontje (vinkje/reisicoon/leeg) werd bijgewerkt. Zodra een node eenmaal
+een foto had geladen, werd het icoontje binnenin dus NOOIT meer
+bijgewerkt — het bleef voor altijd bevroren op wat het toevallig toonde
+op het moment dat de foto laadde. Omdat foto's vaak laden terwijl een
+stop nog "todo" is (reisicoontje, bv. het kano-icoon), en de daadwerkelijke
+check-in status daarna verandert (current → done), bleef zo'n stop na het
+inchecken permanent het originele reisicoontje tonen in plaats van het
+vinkje — precies "de ene keer een vinkje, de andere keer dat icoontje",
+afhankelijk van de toevallige timing van het foto laden t.o.v. het
+inchecken. `railHtml()` (de canonieke, volledige tijdlijn-opbouw in
+`renderTimeline()`) had deze voorwaarde niet en berekende het icoontje
+altijd correct — weer een instantie van het "onvolledige kopie van een
+complete functie"-patroon (nu de 8e keer deze sessie: iteraties
+66/67/69/72/73/74/85, plus deze).
+
+Niet letterlijk een HTTP/service-worker-cachingprobleem (de gok van de
+gebruiker), maar wel een treffende omschrijving van het symptoom: een
+verouderde, "bevroren" weergave die niet meebeweegt met de echte status —
+vergelijkbaar genoeg om de verwarring te verklaren.
+
+**Empirisch bevestigd**: eerst tegen de ongewijzigde code getest met
+Playwright (locatiefoto's kunstmatig direct laten resolven, dan inchecken
+bij een latere stop zodat de tussenliggende stop "done" wordt) — de
+rail-node bleef inderdaad het kano-icoon tonen in plaats van het vinkje,
+op zowel Chromium als WebKit. (Een eerste testopzet ging er ten onrechte
+van uit dat tweemaal op dezelfde stop-knop tikken 'm "done" zou maken —
+in werkelijkheid wordt een stop pas "done" zodra een LATERE stop de
+huidige wordt; de test is gecorrigeerd voordat de bevinding als bewezen
+gold.)
+
+**Fix**: de `has-photo`-voorwaarde uit `updateCheckinUi()` verwijderd —
+het icoontje wordt nu altijd bijgewerkt, ongeacht of de node een
+achtergrondfoto heeft. Dit is veilig: `syncRailPhoto()` raakt alleen
+`style.backgroundImage`/de `has-photo`-klasse aan, nooit de innerHTML, en
+de bestaande CSS (`.tl-node.has-photo svg{filter:drop-shadow(...)}`,
+sinds iteratie 65) past de leesbaarheids-schaduw sowieso toe op ELK
+SVG-kindelement, ongeacht wanneer dat is toegevoegd.
+
+**Test**: dezelfde Playwright-test opnieuw gedraaid na de fix — op zowel
+Chromium als WebKit toont de rail-node nu correct het vinkje zodra de
+stop "done" wordt, ook als de foto allang daarvoor was geladen. Volledige
+`capture.js`-regressiereeks (11 stappen) opnieuw gedraaid op beide
+engines: geen fouten.
+
+Cache-buster: `app.js?v=133`, `SHELL_CACHE='utca-shell-v95'`
+(`app.css` ongewijzigd, blijft `v=127`).
+
+## Ontwerpbesluiten (vervolg 89) — verificatie na iteratie 88, geen verdere bug; bewust behoudend zo dicht bij de deadline
+
+**Geen codewijziging deze iteratie.** Nog ~2u45m tot de deadline; conform
+de gebruikersinstructie om dicht bij de deadline behoudender te zijn
+(liever een verificatie documenteren dan een onzekere wijziging
+committen), gericht gezocht naar directe vervolginstanties van iteratie
+88's bugklasse en naar andere "canonieke vs. incrementele update"-paren,
+zonder iets te forceren:
+
+1. **`has-photo`-patroon elders**: gecontroleerd of de exacte bugklasse
+   uit iteratie 88 (een `classList.contains(...)`-voorwaarde die een
+   incrementele DOM-update blokkeert) nog ergens anders voorkomt. Na de
+   fix is `has-photo` nu alleen nog een plek waar de klasse wordt
+   GEZET (`syncRailPhoto()`), nergens meer gecontroleerd — bevestigd met
+   een grep over de hele `app.js`. De enige overige
+   `classList.contains(...)`-guards (`'loaded'` in `loadPlacePhoto()`,
+   `'show'` in de onboarding-Escape-handler) zijn allebei legitiem: ze
+   voorkomen resp. een dubbele foto-fetch en ongewenste toetsenbord-
+   afhandeling terwijl de onboarding dicht is — geen van beide blokkeert
+   een statusupdate.
+2. **Meter (Naar de klote-meter) incrementele update**: `updateMeterUi()`
+   (draait bij elke score-tik) vergeleken met `meterHtml()` (de volledige
+   opbouw in `renderTimeline()`) — alle drie de dynamische onderdelen
+   (knop-actief-status, "X/5"-tekst, bandlabel-copy) worden door
+   `updateMeterUi()` correct en volledig meegenomen. `setRating()` roept
+   daarnaast ook `renderDayResult()`, een optimistische eigen
+   `participants`-update + `renderGroup()`, én `syncState(false)` aan —
+   compleet, geen gemiste plek.
+3. **`renderStopPeople()`** (de incrementele "wie staat hier"-update)
+   roept al de CANONIEKE `peopleAtStopHtml()` rechtstreeks aan in plaats
+   van eigen logica te dupliceren — al sinds de fix van iteratie 69 het
+   juiste patroon, hier nogmaals bevestigd.
+
+Geen wijziging nodig, dus geen cache-buster-bump. Blijft bij de huidige,
+al opgeleverde stand (`app.js?v=133`, `SHELL_CACHE='utca-shell-v95'`,
+`app.css?v=127`, commit `dd375bc`).
+
+## Ontwerpbesluiten (vervolg 90) — korte verificatie, nog ~2u tot de deadline
+
+**Geen codewijziging.** `renderProgress()` (voortgangsbalk boven de
+tijdlijn) gecontroleerd — wordt door zowel `renderTimeline()` (volledige
+opbouw) als `updateCheckinUi()` (incrementeel) met dezelfde argumenten
+aangeroepen; één canonieke functie, geen dubbele logica. Verder geen
+nieuwe hoek gevonden die met hoge zekerheid een echte bug opleverde;
+conform de instructie om dicht bij de deadline niets te forceren, hier
+gestopt met zoeken voor deze ronde. Geen cache-buster-bump nodig.
+
+## Ontwerpbesluiten (vervolg 91) — derde verificatieronde zonder nieuwe bug: codebase stabiel geacht
+
+**Geen codewijziging.** Laatste check: `buildOnboardingStills()` (de
+onboarding-voorbeeldschermen) kloont live DOM-elementen (`onboardingClone`)
+i.p.v. eigen renderlogica te dupliceren, dus de rail-icoontje-fix uit
+iteratie 88 werkt daar automatisch door zonder apart onderhoud nodig te
+hebben — geen incomplete-kopie-risico in dit pad.
+
+Na drie verificatierondes op rij (89, 90, 91) zonder nieuwe bevinding,
+bovenop de directe-gebruikersfeedback-fix van iteratie 88, wordt de
+codebase op dit moment stabiel genoeg geacht om de zoektocht naar nieuwe
+losse bugs hier te laten rusten richting de deadline. Geen
+cache-buster-bump nodig — huidige, opgeleverde stand blijft
+`app.js?v=133`, `SHELL_CACHE='utca-shell-v95'`, `app.css?v=127`
+(commit `dd375bc`).
+
 ## Resterende problemen
 - "Minder AI visual style" (iteraties 18-19: radius, achtergrondvlekken,
   gerichter backdrop-blur op kaarten). Nog resterend, bewust NIET zonder
@@ -3871,7 +3993,7 @@ voor de volledige geschiedenis, zie de git-log van dit bestand zelf.
 Opnieuw ingekort bij iteratie 76, zelfde aanpak als iteratie 68: alleen
 de ECHTE actuele stand.)
 
-**Stand van zaken (na iteratie 87):** alle bekende designfeedback is
+**Stand van zaken (na iteratie 91):** alle bekende designfeedback is
 verwerkt (zie git-log iteraties 47-76 voor details: locatievisual,
 tijdlijn-rail-nodes inclusief maat/afstand/icoon-consistentie,
 ranglijst-onderschriften en -rangcirkels, lime-accentkleur). Sinds
@@ -3932,6 +4054,14 @@ bekend) volledig uitgeroeid:
    "huidige stop"-header terugviel op "Utrecht Centraal". Empirisch
    bevestigd en gefixt naar hetzelfde patroon als de weerswisselknop
    (iteratie 85).
+6. Nogmaals hetzelfde patroon (8e keer), nu direct gemeld door de
+   gebruiker: `updateCheckinUi()` (de lichte incrementele tijdlijn-update)
+   had een `has-photo`-uitzondering die `railHtml()` (de volledige,
+   canonieke opbouw) niet had, waardoor een tijdlijn-icoontje permanent
+   bevroor zodra de bijbehorende locatiefoto was geladen — een afgevinkte
+   stop kon zo het originele reisicoontje blijven tonen i.p.v. het
+   vinkje. Empirisch bevestigd en gefixt door de uitzondering te
+   verwijderen (iteratie 88).
 
 **Bij visuele/uitlijning-meldingen**: eerst zelf een stap verder
 redeneren over de onderliggende verhouding/oorzaak, en meten met
@@ -3973,8 +4103,21 @@ uitklikpaneel's focus-gedrag empirisch getest — alle drie robuust
    of `_worker.js`.
 
 Blijf bij elke wijziging aan `app.css`/`app.js` de cache-buster-conventie
-uit iteratie 20 volgen (huidige versies: `app.css?v=127`, `app.js?v=132`,
-`SHELL_CACHE='utca-shell-v94'` — verhoog verder bij de eerstvolgende
+uit iteratie 20 volgen (huidige versies: `app.css?v=127`, `app.js?v=133`,
+`SHELL_CACHE='utca-shell-v95'` — verhoog verder bij de eerstvolgende
 wijziging aan die bestanden; controleer bij twijfel altijd `git log` en
 de `?v=`-nummers in `index.html` voor de werkelijk actuele stand, niet
 alleen deze sectie).
+
+## Afronding voor de deadline
+
+Stand bevroren voor de deadline van 2026-09-17T10:41:38Z. Laatste
+commit: `3c760e4`. In totaal 91 iteraties uitgevoerd over deze sessie
+(zie "Ontwerpbesluiten (vervolg 1)" t/m "(vervolg 91)" hierboven voor de
+volledige, iteratie-voor-iteratie onderbouwing). Het opleveringspakket
+(zip van de code + [`OPLEVERING.md`](OPLEVERING.md), met daarin de
+belangrijkste UX-beslissingen, een testoverzicht en een eerlijke lijst
+met resterende beperkingen) is bij de gebruiker afgeleverd. De laatst
+verstuurde zip (commit `dd375bc`) is functioneel identiek aan deze
+laatste stand — de iteraties 89-91 bevatten alleen documentatie-
+correcties, geen codewijzigingen.
