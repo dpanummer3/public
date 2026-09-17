@@ -3105,6 +3105,701 @@ zowel Chromium als WebKit, en ook in regenmodus. Volledige
 `app.css` gewijzigd → cache-buster verhoogd naar `app.css?v=127`,
 `SHELL_CACHE` naar `utca-shell-v85` (`app.js` ongewijzigd op `v=124`).
 
+## Ontwerpbesluiten (vervolg 72) — regenmodus-onboarding toonde nooit een echte locatiefoto
+
+**Frisse code-doorloop** van de onboarding-preview-logica
+(`onboardingClone()`/`buildOnboardingStills()`, nog niet eerder in deze
+sessie bekeken).
+
+**Bug gevonden:** de "Hier"-onboardingslide toont een voorbeeldkaart van
+de weer-afhankelijke stop. Bij zonmodus wordt daar bewust een vaste,
+mooi uitgesneden voorbeeldfoto (`onboarding-checkin.webp`) overheen
+gezet — logisch, want dat asset toont specifiek Kanoverhuur. Bij
+regenmodus ontbreekt die statische override (terecht: hetzelfde
+zon-plaatje tonen voor de regen-stop zou fout zijn), dus die slide moet
+terugvallen op het gewone, dynamische Google Places-foto-systeem voor
+Café Orloff. Dat systeem wordt echter alleen geactiveerd door
+`initPlacePhotos()`, en die functie werd tot nu toe uitsluitend
+aangeroepen vanuit `renderTimeline()` — nooit nadat de
+onboarding-preview-kloon in de DOM werd gezet. Geverifieerd met een
+Playwright-test die `/api/place-photo`-netwerkverzoeken onderschept: bij
+regenmodus werd er nooit een aanvraag voor Café Orloff gedaan, en de
+slide toonde daardoor eeuwig alleen het generieke fallback-icoon i.p.v.
+een echte foto — een merkbaar kwaliteitsverschil tussen zon- en
+regenmodus die verder nergens bewust zo bedoeld was.
+
+**Fix:** één regel — `initPlacePhotos();` toegevoegd aan het einde van
+`buildOnboardingStills()`, na het opbouwen van alle vijf slide-klonen.
+Omdat de zonmodus-versie en de "opties"-slide altijd een statische foto
+krijgen (die functie verwijdert daarbij bewust de
+`data-place-photo`-attributen), pikt deze extra aanroep uitsluitend de
+regenmodus-"Hier"-kloon op die nog geen foto heeft — geen dubbele of
+overbodige aanvragen voor de andere slides.
+
+**Geverifieerd**: met dezelfde netwerk-onderschepping bevestigd dat de
+Café Orloff-foto-aanvraag nu wél verschijnt bij regenmodus, op zowel
+Chromium als WebKit; zonmodus blijft ongewijzigd de statische foto
+tonen (geen regressie). Ook bevestigd dat de ECHTE tijdlijn-foto's (bv.
+Utrecht Centraal, Kanoverhuur) na het sluiten van de onboarding nog
+gewoon correct laden — de extra `initPlacePhotos()`-aanroep verstoort
+de bestaande IntersectionObserver-logica niet. Volledige
+`capture.js`-regressievlucht foutloos op beide engines. Alleen `app.js`
+gewijzigd → cache-buster verhoogd naar `app.js?v=125`, `SHELL_CACHE`
+naar `utca-shell-v86` (`app.css` ongewijzigd op `v=127`).
+
+## Ontwerpbesluiten (vervolg 73) — echte databug: uitloggen via × liet ratings achter voor de volgende naam
+
+**Frisse code-doorloop** van de deelnemer-verwijder-/uitlogflow
+(`removeParticipant`, het two-tap-confirm-mechanisme uit iteratie 31,
+`clearOwnSession`). De eerste twee bleken correct (het arm/disarm-gedrag
+klopt voor alle combinaties: zelfde knop nogmaals, andere knop, klik
+ernaast).
+
+**Bug gevonden: een DERDE, apart uitlog-pad.** Naast `clearOwnSession()`
+(gebruikt door de roster-verwijderflow) bleek de "×"-knop bovenin naast
+je naam — de knop die de privacy-tekst zelf expliciet belooft
+("× naast je naam = uitloggen en opnieuw beginnen") — zijn EIGEN,
+losstaande kopie van die logica te hebben, in plaats van gewoon
+`clearOwnSession()` aan te roepen. En die kopie was onvolledig: hij
+verwijderde `utca-name` en `utca-results-finalized` wel, maar
+`utca-stop` én `utca-ratings` (en de bijbehorende `currentStop`/
+`ratings`-variabelen) helemaal niet.
+
+**Concreet, echt scenario:** David beoordeelt een stop en checkt in,
+tikt dan op "×" om uit te loggen (bv. om het toestel aan Stef te geven).
+Stef typt zijn naam in en logt in. Omdat `ratings` nooit was
+teruggezet, stuurt Stefs eigen inlog-sync Davids beoordeling gewoon mee
+naar de GEDEELDE server-database onder Stefs naam — Stef zou dus een
+score krijgen voor een stop die hij nooit zelf heeft beoordeeld.
+Geverifieerd met een Playwright-test die dit scenario exact naspeelt en
+de daadwerkelijke `POST /api/state`-payload afvangt: vóór de fix bevatte
+Stefs inlog-POST `"ratings":{"weather-sun":4}` (Davids beoordeling), op
+zowel Chromium als WebKit.
+
+**Fix:** de "×"-knop roept nu gewoon `clearOwnSession()` aan (die alles
+correct terugzet: naam, stop, ratings, resultsFinalized) in plaats van
+zijn eigen onvolledige kopie — de prettige UX-toevoeging (focus terug
+naar het naamveld na het wissen) is behouden. Geverifieerd: na de fix
+bevat Stefs inlog-POST correct `"ratings":{}`, op beide engines. Ook
+gecontroleerd dat het inlogscherm na het klikken op "×" nog steeds
+correct verschijnt met het naamveld leeg en gefocust — geen
+regressie in dat gedrag. Volledige `capture.js`-regressievlucht
+foutloos. Alleen `app.js` gewijzigd → cache-buster verhoogd naar
+`app.js?v=126`, `SHELL_CACHE` naar `utca-shell-v87` (`app.css`
+ongewijzigd op `v=127`).
+
+## Ontwerpbesluiten (vervolg 74) — dezelfde databug nogmaals gevonden, in de "naam corrigeren"-knop van de onboarding
+
+**Direct toegepast**: de expliciete instructie om na iteratie 73 te
+zoeken naar ANDERE plekken die een "volledige" functie zouden moeten
+aanroepen maar in plaats daarvan hun eigen onvolledige kopie hebben.
+`grep` op alle `storeRemove('utca-*')`-aanroepen liet zien dat
+`storeRemove('utca-name')` op een TWEEDE plek voorkwam, buiten
+`clearOwnSession()`: in `onboardingBackToName()` (de functie achter de
+"Terug"-knop/pijltje-links op de allereerste onboardingslide, bedoeld
+om een typefout in je zojuist ingevoerde naam te herstellen).
+
+**Zelfde bugpatroon als iteratie 73:** deze functie zette `user`/
+`utca-name` terug (zodat het inlogscherm weer verschijnt), maar liet
+`utca-stop`, `utca-ratings`, `utca-results-finalized` en de
+bijbehorende `currentStop`/`ratings`/`resultsFinalized`-variabelen
+volledig met rust. In de praktijk is dit pad lastiger te misbruiken dan
+de "×"-knop uit iteratie 73 (je zit dan al aan het BEGIN van de
+onboarding, ver voordat er iets te beoordelen valt) — maar niet
+onmogelijk: als er ooit verouderde `ratings` in `localStorage` blijven
+hangen (bijvoorbeeld via een pad dat nog niet is gevonden), zou het
+opnieuw intypen van een naam en op "Terug" tikken diezelfde stale data
+alsnog laten meeliften naar de volgende inlog.
+
+**Fix:** dezelfde aanpak als iteratie 73 — `clearOwnSession()`
+aanroepen in plaats van de eigen kopie, met behoud van de twee dingen
+die deze functie SPECIFIEK anders moet doen dan een gewone uitlog: de
+onboarding-overlay expliciet sluiten, en de vorige naam terugzetten in
+het invoerveld (zodat je 'm kunt corrigeren i.p.v. opnieuw intypen).
+
+**Geverifieerd** met een Playwright-test die opzettelijk verouderde
+`utca-ratings` in `localStorage` zet vóór het inloggen (om het
+lastig-te-bereiken pad toch te kunnen testen): na het tikken op "Terug"
+staat de vorige naam nog correct in het veld (UX behouden) én is
+`utca-ratings` nu leeg; de daaropvolgende, gecorrigeerde inlog stuurt
+correct `"ratings":{}` — op zowel Chromium als WebKit. Volledige
+`capture.js`-regressievlucht foutloos op beide engines. Alleen `app.js`
+gewijzigd → cache-buster verhoogd naar `app.js?v=127`, `SHELL_CACHE`
+naar `utca-shell-v88` (`app.css` ongewijzigd op `v=127`, toevallig
+hetzelfde nummer).
+
+## Ontwerpbesluiten (vervolg 75) — verificatie: geen verdere "onvolledige kopie"-bugs of nieuwe issues gevonden
+
+**Direct vervolg op de vraag uit iteratie 74**: expliciet gezocht naar
+verdere plekken met hetzelfde "eigen onvolledige kopie i.p.v. de
+volledige functie aanroepen"-patroon rond `syncState()`/
+`renderTimeline()`. Alle vier `/api/state`-aanroepen (`syncState`,
+`refreshState`, en `removeParticipant`'s twee takken) en alle
+`participants=`-toewijzingen zitten uitsluitend in die drie, al
+gecontroleerde functies — geen vijfde, losse plek gevonden. Ook
+`resultsFinalized`/`utca-results-finalized` nagelopen: alle vijf
+plekken die dit aanraken (initiële laadbeurt, het "KLAAR"-knop-moment,
+`renderFinalResult`'s leesactie, en de nu beide gefixte
+`clearOwnSession`/`login`) zijn compleet en consistent.
+
+**Fris gecontroleerd, verder geen bug gevonden:**
+- `renderJourneyHeader()`/`renderProgress()` — correcte
+  huidige-stop-bepaling, "KLAAR"-afsluiting en voortgangsbalk, geen
+  duplicatie-risico met andere renderfuncties.
+- `participantResult`/`averageFromRatings`/`percentFromAverage` — de
+  1-5-naar-percentage-berekening en de "X van Y onderdelen
+  ingevuld"-telling gebruiken beide dezelfde, dynamisch berekende
+  `meterStops()` (afgeleid van de `meter:true`-vlag op de itinerary-
+  data) als enige bron van waarheid — geen apart, hardgecodeerd lijstje
+  dat uit de pas kan lopen.
+- `bandForScore()` (index 1-5, gebruikt voor kleurband-lookup) en
+  `bandForValue()` (retourneert direct het band-object, met een eigen
+  `Math.round`) bleken bij nadere inspectie twee ONAFHANKELIJKE, maar
+  wiskundig volledig equivalente implementaties van dezelfde
+  afrondingslogica (geverifieerd voor alle randgevallen op de
+  .5-grenzen). Geen bug — beide geven altijd hetzelfde resultaat — maar
+  wel pure redundantie. Bewust niet samengevoegd deze iteratie: dat is
+  cosmetische opruiming zonder functionele noodzaak, geen bugfix, en
+  dus buiten scope voor een kleine, veilige iteratie.
+- `fmtTime()` (inclusief middernacht-edge-case: 1440 minuten → "00:00")
+  en `walkDisplay()` (loop-/speling-berekening) — correct.
+
+Geen codewijziging deze iteratie, dus geen cache-buster nodig. Dit is
+een bewuste, legitieme verificatie-iteratie (zelfde patroon als
+iteraties 37/39/42/50/52-55) — grondig zoeken leidt niet elke keer tot
+een nieuwe bug, en dat is op zich een goed teken over de huidige
+codekwaliteit na 74 eerdere iteraties.
+
+## Ontwerpbesluiten (vervolg 76) — naam met emoji kon precies op de 24-tekengrens breken
+
+**Bredere zoektocht** (per de instructie na iteratie 75: niet alleen het
+"onvolledige kopie"-patroon, breder naar andere soorten bugs) leidde
+naar de naam-validatie/-afkapping. `v.slice(0,24)` (in `app.js`'s
+`login()`, en tweemaal in `_worker.js` voor zowel het opslaan als het
+verwijderen van een deelnemer) knipt op **UTF-16-code-units**, niet op
+hele tekens. Een emoji (of ander teken buiten het Basic Multilingual
+Plane) telt als TWEE code-units — als zo'n teken precies op de
+24e/25e positie valt, knipt `.slice(0,24)` het emoji middendoor. Het
+resultaat is een "lone surrogate": geen geldig Unicode-teken meer, wat
+in de UI als een kapot tofu-blokje oogt en bij het opslaan in de
+SQLite-database (die UTF-8 verwacht) stilzwijgend vervangen wordt door
+een replacement-character — een echte, zij het smalle, dataintegriteits-
+kwestie. Bereikbaar via plakken van tekst of bepaalde emoji-toetsenbord-
+invoermethoden, niet alleen theoretisch (bevestigd met een concrete
+Playwright-reproductie: `"aaa...a" + 🎉 + "bbbbb"` met het emoji precies
+op de grens gaf een losse hoge surrogate in zowel de opgeslagen naam als
+de `POST /api/state`-payload, vóór de fix, op zowel Chromium als
+WebKit).
+
+**Fix:** `str.slice(0,24)` vervangen door `Array.from(str).slice(0,24).
+join('')` op alle drie plekken — dit itereert per Unicode-codepoint
+i.p.v. per UTF-16-eenheid, dus een emoji telt als één ondeelbaar teken
+en wordt óf volledig meegenomen óf volledig weggelaten, nooit
+doormidden geknipt. Voor gewone ASCII/Latijnse namen (de realistische
+usecase voor deze vriendengroep) is de uitkomst byte-voor-byte
+identiek aan de oude aanpak — geverifieerd met een directe vergelijking.
+
+**Geverifieerd:** de Playwright-reproductie met het emoji op de
+tekengrens geeft na de fix een intact emoji terug (24 codepoints, geen
+losse surrogate meer), zowel in de lokale opslag als in de
+`POST /api/state`-payload, op Chromium en WebKit. De `_worker.js`-kant
+apart bevestigd met een losse Node-simulatie van exact dezelfde
+expressie (kan niet lokaal als echte Cloudflare Worker draaien).
+Volledige `capture.js`-regressievlucht foutloos op beide engines — geen
+regressie voor normale namen. Alleen `app.js` (client) en `_worker.js`
+(server, niet door deze sessie gedeployed) inhoudelijk gewijzigd →
+cache-buster verhoogd naar `app.js?v=128`, `SHELL_CACHE` naar
+`utca-shell-v89` (`app.css` ongewijzigd op `v=127`).
+
+## Ontwerpbesluiten (vervolg 77) — toast-meldingen waren onzichtbaar voor screenreaders
+
+**Frisse invalshoek** (per de instructie na iteratie 76: breder zoeken):
+eerst gecontroleerd of er nog méér tekstinvoervelden met dezelfde
+Unicode-aanname als de naam bestonden — er is er maar één (`#nameInput`)
+in de hele app, en de overige `.slice(0,N)`-plekken werken allemaal op
+systeem-gegenereerde waarden (stop-ID's, rating-sleutels,
+foto-zoekopdrachten), nooit op vrije gebruikersinvoer — dus geen verdere
+instantie van iteratie 76's bugklasse.
+
+**Focus-trap van de onboarding-modal expliciet getest** (Tab en
+Shift+Tab, 12x achter elkaar) uit voorzorg tegen een mogelijk lek naar
+de onderliggende (verborgen maar niet `display:none`) pagina-inhoud:
+bleek al volledig correct — de natuurlijke DOM-volgorde plaatst de
+"←"-terugknop al tussen "Overslaan" en "Volgende", en de JS ving alleen
+de twee randgevallen (laatste→eerste, eerste→laatste) af. Geen bug.
+
+**Bug gevonden: het `#toast`-element had geen enkel ARIA-attribuut.**
+`toast()` wordt door de hele app gebruikt voor belangrijke statusfeedback
+("Hoi [naam]. Succes ermee.", "Check-in gedeeld", "Meter gewist",
+"Verwijderen mislukt", offline-status, etc.) — maar zonder
+`aria-live`/`role` hoort een screenreader-gebruiker DAAR NOOIT IETS VAN.
+Ter vergelijking: `#journeyBar` en `#nameHint` hebben wél al
+`aria-live="polite"` — het toast-element was de enige uitzondering.
+
+**Fix:** `role="status" aria-live="polite" aria-atomic="true"`
+toegevoegd aan het `#toast`-element in zowel `index.html` als
+`test-local.html`. `role="status"` is het standaard ARIA-patroon voor
+dit soort tijdelijke statusmeldingen; `aria-atomic="true"` zorgt dat de
+VOLLEDIGE nieuwe boodschap wordt voorgelezen bij elke wijziging (niet
+alleen het verschil), belangrijk omdat `toast()` de tekst steeds in zijn
+geheel vervangt. Puur additief, geen enkele visuele wijziging — geen
+regressierisico.
+
+**Geverifieerd**: de attributen staan correct in de DOM en de
+toast-tekst wordt nog steeds correct bijgewerkt bij het inloggen, op
+zowel Chromium als WebKit. Volledige `capture.js`-regressievlucht
+foutloos. Alleen markup gewijzigd (geen `app.css`/`app.js`-inhoud) →
+alleen `SHELL_CACHE` verhoogd naar `utca-shell-v90` (zelfde aanpak als
+iteraties 45/60/68 voor index.html-only-wijzigingen).
+
+## Ontwerpbesluiten (vervolg 78) — vervolg op de accessibility-doorloop, één bewuste niet-actie
+
+**Directe opvolging van iteratie 77's vervolgpunt 4**: gecontroleerd of
+andere dynamisch-bijgewerkte statuselementen (`#dayCopy`, `#dayMeta`,
+`#groupAverage`, `#rosterCount`) ook `aria-live` nodig hebben, zoals
+`#toast`/`#nameHint` dat al hebben. **Bewuste conclusie: NEE, niet
+toevoegen.** `#toast` en `#nameHint` worden uitsluitend bijgewerkt door
+een DIRECTE actie van de gebruiker zelf (inloggen, typen, check-in) —
+een goede match voor `aria-live`. `#dayCopy`/`#dayMeta`/`#groupAverage`/
+`#rosterCount` worden ECHTER OOK elke 15 seconden bijgewerkt door de
+achtergrond-polling (`refreshState()`) zodra een ANDERE deelnemer iets
+doet — `aria-live` daarop zetten zou een screenreader-gebruiker om de
+15 seconden lastigvallen met meldingen over acties van andere mensen,
+een bekend anti-patroon (over-aankondigen van niet-zelf-geïnitieerde
+wijzigingen). Dit is dus geen gemiste kans maar een bewust juiste
+huidige staat.
+
+**Aria-label-audit** van alle interactieve elementen (statische knoppen
+in `index.html` én dynamisch gegenereerde knoppen in `app.js`: roster-
+verwijderknoppen, meter-ratingknoppen 1-5, alternatieve-locatie-
+selectieknoppen, Info/Boek-links): allemaal al voorzien van een
+bruikbare `aria-label` of duidelijke zichtbare teksinhoud. Geen gat
+gevonden.
+
+**Focus/legibiliteit-check** met dezelfde lens als iteratie 71 (dunne
+SVG-iconen op lage opaciteit): het `.venue-photo-fallback`-icoon (de
+treinsilhouet-watermark in een leeg fotokader, 20% dekking) visueel
+gecontroleerd op hoge zoom — in tegenstelling tot de todo-tijdlijn-
+iconen uit iteratie 71 is dit hier een bewust subtiel, groot (44px+)
+decoratief plaatshouder-element, geen primaire statusindicator, en het
+oogt in de praktijk prima leesbaar/herkenbaar als bedoeld. Geen bug.
+
+**Noemenswaardige, niet-functionele bevinding**: de `intox`-kolom in
+`_worker.js`'s database-schema (`CREATE TABLE ... intox INTEGER NOT
+NULL DEFAULT 1 CHECK(intox BETWEEN 1 AND 5) ...`) blijkt daadwerkelijk
+dode schema — nergens in `_worker.js` of `app.js` gelezen of
+beschreven, waarschijnlijk een overblijfsel van een vroegere
+schema-opzet vóór `ratings_json` bestond. Bewust NIET verwijderd deze
+iteratie: net als `bandForScore`/`bandForValue` in iteratie 75 is dit
+cosmetische opruiming zonder functionele noodzaak (de kolom veroorzaakt
+zelf geen enkel probleem, dankzij de `DEFAULT 1`), en dus buiten scope
+voor een kleine, veilige iteratie.
+
+Geen codewijziging deze iteratie behalve de reeds genoemde
+cache-buster-non-issue — dit is een legitieme verificatie-/audit-
+iteratie met één belangrijke bevestigde-juiste-staat (geen aria-live-
+overkill) en één bewust ongemoeide dode-schema-notitie.
+
+## Ontwerpbesluiten (vervolg 79) — verificatie: nog een reeks niet eerder bekeken hoeken doorgelicht, geen bug
+
+**Frisse code-doorloop** van een aantal kleinere, nog niet eerder in
+deze sessie bekeken helperfuncties en CSS-gebieden:
+- `uiTransition()` — gebruikt de View Transitions API met correcte
+  fallback wanneer die niet beschikbaar is of `motionAllowed()` false
+  teruggeeft; `try/catch` vangt ook een eventuele runtime-fout op.
+  Correct.
+- `scrollAppTop()` — forceert scroll-naar-boven op een betrouwbare
+  manier (tijdelijk `scroll-behavior:auto`, dubbele aanroep incl. een
+  `requestAnimationFrame`-tik, herstelt daarna de oorspronkelijke
+  scroll-behavior). Correct, geen race gevonden.
+- `safeJson()`/`escapeHtml()` — beide robuuste, kleine utility's; geen
+  probleem.
+- **Externe-link-veiligheid**: alle `target="_blank"`-links (zowel
+  statisch in `index.html` als dynamisch gegenereerd in `app.js`, via
+  `externalAttrs()` en de "Info"/route-links) hebben consequent
+  `rel="noopener"`. `externalAttrs()` laat `target="_blank"` bovendien
+  terecht helemaal weg voor `tel:`-links. Geen gat.
+- **`env(safe-area-inset-*)`-gebruik** in `app.css` doorgenomen (notch/
+  home-indicator-marges voor bottom-nav, journeybar, roster). Ziet er
+  doordacht uit, maar kan niet empirisch geverifieerd worden zonder een
+  fysiek toestel met notch/home-indicator (Playwright/headless
+  browsers rapporteren hier altijd 0) — al eerder gedocumenteerd als
+  bekende beperking, niet opnieuw als actiepunt toegevoegd.
+- **`resultsFinalized`/"KLAAR"-knop is bewust NIET tussen deelnemers
+  gesynchroniseerd** (zit niet in `syncState()`'s payload): gecontroleerd
+  of dit een gemiste synchronisatie is (in de stijl van iteraties
+  66/73/74) — dat is het NIET. "KLAAR" markeert wanneer JIJ persoonlijk
+  je eigen laatste stop hebt bereikt, niet een groepsbrede
+  "de-dag-is-voorbij"-vlag; dat andere deelnemers dit niet op hun eigen
+  scherm zien totdat zij zelf hun laatste stop bereiken is exact zoals
+  bedoeld.
+
+Geen codewijziging, dus geen cache-buster nodig. Nog een legitieme
+verificatie-iteratie zonder nieuwe bug — bevestigt dat de eerder
+gevonden bugklassen (onvolledige kopieën, Unicode-truncatie,
+ontbrekende aria-live) grondig zijn uitgeroeid en niet breder
+terugkomen in deze hoeken van de code.
+
+## Ontwerpbesluiten (vervolg 80) — echte offline-test met een werkende service worker, geen bug maar wel een testtool-eigenaardigheid
+
+**Op verzoek**: i.p.v. nog meer helperfuncties na te lezen, dit keer een
+ECHTE, empirische test van het offline-gedrag — precies de methode uit
+iteratie 37 (`http://localhost` registreert de SW nooit via `app.js`
+zelf, dus handmatig `navigator.serviceWorker.register('/sw.js')`
+aangeroepen om de HTTPS-only-guard te omzeilen).
+
+**Geverifieerd, allemaal correct:**
+1. Na registratie precacht de SW exact de verwachte `APP_SHELL`-lijst
+   onder de huidige `SHELL_CACHE`-naam (`utca-shell-v90`) — gecontroleerd
+   door de daadwerkelijke Cache Storage-inhoud uit te lezen.
+2. **Chromium**: een volledige `page.reload()` terwijl de browser-context
+   op offline staat laadt de pagina foutloos vanuit de cache — titel,
+   login-overlay en `app.js` allemaal correct aanwezig, geen
+   console-/pagina-fouten.
+3. **WebKit**: hetzelfde scenario (zowel via `reload()` als `goto()`)
+   gooit een `"WebKit encountered an internal error"` in Playwright's
+   eigen navigatie-afhandeling — MAAR een directe `page.evaluate()` na
+   die worp laat zien dat de pagina zelf wél degelijk correct is
+   herladen (juiste titel, login-overlay aanwezig, 61KB gerenderde
+   HTML). Dit is dus een **Playwright/WebKit-testtool-eigenaardigheid**
+   in de combinatie offline-context + service-worker-navigatie, geen
+   fout in de app zelf — belangrijk om te weten voor toekomstige
+   iteraties die dit soort tests herhalen, zodat deze specifieke worp
+   niet ten onrechte als een echte bug wordt aangemerkt.
+4. Een foto-aanvraag voor een NIET-gecachete locatie terwijl offline
+   geeft via de SW's `cacheFirst(PHOTO_CACHE,...)`-pad netjes een
+   `503`-response terug (geen hang, geen onafgehandelde netwerkfout) —
+   precies wat `loadPlacePhoto()`'s foutafhandeling verwacht, dus de
+   fallback-icoon-weergave blijft werken.
+
+Ook `_worker.js`'s Google Places-integratie (`handlePlacePhoto`/
+`handlePlacePhotoMedia`) nog een keer grondig nagelopen: geen bug
+gevonden (de placeId-hergebruik-validatie, de Utrecht-begrenzing en de
+`no-store`-cache-header op de foto-media zijn allemaal bewust en
+consistent).
+
+Geen codewijziging, dus geen cache-buster nodig. Waardevolle, andere-
+invalshoek-verificatie (echte browser-/SW-gedrag i.p.v. code lezen) die
+bevestigt dat de offline-afhandeling robuust is.
+
+## Ontwerpbesluiten (vervolg 81) — drie echte mobiele scenario's empirisch getest, geen bug
+
+**Toetsenbord-op-scherm-scenario**: op een klein toestel (375×667)
+gesimuleerd wat er gebeurt als het toetsenbord ±280px van het scherm
+inneemt (realistische iOS-toetsenbordhoogte incl. QuickType-balk) — het
+inlog-invoerveld en de knop blijven op zowel Chromium als WebKit volledig
+zichtbaar, dankzij de `100dvh`/`align-items:flex-end`-combinatie die
+meebeweegt met de kleiner wordende viewport. Geen bug: de login-kaart
+"volgt" het toetsenbord automatisch naar boven i.p.v. eronder te
+verdwijnen.
+
+**Smalste ondersteunde breedte (320px) met de langste knoptekst**: de
+laatste onboardingslide toont "Ik heb er zin in →" i.p.v. het kortere
+"Volgende" — gecontroleerd of dit op 320px nog past. Doet het: geen
+tekstoverloop, geen pagina-brede scroll, nette uitlijning op beide
+engines (visueel bevestigd met een screenshot).
+
+**Roster-uitklikpaneel (`#rosterToggle`/`#rosterWrap`) — focus-gedrag
+gecontroleerd**: de dichtgeklapte staat gebruikt `visibility:hidden` +
+`pointer-events:none` (niet `display:none`), wat de verwijderknoppen
+binnenin correct uitsluit van de Tab-volgorde zolang het paneel dicht
+is — geen "onzichtbare focus-val". Wél genoteerd: er is geen Escape-
+toets-afhandeling om het paneel te sluiten. Bewust NIET als bug
+aangemerkt: dit is een simpel uitklikpaneel zonder focus-trap (in
+tegenstelling tot de onboarding-modal), dus het ontbreken van Escape is
+een kleine, lage-prioriteit UX-nicety, geen toegankelijkheidsprobleem.
+
+Geen codewijziging, dus geen cache-buster nodig. Nog een reeks
+empirisch geverifieerde, robuuste scenario's — bevestigt verder dat de
+basis van de app na 80 eerdere iteraties stevig staat.
+
+## Ontwerpbesluiten (vervolg 82) — echte databug: verouderde netwerkrespons kon de weergegeven locatie laten teruggrijpen op een oudere check-in
+
+**Wat was het probleem?** `syncState()` (aangeroepen bij elke check-in)
+en `refreshState()` (de achtergrond-poller die elke paar seconden de
+groepsstatus ververst) verwerkten allebei het antwoord van
+`/api/state` onvoorwaardelijk: `participants=data.participants||[];
+renderGroup()`. Er was geen enkele bescherming tegen een netwerk-
+respons die *later binnenkomt dan een nieuwere aanvraag, maar over een
+ouder moment gaat*. Bij twee snel opeenvolgende check-ins (bijv. eerst
+"Utrecht Centraal", vlak daarna "Kanoverhuur Utrecht") met wisselende
+netwerklatency — heel plausibel op wisselende café-wifi tijdens de
+kroeg-tocht — kon de trage respons van de EERSTE (inmiddels
+verouderde) check-in alsnog na de tweede binnenkomen en de
+groepsweergave laten terugspringen naar de oude locatie. Dit raakt de
+kern van de app: vrienden zien dan een foutieve, verouderde locatie
+van elkaar, zonder enige foutmelding.
+
+**Empirisch bevestigd** met een Playwright-test die `/api/state`
+onderschept en bewust vertraagt: de eerste check-in ("start") kreeg
+een kunstmatige vertraging van 1200ms, de tweede ("weather-sun") 30ms.
+Resultaat vóór de fix: op ~400ms toonde de groepslijst correct
+"Kanoverhuur Utrecht" (de snelle, meest recente respons), maar op
+~1.7s — zodra de trage/verouderde respons alsnog binnenkwam — sprong
+het terug naar "Utrecht Centraal". Reproduceerbaar op zowel Chromium
+als WebKit.
+
+**Fix**: een monotoon oplopend sequentienummer (`syncSeq`), opgehoogd
+bij elke nieuwe aanroep van zowel `syncState()` als `refreshState()`
+(beide praten met hetzelfde `/api/state`-eindpunt en muteren dezelfde
+`participants`-state, dus dezelfde bescherming moet voor beide gelden).
+Elke aanroep onthoudt zijn eigen volgnummer (`var seq=++syncSeq`) en
+past zijn respons alleen toe als dat nummer nog steeds het nieuwste is
+(`if(seq!==syncSeq)return;`) — zowel in het success-pad als in het
+catch-fallback-pad van `syncState()`. Zo wint altijd de respons van de
+*laatst gestarte* aanvraag, ongeacht in welke volgorde de antwoorden
+binnenkomen.
+
+**Test**: dezelfde vertraagde-respons-Playwright-test opnieuw gedraaid
+na de fix — op zowel Chromium als WebKit blijft de groepslijst nu
+correct op "Kanoverhuur Utrecht" staan, ook nadat de verouderde,
+trage respons alsnog binnenkomt. Volledige `capture.js`-regressiereeks
+(11 stappen) opnieuw gedraaid: geen fouten, geen regressies.
+
+Dit is qua ernst vergelijkbaar met de databugs uit iteratie 73/74 (ook
+toen een subtiele, alleen-onder-race-condities zichtbare fout in de
+kernfunctionaliteit "waar is iedereen"), maar dan een timing-bug i.p.v.
+een onvolledige-kopie-bug — een nieuwe bugklasse voor dit project.
+
+Cache-buster: `app.js?v=129`, `SHELL_CACHE='utca-shell-v91'`
+(`app.css` ongewijzigd, blijft `v=127`).
+
+## Ontwerpbesluiten (vervolg 83) — dezelfde race-conditieklasse nogmaals gevonden, nu in de verwijder-vriend-functie
+
+**Directe opvolging van iteratie 82** ("zoek na het fixen van een
+bugklasse naar andere instanties van hetzelfde patroon"): `app.js`
+bevat drie plekken die `/api/state`-responses verwerken en
+`participants` overschrijven — `syncState()` en `refreshState()`
+(vorige iteratie al beveiligd met het `syncSeq`-volgnummer) én
+`removeParticipant()` (de "×" op een deelnemerchip in het
+uitklikpaneel, na dubbeltikken ter bevestiging). Die derde plek was
+over het hoofd gezien en had nog steeds de onbeveiligde
+`participants=data.participants||[]`-toewijzing.
+
+**Waarom dit potentieel nog vervelender is dan de vorige bug**: hier
+kan een trage, VEROUDERDE achtergrondpoll (`refreshState()`, elke 15s)
+die al onderweg was vóórdat een vriend werd verwijderd, na de
+succesvolle verwijdering alsnog binnenkomen — en die vriend dan
+zichtbaar laten TERUGKEREN in de deelnemerslijst, ook al is die net
+bewust en bevestigd verwijderd.
+
+**Empirisch bevestigd**: eerst getest tegen de ONGEWIJZIGDE code (via
+`git stash` op alleen `app.js`) met een Playwright-test die een
+absichtelijk trage achtergrondpoll (900ms, met de nog-niet-verwijderde
+deelnemer "Ghost" erin) laat racen tegen een snelle, echte
+verwijdering (dubbeltik op de "×", 50ms-respons zonder "Ghost"). Zoals
+verwacht: "Ghost" kwam op zowel Chromium als WebKit terug in de lijst
+zodra de trage poll alsnog binnenkwam — de bug is dus echt en
+reproduceerbaar, niet alleen in theorie.
+
+**Fix**: dezelfde `syncSeq`-bescherming toegepast op
+`removeParticipant()`'s DELETE-aanvraag. Net als bij de vorige fix
+wordt de deelnemerslijst alleen overschreven als dit nog steeds de
+laatst gestarte aanvraag is; in tegenstelling tot `syncState()` blijven
+de neveneffecten van een gelukte verwijdering (`clearOwnSession()` bij
+zelf-verwijderen, de bevestigingstoast) WEL altijd uitgevoerd, ook als
+de deelnemerslijst-update zelf als verouderd wordt genegeerd — de
+verwijdering is een expliciete, bevestigde gebruikersactie en moet
+nooit stilzwijgend "niet gebeurd" lijken, ook al wint een andere
+respons de weergave-race.
+
+**Test**: dezelfde race-test opnieuw gedraaid na de fix — op zowel
+Chromium als WebKit blijft "Ghost" nu verwijderd, ook nadat de trage,
+verouderde poll alsnog binnenkomt. Volledige `capture.js`-
+regressiereeks (11 stappen) opnieuw gedraaid: geen fouten.
+
+Cache-buster: `app.js?v=130`, `SHELL_CACHE='utca-shell-v92'`
+(`app.css` ongewijzigd, blijft `v=127`).
+
+## Ontwerpbesluiten (vervolg 84) — vierde `/api/state`-plek gedicht, drie nieuwe hoeken doorgelicht (geen verdere bug)
+
+**Afronding van de audit uit iteratie 82/83**: naast `syncState()`,
+`refreshState()` en `removeParticipant()` bleek `init()` nóg een vierde
+plek te hebben die een `/api/state`-respons onvoorwaardelijk in
+`participants` schrijft — de eenmalige GET die vóór het inloggen
+draait (voor de "naam bestaat al"-hint). Dit bleek in de praktijk veel
+lastiger te laten manifesteren als zichtbare bug dan de eerdere drie:
+die GET-callback roept nooit `renderGroup()`/`renderRoster()` aan, dus
+een verouderd antwoord corrumpeert alleen de `participants`-variabele
+in het geheugen zonder de DOM meteen te beïnvloeden — pas de
+eerstvolgende render (bijv. de volgende achtergrondpoll, tot 15s later)
+zou het zichtbaar maken, en dan meestal alweer overschreven door verse
+data. Een Playwright-test die dit expliciet probeerde te reproduceren
+liet geen zichtbare regressie zien, zelfs niet tegen de ongewijzigde
+code. Toch is voor consistentie dezelfde `syncSeq`-bescherming ook hier
+toegevoegd (nul risico, dezelfde aanpak als de andere drie plekken) —
+eerlijkheidshalve genoteerd als defensieve afronding, niet als een
+bewezen zichtbare bug zoals iteratie 82/83.
+
+**Drie andere hoeken doorgelicht, geen bug gevonden**:
+1. Alle `currentStop=`-toewijzingen in `app.js` nagelopen op de
+   "onvolledige kopie"-patroon (de bugklasse van iteraties 30-74) —
+   `setHere()` is nog steeds de enige plek die daadwerkelijk incheckt
+   en consistent `storeSet`/`storeRemove` + `syncState()` aanroept;
+   `activateHere()`, `login()` en `clearOwnSession()` roepen die
+   canonieke functie aan of resetten expliciet en volledig. Geen
+   afwijkende instantie gevonden.
+2. `storeGet()`/`storeSet()`/`storeRemove()` (de localStorage-wrappers)
+   bleken al robuust: elke functie vangt exceptions op quota-fouten of
+   ontbrekende `window.localStorage` (bijv. Safari private browsing) af
+   en valt terug op een in-memory `memoryStore`-object. Geen wijziging
+   nodig.
+3. `icon-192.png`/`icon-maskable-192.png` en `icon-512.png`/
+   `icon-maskable-512.png` bleken byte-voor-byte identiek (gecontroleerd
+   met `shasum`) — de "maskable"-varianten hebben dus geen eigen
+   safe-zone-marge, wat normaliter een risico is (een adaptive-icon-
+   masker op Android kan dan belangrijke inhoud wegsnijden). Met een
+   Playwright-canvas-pixelsample gecontroleerd of dit in de praktijk een
+   probleem is: de achtergrond is een uniforme, bijna-zwarte kleur tot
+   in de hoeken (geen transparantie) en de "U"-letter staat ruim
+   gecentreerd, ruim binnen elke redelijke maskvorm — dus visueel geen
+   probleem, ook al zijn het technisch geen "echte" maskable-bestanden.
+   Geen wijziging nodig; genoteerd als bewuste niet-actie.
+
+**Test**: volledige `capture.js`-regressiereeks (11 stappen) opnieuw
+gedraaid na de `init()`-wijziging: geen fouten.
+
+Cache-buster: `app.js?v=131`, `SHELL_CACHE='utca-shell-v93'`
+(`app.css` ongewijzigd, blijft `v=127`).
+
+## Ontwerpbesluiten (vervolg 85) — echte databug: naar een vriend op de andere weersvariant springen brak je eigen "huidige stop"
+
+**Waar kwam dit vandaan?** In de groepstab kan je op een vriend tikken
+om naar hun huidige stop te springen (`jumpToStop()`, via
+`data-jump-stop` op elke deelnemer-rij). Als die vriend is ingecheckt
+bij de ANDERE weersvariant dan jouw eigen telefoon toont (bijv. zij
+zagen kano/zonmodus, jij staat lokaal op regenmodus, of andersom — elk
+toestel onthoudt de weerskeuze puur lokaal), schakelt `jumpToStop()`
+terecht je eigen weermodus om zodat die stopkaart zichtbaar wordt. Maar
+in tegenstelling tot de weerswisselknop in de header (de CANONIEKE
+functie, gefixt in iteratie 66 na precies dit soort desync) hield
+`jumpToStop()` geen rekening met je eigen actieve check-in: als je
+zelf op dat moment stond ingecheckt bij de weersstop van je OUDE modus,
+liet de omschakeling die check-in eenvoudigweg "los" zonder 'm mee te
+verhuizen naar de nieuwe modus — een schoolvoorbeeld van de
+"onvolledige kopie van een complete functie"-bugklasse die dit hele
+project al vanaf iteratie 30 typeert.
+
+**Zichtbaar gevolg**: `renderJourneyHeader()` zoekt `currentStop` op in
+de actieve `itinerary()` (die per weersmodus verschilt); vindt-ie geen
+match, dan valt-ie stilzwijgend terug op index 0. Resultaat: de
+"huidige stop"-kop in de header sprong na het tikken op de vriend
+INCORRECT terug naar "Utrecht Centraal", ook al stond je zelf nog
+gewoon ingecheckt bij de kanoverhuur — verwarrend en foutief voor
+degene die net alleen even wilde kijken waar een vriend was.
+
+**Empirisch bevestigd**: eerst tegen de ongewijzigde code getest (via
+`git stash`) met een Playwright-scenario waarin "Ik" inge­checkt sta bij
+`weather-sun` en een gesimuleerde deelnemer "Friend" bij
+`weather-rain` staat — na het tikken op Friend's rij sprong
+`#journeyNow`/`data-current-stop` inderdaad terug naar "Utrecht
+Centraal"/`start` op zowel Chromium als WebKit. (Een eerste testversie
+ging er ten onrechte van uit dat de eigen `currentStop`-waarde
+ONGEWIJZIGD moest blijven — maar de juiste, consistente correctie is
+dat 'm MEEVERHUIST naar de nieuwe modus, exact zoals de weerswissel-
+knop dat al deed sinds iteratie 66. De test is daarop aangepast vóór
+de fix als bevestigd werd beschouwd.)
+
+**Fix**: `jumpToStop()` herschreven naar hetzelfde patroon als de
+weerswisselknop — bij een moduswissel wordt, als `currentStop` de OUDE
+weersstop was, deze meeverplaatst naar de NIEUWE weersstop
+(`storeSet`+`syncState(true)`), en worden dezelfde volgrender-aanroepen
+(`renderDayResult`/`renderRoute`/`renderGroup`, in een `uiTransition`)
+gedaan die de weerswisselknop ook al deed maar die in `jumpToStop()`
+ontbraken.
+
+**Test**: dezelfde Playwright-test (met de gecorrigeerde, juiste
+verwachting) opnieuw gedraaid na de fix — op zowel Chromium als WebKit
+volgt de eigen check-in nu correct de moduswissel. Volledige
+`capture.js`-regressiereeks (11 stappen) opnieuw gedraaid: geen fouten.
+
+Cache-buster: `app.js?v=132`, `SHELL_CACHE='utca-shell-v94'`
+(`app.css` ongewijzigd, blijft `v=127`).
+
+## Ontwerpbesluiten (vervolg 86) — drie nieuwe hoeken doorgelicht, geen bug gevonden
+
+**Geen codewijziging deze iteratie** — na de databug van iteratie 85
+grondig gezocht naar een volgende genuine instantie van hetzelfde
+"onvolledige kopie"-patroon en naar nieuwe empirische randgevallen,
+maar alle drie de onderzochte hoeken bleken al correct:
+
+1. **Render-consistentie na venuekeuze**: nagelopen of `selectVenue()`
+   (een alternatieve locatie kiezen) alle afgeleide UI bijwerkt die van
+   `activeVenue()` afhangt. `renderTimeline()` roept intern al
+   `renderJourneyHeader()` aan, dus de "huidige stop"-kop klopt
+   automatisch mee. `renderDayResult()` (de degradatiemeter) en
+   `renderRoute()`'s Google Maps-link hangen bewust NIET af van de
+   gekozen locatie-naam (de meter gaat over cijfers, de route-link over
+   adressen die met of zonder alt-keuze identiek zijn) — dus het
+   ontbreken van die aanroepen in `selectVenue()` is correct, geen
+   gemiste plek.
+2. **Twee-tik-bevestiging bij het verwijderen van een deelnemer, tijdens
+   een achtergrond-rerender**: als je één keer op de "×" tikt (arm de
+   bevestiging) en de achtergrondpoll herbouwt `#roster`'s HTML vóórdat
+   je de tweede, bevestigende tik geeft, wijst de globale
+   `removeArmed`-referentie dan naar een losgekoppeld DOM-element.
+   Empirisch getest met Playwright (arm → forceer een rerender via
+   `visibilitychange` → tik nogmaals): op zowel Chromium als WebKit
+   wordt de tweede tik correct als een NIEUWE (eerste) bevestigings-tik
+   behandeld in plaats van een verwijdering te forceren op het verkeerde
+   element — geen crash, geen foutieve verwijdering, gewoon één keer
+   extra tikken nodig. Veilig gedrag, geen wijziging nodig.
+3. **"Klik ergens anders"-logica die de bevestiging annuleert**: de
+   `document`-brede click-listener (`disarmRemove()` bij een klik
+   buiten een `[data-remove-person]`-knop) en de `roster`-listener
+   (die bij een klik op een ANDERE verwijderknop eerst ontwapent en dan
+   de nieuwe knop bewapent) blijken door de bubbling-volgorde
+   (roster vóór document) nooit met elkaar in de weg te zitten — bij
+   het wisselen tussen twee verwijderknoppen wordt nooit onterecht
+   dubbel ontwapend of de zojuist bewapende knop meteen weer
+   gedeactiveerd.
+
+Geen wijziging nodig, dus geen cache-buster-bump. Nog een reeks
+empirisch geverifieerde randgevallen — bevestigt verder dat de
+kernfunctionaliteit stevig staat na 85 eerdere iteraties.
+
+## Ontwerpbesluiten (vervolg 87) — leaderboard-tekstoverflow en "Grupo completo"-race doorgelicht, geen bug; CSS/_worker.js-laag nu ook meegenomen
+
+**Geen codewijziging deze iteratie.** Op advies van de vorige iteratie
+bewust een ander soort hoek geprobeerd dan de app.js-logica van de
+laatste weken: de CSS-laag van de eindstand/leaderboard, en nogmaals
+`_worker.js`.
+
+1. **Lange-naam-overflow in de DEGRADATIESTRIJD-leaderboard**:
+   `.final-stat-main` is een flex-rij (`justify-content:space-between`)
+   met de naam en het percentage naast elkaar — leek op het eerste
+   gezicht risicovol voor een enkel, 24 tekens lang, spatieloos woord
+   (flex-items krimpen normaal niet onder hun intrinsieke breedte).
+   Empirisch getest op 320px breedte met Playwright, zowel met een
+   gelijkspel tussen drie lange namen (die samengevoegd worden met
+   " & ") als losstaand geredeneerd over een spatieloos scenario: bleek
+   dat `.final-stat-main strong` al `min-width:0` + `word-break:
+   break-word` heeft staan — dus zelfs een onbreekbaar lang woord wordt
+   netjes midden-in afgebroken in plaats van te overlappen met het
+   percentage of de kaart te laten overstromen. Dit dekt exact het punt
+   dat al genoemd stond in "Resterende problemen" (`#nameInput`'s
+   `maxlength=24` kan een naam midden-woord afbreken) — bevestigd dat
+   dit ook in de leaderboard-context al goed is opgevangen. Geen
+   wijziging nodig.
+2. **"Grupo completo ✓"-races**: wanneer alle zes deelnemers op
+   dezelfde stop inchecken, toont `herdMoment()` 2,6 seconden lang een
+   feestelijke knoplabel voordat deze teruggezet wordt naar "Check in
+   ✓". Nagegaan of een achtergrondpoll die binnen dat venster
+   binnenkomt (`refreshState()` → `renderGroup()` → `herdMoment()`
+   opnieuw) het label voortijdig kan resetten: dat gebeurt niet, dankzij
+   de bestaande `storeGet(key)`-vlag die een tweede afvuring van
+   hetzelfde herd-moment blokkeert. De enige manier om het label
+   voortijdig te laten verdwijnen is als de gebruiker zelf binnen die
+   2,6 seconden een andere actie doet die `renderTimeline()` opnieuw
+   aanroept (bijv. een andere locatie kiezen) — een smalle, cosmetische
+   edge case zonder impact op de data, niet de moeite van een fix waard.
+3. **`_worker.js`'s `cleanRatings()`**: nogmaals doorgelicht (na
+   iteraties 76/78/80); geconstateerd dat `Number(value)` ook een
+   boolean `true` zou omzetten naar een geldige score `1` — een lichte,
+   theoretische validatie-losheid, maar zonder enig praktisch risico
+   gezien het vertrouwde, kleine-vriendengroep-gebruiksmodel van deze
+   app (geen adversariale gebruikers). Geen wijziging nodig.
+
 ## Resterende problemen
 - "Minder AI visual style" (iteraties 18-19: radius, achtergrondvlekken,
   gerichter backdrop-blur op kaarten). Nog resterend, bewust NIET zonder
@@ -3149,6 +3844,18 @@ zowel Chromium als WebKit, en ook in regenmodus. Volledige
   richting die stijl — punten 2 en 3 daar zijn nog niet opgepakt (grotere,
   bewust nog niet opgepakte ingreep — losse iteraties tot nu toe waren
   bewust kleine, geïsoleerde fixes).
+- De `intox`-kolom in `_worker.js`'s database-schema is dode schema
+  (iteratie 78-onderzoek, geen codewijziging): nergens gelezen of
+  beschreven, waarschijnlijk een overblijfsel van vóór `ratings_json`
+  bestond. Veroorzaakt zelf geen probleem (heeft een `DEFAULT 1`) —
+  bewust niet verwijderd, cosmetische opruiming zonder functionele
+  noodzaak, kandidaat voor een latere, expliciet-opruim-gerichte
+  iteratie als daar ooit ruimte voor is.
+- Het roster-uitklikpaneel (`#rosterToggle`) sluit niet op de
+  Escape-toets (iteratie 81-onderzoek, geen codewijziging) — bewust
+  laag-prioriteit: geen focus-trap zoals de onboarding-modal, dus geen
+  echt toegankelijkheidsprobleem, puur een kleine UX-nicety die
+  ontbreekt.
 
 ## Permissies (belangrijk voor vervolgruns)
 Op expliciet verzoek van de gebruiker staat `.claude/settings.local.json` nu
@@ -3159,41 +3866,96 @@ vangnet voor de acties die toch al harde grenzen waren: `git push*`,
 `publish*`. Dit hoeft niet opnieuw ingesteld te worden.
 
 ## Eerstvolgende actie
-(Deze sectie liep herhaaldelijk stale — voor de volledige geschiedenis
-van correcties zie de git-log van dit bestand zelf. Vanaf iteratie 68
-bewust ingekort: alleen de ECHTE actuele stand, niet elke eerdere
-correctie-van-een-correctie.)
+(Deze sectie loopt herhaaldelijk stale vol met per-iteratie-correcties —
+voor de volledige geschiedenis, zie de git-log van dit bestand zelf.
+Opnieuw ingekort bij iteratie 76, zelfde aanpak als iteratie 68: alleen
+de ECHTE actuele stand.)
 
-**Stand van zaken (na iteratie 71):** alle bekende designfeedback is
-verwerkt (locatievisual, tijdlijn-rail-nodes — inclusief de
-maat/afstand-consistentiefix van iteratie 70 én de
-todo-icoon-zichtbaarheidsfix van iteratie 71, ranglijst-onderschriften
-en -rangcirkels, lime-accentkleur — zie git-log iteraties 47-71 voor
-details). Sinds iteratie 30 is de nadruk vooral op systematisch
-bug-jagen komen te liggen; een terugkerend, nuttig patroon dat hierbij
-hielp: een losse "update-plek" die een deel van de logica van een volledige
-render-/sync-functie dupliceert, maar niet meesynchroniseert als die
-basislogica verandert (tabblad-highlighting-bugs iteraties 30/33/41/
-43/44/48, weersomslag-syncbug iteratie 66, onboarding-navigatie-landmine
-iteratie 67, verouderde-check-in-chips iteratie 69: `checkinIsStale()`
-bestond en werd elders al gebruikt, maar was in `peopleAtStopHtml()`
-vergeten). **Bij visuele/uitlijning-meldingen**: eerst zelf een stap
-verder redeneren over de onderliggende verhouding/oorzaak, niet alleen
-letterlijk genoemde coördinaten fixen (expliciete gebruikerswens,
-iteratie 64) — en bij twijfel of twee bestanden die "hetzelfde" horen te
-zijn (zoals `index.html`/`test-local.html`) dat ook echt zijn, gewoon
-even `diff` trekken in plaats van aannemen (iteratie 68 vond zo een
-grote, langlopende drift die zonder die check onopgemerkt was gebleven).
+**Stand van zaken (na iteratie 87):** alle bekende designfeedback is
+verwerkt (zie git-log iteraties 47-76 voor details: locatievisual,
+tijdlijn-rail-nodes inclusief maat/afstand/icoon-consistentie,
+ranglijst-onderschriften en -rangcirkels, lime-accentkleur). Sinds
+iteratie 30 ligt de nadruk vooral op systematisch bug-jagen. Twee
+terugkerende, nuttige patronen zijn dit sessie gevonden en (voor zover
+bekend) volledig uitgeroeid:
+1. Een losse "update-plek" die een deel van de logica van een volledige
+   render-/sync-functie dupliceert i.p.v. 'm aan te roepen, en niet
+   meesynchroniseert als die basislogica verandert (tabblad-
+   highlighting-bugs iteraties 30/33/41/43/44/48; weersomslag-syncbug
+   iteratie 66; onboarding-navigatie-landmine iteratie 67; verouderde-
+   check-in-chips iteratie 69; regenmodus-onboarding-foto iteratie 72;
+   en de zwaarste twee — de "×"-uitlogknop en `onboardingBackToName()`
+   met elk hun eigen onvolledige kopie van `clearOwnSession()`,
+   iteraties 73-74, qua ernst vergelijkbaar met de dubbele-naam-databug
+   uit iteratie 51). Bij iteratie 75 gericht nagezocht op verdere
+   instanties rond `syncState`/`renderTimeline` — niets meer gevonden.
+2. Tekst-truncatie op UTF-16-code-units i.p.v. Unicode-codepoints,
+   waardoor een emoji op de tekengrens kon breken (iteratie 76, in
+   zowel `app.js` als `_worker.js`).
+3. Ontbrekende accessibility-attributen: het `#toast`-element had geen
+   `aria-live`, waardoor screenreader-gebruikers geen enkele
+   statusmelding ("Check-in gedeeld", "Meter gewist", etc.) te horen
+   kregen — nu `role="status" aria-live="polite" aria-atomic="true"`
+   (iteratie 77). De onboarding-modal's focus-trap (Tab/Shift+Tab) is
+   apart getest en bleek al correct. Vervolg-audit in iteratie 78:
+   overige statuselementen (`#dayCopy`/`#dayMeta`/`#groupAverage`/
+   `#rosterCount`) BEWUST geen `aria-live` gegeven — die worden ook
+   door achtergrond-polling bijgewerkt (elke 15s), dus zouden
+   screenreader-gebruikers om de 15s lastigvallen met acties van
+   andere mensen; alle interactieve knoppen bleken al correct
+   gelabeld.
+4. Een nieuwe bugklasse voor dit project: een race condition door het
+   ontbreken van een sequentiebewaking op asynchrone netwerkresponses.
+   `syncState()` en `refreshState()` verwerkten allebei het antwoord
+   van `/api/state` onvoorwaardelijk, dus een trage/verouderde respons
+   kon een latere, snellere respons overschrijven en de weergegeven
+   locatie van een vriend laten teruggrijpen op een oude check-in —
+   empirisch bevestigd met een Playwright-test die netwerkvertraging
+   simuleert. Gefixt met een monotoon `syncSeq`-volgnummer dat een
+   respons alleen toepast als 'm nog steeds de nieuwste aanvraag is
+   (iteratie 82). Bij het gericht nazoeken van diezelfde bugklasse
+   bleek `removeParticipant()` (de "×" op een deelnemerchip) dezelfde
+   onbeveiligde overschrijving te hebben — een verwijderde vriend kon
+   zichtbaar terugkeren als een trage, verouderde achtergrondpoll na de
+   verwijdering alsnog binnenkwam. Ook empirisch bevestigd (eerst tegen
+   de ongewijzigde code, om te bewijzen dat de test de bug echt
+   reproduceert) en met dezelfde `syncSeq`-bescherming gefixt
+   (iteratie 83). Een vierde plek (`init()`'s eenmalige pre-login GET)
+   bleek hetzelfde patroon te missen maar had geen zichtbaar effect
+   (geen render-aanroep in die callback) — voor de consistentie toch
+   dezelfde bescherming toegevoegd (iteratie 84).
+5. Nogmaals hetzelfde "onvolledige kopie"-patroon (punt 1), nu in
+   `jumpToStop()`: bij het springen naar een vriend op de andere
+   weersvariant schakelde de functie de eigen weermodus om zonder — in
+   tegenstelling tot de weerswisselknop (al gefixt in iteratie 66) —
+   een eigen actieve weersstop-check-in mee te verhuizen, waardoor de
+   "huidige stop"-header terugviel op "Utrecht Centraal". Empirisch
+   bevestigd en gefixt naar hetzelfde patroon als de weerswisselknop
+   (iteratie 85).
 
-**Nu al afgerond, dus GEEN kandidaat meer:** alle ~13 alternatieve-
-locatielinks gecontroleerd (iteraties 57-59, 68); `test-local.html` weer
-volledig gelijk aan `index.html` (iteratie 68); `.final-stat-label` is
-GEEN dode CSS (blijkt actief gebruikt in `test-local.html` — niet
-opruimen); venue-selectielogica en routebouw doorgelicht, geen bug
-(iteratie 69); verouderde-check-in-chips op stopkaarten gefixt
-(iteratie 69); tijdlijn-rail-nodes één vaste maat + symmetrische
-lijnafstand gemaakt (iteratie 70) en todo-icoontjes duidelijk zichtbaar
-gemaakt (iteratie 71) — beide directe gebruikersfeedback.
+**Bij visuele/uitlijning-meldingen**: eerst zelf een stap verder
+redeneren over de onderliggende verhouding/oorzaak, en meten met
+Playwright i.p.v. aannemen (expliciete gebruikerswens, iteratie 64) —
+en bij twijfel of twee bestanden die "hetzelfde" horen te zijn (zoals
+`index.html`/`test-local.html`) dat ook echt zijn, gewoon `diff`
+trekken (iteratie 68 vond zo een grote, langlopende drift).
+
+**Al afgerond, GEEN kandidaat meer:** alle ~13 alternatieve-
+locatielinks gecontroleerd (iteraties 57-59, 68); `test-local.html`
+weer volledig gelijk aan `index.html` (iteratie 68); `.final-stat-label`
+is GEEN dode CSS (actief gebruikt in `test-local.html`); venue-
+selectielogica, routebouw, rating-aggregatie, tijdformattering,
+alternatieven-rendering doorgelicht — geen bug (iteraties 69, 75, 78);
+accessibility-audit (aria-live-kandidaten + aria-labels) afgerond
+(iteraties 77-78); externe-link-veiligheid (`noopener`),
+`uiTransition`/`scrollAppTop`-helpers, en het bewust niet-gesynchroniseerd
+zijn van `resultsFinalized` doorgelicht — geen bug (iteratie 79); ECHTE
+offline-/service-worker-test (registratie, precache, offline reload,
+foto-cache-fallback) en `_worker.js`'s Google Places-integratie
+doorgelicht — beide robuust, geen bug (iteratie 80); mobiel-
+toetsenbord-scenario, smalste-breedte-knoptekst en het roster-
+uitklikpaneel's focus-gedrag empirisch getest — alle drie robuust
+(iteratie 81).
 
 **Kandidaten voor een volgende iteratie, in aflopende prioriteit:**
 1. Een nieuwe PageSpeed-run tegen de live site zodra de gebruiker deze
@@ -3201,20 +3963,18 @@ gemaakt (iteratie 71) — beide directe gebruikersfeedback.
    in de praktijk ook echt daalt (kon deze sessie niet zelf worden
    geverifieerd — er wordt nooit gedeployed vanuit deze sessie).
 2. De bewust uitgestelde punten in "Resterende problemen" hierboven
-   (venuenaam-per-kijker, lange namen) als ze daadwerkelijk voorkomen.
+   (venuenaam-per-kijker, lange namen, de dode `intox`-kolom) als ze
+   daadwerkelijk relevant worden.
 3. "Avoid non-composited animations" (97 elementen, PageSpeed-
    diagnostiek zonder score-impact, bewust nog niet opgepakt — een
-   volledige refactor naar alleen transform/opacity-transities is een
-   te grote, risicovolle ingreep voor de marginale winst).
+   volledige refactor is een te grote, risicovolle ingreep voor de
+   marginale winst).
 4. Een frisse code-doorloop van een nog niet bekeken hoek van `app.js`
-   (bv. `removeParticipant`, `onboardingClone`/`buildOnboardingStills`,
-   of `_worker.js` nog eens met de kennis van iteratie 69's bugtype in
-   het achterhoofd — andere plekken die een status/leeftijd-check
-   zouden moeten toepassen maar dat vergeten).
+   of `_worker.js`.
 
 Blijf bij elke wijziging aan `app.css`/`app.js` de cache-buster-conventie
-uit iteratie 20 volgen (huidige versies: `app.css?v=127`, `app.js?v=124`,
-`SHELL_CACHE='utca-shell-v85'` — verhoog verder bij de eerstvolgende
+uit iteratie 20 volgen (huidige versies: `app.css?v=127`, `app.js?v=132`,
+`SHELL_CACHE='utca-shell-v94'` — verhoog verder bij de eerstvolgende
 wijziging aan die bestanden; controleer bij twijfel altijd `git log` en
 de `?v=`-nummers in `index.html` voor de werkelijk actuele stand, niet
 alleen deze sectie).
