@@ -1,9 +1,8 @@
 # OPLEVERING — DE RONDE UX-overhaul
 
-**Laatste functionele codewijziging:** iteratie 97 (commit `c2822e0`,
-leaderboard-rangnummer top-uitgelijnd met de naam — zie hieronder).
-Daarvoor, iteratie 96: definitieve oplossing voor de tijdlijn-icoon-
-centrering. Achtergrond: iteraties 93-95 probeerden de stop-type-
+**Laatste functionele codewijziging:** iteratie 96 (commit `dff39b7`,
+definitieve oplossing voor de tijdlijn-icoon-centrering — zie
+hieronder). Achtergrond: iteraties 93-95 probeerden de stop-type-
 icoontjes (trein, vlag, wijnglas, ...) steeds nauwkeuriger wiskundig te
 centreren (optische correctie, CSS-transform, viewBox-verschuiving),
 maar de gebruiker bleef het op een echte iPhone/Safari scheef zien —
@@ -105,13 +104,6 @@ WebKit voordat die gecommit werd.
   simpel CSS-stipje te geven i.p.v. het stop-specifieke icoontje — een
   cirkel kan per definitie niet scheef renderen, op geen enkel toestel.
   De iconen zelf blijven zichtbaar op de stopkaart.
-- **Leaderboard-rangnummer top-uitgelijnd met de naam** (iteratie 97):
-  het cijfer in de rangcirkel (1/2/3) stond verticaal gecentreerd in een
-  44px cirkel, terwijl de naam ernaast bovenaan zijn regel begint —
-  gemeten (fontmetrics + pixelscan op een hoge-resolutie screenshot) op
-  ca. 11px zichtbaar verschil. Gefixt met `align-items:flex-start` +
-  een berekende `padding-top`, teruggebracht tot 0,25px verschil —
-  visueel bevestigd op zowel Chromium als WebKit.
 - **Kleurstijl blijft de eigen, donkere DE RONDE-identiteit** — de
   Polarsteps-richting (op gebruikersverzoek onderzocht) is toegepast op
   informatiehiërarchie/kaartpatronen, niet als volledige paletomkering
