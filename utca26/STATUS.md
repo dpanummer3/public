@@ -4292,3 +4292,71 @@ ervan.
 
 Cache-buster: `app.js?v=136`, `SHELL_CACHE='utca-shell-v98'`
 (`app.css` ongewijzigd, blijft `v=128`).
+
+## Ontwerpbesluiten (vervolg 95) — iteratie 94's fix bleek op een écht toestel alsnog niet te werken: overgestapt op een fundamenteel robuustere techniek
+
+**Gebruiker bevestigde, na uitsluiting van alle andere factoren**: de
+juiste zip (`de-ronde-iteratie94.zip`, met de WebKit-`transform`-fix uit
+iteratie 94) was daadwerkelijk geüpload naar GitHub, Cloudflare had
+opnieuw gedeployed, Safari-geschiedenis was gewist vóór elke test, en
+AdGuard Pro filtert alleen CDN-verkeer (niet deze site zelf) — dus geen
+van de gebruikelijke verdachten (cache, verkeerde versie, content-
+blocker) verklaarde het probleem. De icoontjes stonden zowel in Safari
+als in de geïnstalleerde webapp nog steeds net zo scheef als vóór
+iteratie 93/94. Dit bevestigt een genuine discrepantie tussen wat
+Playwright's gebundelde WebKit-engine laat zien (waar de iteratie-94-fix
+wél correct werkte, expliciet met `getComputedStyle` geverifieerd) en
+hoe een echte iPhone/Safari het daadwerkelijk rendert.
+
+**Belangrijke procesbeperking, expliciet door de gebruiker aangegeven**:
+geen diagnostiek meer die actie van de gebruiker vereist (geen
+screenshots, geen Web Inspector/kabel-gedoe) — de app wordt straks door
+5 andere mensen (4x iOS, 1x Android) gebruikt, dus de oplossing moet
+vanuit de code zelf robuust zijn, niet afhankelijk van een
+diagnostische ronde per persoon.
+
+**Besluit: van `transform` naar `viewBox`-verschuiving.** In plaats van
+de iconen op hun originele plek te laten staan en er een `transform`
+overheen te leggen (waarvan al gebleken was dat minstens één
+renderengine dat mechanisme kan negeren, afhankelijk van hoe de SVG in
+de DOM terechtkomt), verschuift de fix nu de `viewBox` van elk
+icoon-SVG zelf. `viewBox` is geen los, optioneel toe te passen
+attribuut zoals `transform` bovenop een via `innerHTML` ingevoegd
+element — het is het fundamentele coördinatenstelsel-mechanisme van SVG
+zelf, dat elke renderengine zonder uitzondering moet interpreteren om
+de afbeelding überhaupt te kunnen tekenen. Er is geen "negeer dit
+attribuut"-uitwijkmogelijkheid mogelijk zoals bij een aanvullende
+transform.
+
+**Wiskundige afleiding** (voor de volledigheid): als een icoon zijn
+inkt-gewogen zwaartepunt oorspronkelijk op positie `(12+e_x, 12+e_y)`
+heeft binnen zijn `0 0 24 24`-viewBox, dan brengt een nieuwe viewBox
+`"e_x e_y 24 24"` dat exact naar het midden van de weergave — zonder dat
+er een aparte transform-stap nodig is. (Bij de eerdere `transform`-
+aanpak moest de content zelf worden verschoven met `-e_x,-e_y`; bij
+deze `viewBox`-aanpak is de benodigde verschuiving van het
+coördinatenstelsel juist `+e_x,+e_y` — het tegenovergestelde teken. Dit
+teken is bij de eerste implementatiepoging fout gegaan en meteen
+zelf opgemerkt via dezelfde pixel-gewogen hermeting, vóór het als
+definitief werd beschouwd.)
+
+**Test**: dezelfde pixel-gewogen zwaartepuntmeting als iteratie 93
+opnieuw gedraaid op zowel Chromium als WebKit — alle 12 iconen en het
+vinkje zitten weer binnen 0,07 eenheden van het exacte midden, op beide
+engines identiek. Op de live pagina gecontroleerd dat de daadwerkelijke
+`viewBox`-attribuutwaarde (bijv. `"-0.2 -1 24 24"` voor het todo-icoon,
+`"0.09 0.32 24 24"` voor het vinkje) op beide engines exact
+overeenkomt. Volledige `capture.js`-regressiereeks (11 stappen) op
+beide engines: geen fouten.
+
+**Waarom dit ditmaal wél in Safari zou moeten werken**: `viewBox`-
+interpretatie is geen apart, uitschakelbaar renderingpad zoals
+`transform` op een innerHTML-ingevoegd element bleek te zijn — het is
+de basis van hoe elke SVG-renderer, inclusief WebKit op iOS, de
+coördinaten-naar-pixel-mapping berekent. Zonder toegang tot een fysiek
+Apple-toestel kan dit niet met 100% zekerheid bevestigd worden, maar dit
+is qua onderliggend mechanisme een fundamenteel andere en aantoonbaar
+robuustere aanpak dan de vorige twee pogingen.
+
+Cache-buster: `app.js?v=137`, `SHELL_CACHE='utca-shell-v99'`
+(`app.css` ongewijzigd, blijft `v=128`).

@@ -1,13 +1,17 @@
 # OPLEVERING — DE RONDE UX-overhaul
 
-**Laatste functionele codewijziging:** iteratie 94 (commit `78b609f`,
-correctie op iteratie 93 — zie hieronder). Iteratie 93 centreerde de
-tijdlijn-icoontjes optisch op basis van een echte pixel-gewogen meting,
-maar gebruikte daarvoor een SVG-attribuut dat WebKit (Safari/iOS)
-stilzwijgend negeert; de gebruiker meldde dat het in Firefox wél goed
-stond maar in Safari/de webapp nog steeds scheef. Vervangen door een
-CSS-transform die op alle geteste engines (nu ook expliciet op WebKit
-geverifieerd) consistent wordt toegepast. Ook de repo zelf is
+**Laatste functionele codewijziging:** iteratie 95 (commit `74fd8e4`,
+icoon-centrering overgezet van een `transform` naar een `viewBox`-
+verschuiving — zie hieronder). Achtergrond: iteratie 93 centreerde de
+tijdlijn-icoontjes optisch op basis van een echte pixel-gewogen meting;
+iteratie 94 verhielp een WebKit-specifieke bug daarin (een SVG-attribuut
+dat Safari/iOS stilzwijgend negeert); de gebruiker bevestigde daarna —
+na uitsluiting van cache, verkeerde versie en content-blockers — dat het
+op een echte iPhone/Safari ALSNOG niet klopte. Iteratie 95 verving de
+aanpak daarom door een fundamenteel andere, niet-optionele SVG-techniek
+(de `viewBox` zelf verschuiven i.p.v. een aanvullend `transform`
+toe te voegen), zodat dit niet afhankelijk is van of een specifieke
+renderengine een los attribuut wel/niet honoreert. Ook de repo zelf is
 opgeschoond: `screenshots/`, `test-local.html` en `robots.txt` zijn
 verwijderd (op verzoek van de gebruiker; geen van drie hoort bij de
 daadwerkelijke productie-app). Dit alles is, net als iteratie 92
@@ -77,8 +81,16 @@ WebKit voordat die gecommit werd.
   canvas-pixelanalyse berekend, met een per-icoon correctie tot
   sub-pixel nauwkeurigheid. **Vervolg (iteratie 94)**: deze correctie
   werkte niet in Safari/WebKit — het gebruikte SVG-attribuut bleek daar
-  stilzwijgend genegeerd te worden. Vervangen door een CSS-transform,
-  die op alle geteste engines wél consistent wordt toegepast.
+  stilzwijgend genegeerd te worden. Vervangen door een CSS-transform.
+  **Vervolg (iteratie 95)**: de gebruiker bevestigde dat het óók ná die
+  CSS-transform-fix op een echte iPhone nog steeds scheef stond (met
+  cache, verkeerde versie en content-blockers expliciet uitgesloten).
+  Overgestapt op een fundamenteel andere techniek: in plaats van een los
+  `transform`-attribuut toe te voegen, verschuift de fix nu de `viewBox`
+  van elk icoon-SVG zelf — een niet-optioneel basismechanisme van SVG
+  dat elke renderer sowieso moet interpreteren om de afbeelding te
+  tonen, in tegenstelling tot een aanvullende transform die een
+  renderengine kan negeren.
 - **Kleurstijl blijft de eigen, donkere DE RONDE-identiteit** — de
   Polarsteps-richting (op gebruikersverzoek onderzocht) is toegepast op
   informatiehiërarchie/kaartpatronen, niet als volledige paletomkering
