@@ -1,10 +1,13 @@
 # OPLEVERING — DE RONDE UX-overhaul
 
-**Laatste functionele codewijziging:** iteratie 92 (commit `601ec7f`,
-tijdlijn-bolletjes definitief vereenvoudigd naar altijd een vlak, donker
-bolletje met lime-icoontje/vinkje — geen fototextuur meer, zie
-hieronder). Dit was direct-gemelde feedback van de gebruiker op een
-screenshot van een echt toestel, NA de oorspronkelijke deadline van
+**Laatste functionele codewijziging:** iteratie 93 (commit `f0b2c57`,
+tijdlijn-icoontjes optisch gecentreerd op basis van een echte
+pixel-gewogen meting — zie hieronder). Ook de repo zelf is opgeschoond:
+`screenshots/`, `test-local.html` en `robots.txt` zijn verwijderd (op
+verzoek van de gebruiker; geen van drie hoort bij de daadwerkelijke
+productie-app). Dit was, net als iteratie 92 (tijdlijn-bolletjes zonder
+fototextuur), direct-gemelde feedback van de gebruiker op screenshots
+van een echt toestel, NA de oorspronkelijke deadline van
 2026-09-17T10:41:38Z.
 **Deadline van deze opdracht:** 2026-09-17T10:41:38Z (opgeleverd; deze
 sessie werkt sindsdien op verzoek door aan directe gebruikersfeedback).
@@ -58,6 +61,16 @@ WebKit voordat die gecommit werd.
   inconsistent beeld. Op expliciet verzoek is de fototextuur-behandeling
   helemaal verwijderd: alle rail-nodes zijn nu altijd een vlak, donker
   bolletje met alleen het lime-icoontje/vinkje.
+- **Tijdlijn-icoontjes optisch gecentreerd** (iteratie 93, eveneens
+  gemeld met een echt-toestel-screenshot): de icoontjes stonden met het
+  blote oog niet precies in het midden van hun bolletje. CSS-layout en
+  de zuivere geometrische bounding box van elk icoon bleken al correct
+  gecentreerd — de werkelijke oorzaak was het optische (inkt-gewogen)
+  zwaartepunt van stroke-based lijniconen (bv. de vlag, het wijnglas),
+  dat meetbaar afweek van hun geometrisch midden. Elk van de 12 gebruikte
+  iconen én het vinkje gerasterd en het inkt-gewogen zwaartepunt via
+  canvas-pixelanalyse berekend, met een per-icoon correctie tot
+  sub-pixel nauwkeurigheid.
 - **Kleurstijl blijft de eigen, donkere DE RONDE-identiteit** — de
   Polarsteps-richting (op gebruikersverzoek onderzocht) is toegepast op
   informatiehiërarchie/kaartpatronen, niet als volledige paletomkering
@@ -171,9 +184,9 @@ cd de-ronde-ux-overhaul
 python3 -m http.server 8099
 ```
 
-Open daarna `http://localhost:8099/test-local.html` in de browser
-(gebruikt relatieve paden en werkt zonder de Cloudflare Worker/D1-backend
-— check-ins/groepsstatus werken dan alleen lokaal-in-het-geheugen).
+Open daarna `http://localhost:8099/` in de browser (werkt zonder de
+Cloudflare Worker/D1-backend — check-ins/groepsstatus werken dan alleen
+lokaal-in-het-geheugen).
 
 ## Zelf publiceren naar Cloudflare Pages
 

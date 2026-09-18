@@ -128,7 +128,6 @@ Er worden geen frameworks, bundlers of externe JavaScript-libraries gebruikt.
 ├── icon-512.png
 ├── icon-maskable-192.png
 ├── icon-maskable-512.png
-├── robots.txt
 └── README.md
 ```
 

@@ -4178,3 +4178,64 @@ in `OPLEVERING.md`/`README.md` staat).
 
 Cache-buster: `app.css?v=128`, `app.js?v=134`,
 `SHELL_CACHE='utca-shell-v96'`.
+
+## Ontwerpbesluiten (vervolg 93) — repo opgeschoond, tijdlijn-icoontjes optisch gecentreerd
+
+**Repo-opschoning, op verzoek van de gebruiker**: `screenshots/`
+(dev-only Playwright-testtooling), `test-local.html` (overbodig —
+`index.html` werkt identiek lokaal via `python3 -m http.server`) en
+`robots.txt` (dood gewicht: `_worker.js` hardcodet zijn eigen
+`/robots.txt`-response en leest het bestand nooit) uit de git-repo
+verwijderd. `.gitignore` uitgebreid; `OPLEVERING.md`/`README.md`
+bijgewerkt om niet meer naar de verwijderde bestanden te verwijzen.
+
+**Tijdlijn-icoontjes optisch gecentreerd, op directe gebruikersfeedback
+met screenshots van een echt iPhone-toestel**: de gebruiker meldde dat
+de icoontjes in niet-geactiveerde (todo) rail-nodes met het blote oog
+niet precies in het midden van het bolletje staan — voor het
+poolcafé-icoontje specifiek "iets meer naar rechts", en "dat geldt ook
+voor andere icoontjes naar alle andere kanten".
+
+**Eerst gemeten, niet aangenomen**: de CSS-laag zelf bleek al perfect —
+`getBoundingClientRect()` op een echte gerenderde tijdlijn-node liet
+zien dat de SVG exact (0,0 offset) gecentreerd wordt binnen de
+`.tl-node`-cirkel dankzij `display:grid;place-items:center`. Ook de
+zuiver geometrische bounding-box van elk icoon-pad binnen zijn eigen
+24×24-viewBox bleek al vrijwel perfect gecentreerd. De werkelijke
+oorzaak zat een niveau dieper: het **optische (met inkt/lijndikte
+gewogen) zwaartepunt** van de meeste icoon-glyphs (stroke-based lijn-
+iconen zoals trein, fles wijn, cocktailglas, vlag) wijkt wél meetbaar af
+van hun geometrisch middelpunt — bv. `flag` had een zwaartepunt-afwijking
+van (-1.38, -2.26) op een schaal van 24, `cocktail`/`wine` rond -1.6 tot
+-1.4 verticaal, `boules` +1.86 verticaal. Dit is precies wat het menselijk
+oog waarneemt als "niet gecentreerd", ook al is de wiskundige bounding
+box in orde.
+
+**Methode**: elk van de 12 daadwerkelijk gebruikte icoon-glyphs (en
+apart het vinkje voor "done") gerasterd op hoge resolutie (24×20px per
+eenheid) en het met alpha/inkt-dekking gewogen zwaartepunt berekend via
+canvas-pixelanalyse (dezelfde meetmethode als eerder gebruikt voor de
+maskable-icon-veiligheidscontrole, iteratie 84). Voor elk icoon een
+correctie-`transform="translate(dx,dy)"` toegevoegd (nieuwe
+`ICON_OPTICAL_OFFSET`-tabel in `svgIcon()`, en een losse correctie op de
+`CHECK`-vinkje-constante) zodat het optische zwaartepunt exact op
+(12,12) — het echte midden — komt te liggen.
+
+**Resultaat, opnieuw gemeten na de fix**: alle 12 icoon-glyphs zitten nu
+binnen 0,07 eenheden (op een schaal van 24) van het exacte midden — op
+het weergegeven formaat van 11px een sub-pixel afwijking, ruim onder de
+waarneembaarheidsdrempel. Het vinkje zit na correctie op 0,0002/-0,008
+eenheden van het midden. Visueel gecontroleerd met een vergrote render:
+het kruispunt van het poolcafé-icoontje valt nu exact op het
+middelpunt van de cirkel.
+
+**Test**: volledige `capture.js`-regressiereeks (11 stappen) opnieuw
+gedraaid op zowel Chromium als WebKit: geen fouten. Deze fix werkt
+identiek op alle platforms (het is een correctie op de SVG-geometrie
+zelf, geen CSS/browser-specifieke hack), dus ook op de iPhone/Safari
+waar de gebruiker het oorspronkelijke probleem zag.
+
+Cache-buster: `app.js?v=135`, `SHELL_CACHE='utca-shell-v97'`
+(`app.css` ongewijzigd, blijft `v=128`; `test-local.html` bestaat niet
+meer, dus vanaf nu hoeft de cache-buster alleen in `index.html`/`sw.js`
+bijgewerkt te worden).
