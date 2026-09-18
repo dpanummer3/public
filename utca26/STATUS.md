@@ -4360,3 +4360,63 @@ robuustere aanpak dan de vorige twee pogingen.
 
 Cache-buster: `app.js?v=137`, `SHELL_CACHE='utca-shell-v99'`
 (`app.css` ongewijzigd, blijft `v=128`).
+
+## Ontwerpbesluiten (vervolg 96) — definitieve oplossing: todo-icoontjes per stop-type vervangen door één symmetrisch stipje
+
+**Iteratie 95 (viewBox-fix) bleek op een écht toestel alsnog scheef**,
+opnieuw gemeld met een screenshot van de live productiesite
+(`utca26.pages.dev`), ditmaal specifiek van het "flag"-icoontje (laatste
+stop). Root-cause-analyse: het vlag-icoon is **inherent asymmetrisch by
+design** — de paal staat bewust links met de vlag die naar rechts
+uitwaaiert, exact zoals elke bekende iconenset (Feather, Font Awesome)
+een vlag tekent, simpelweg omdat dat is hoe een vlag eruitziet. Zowel de
+zuiver geometrische bounding-box-meting (iteratie 93, offset slechts
+-0.1/24) als de inkt-gewogen-zwaartepunt-meting (iteratie 93-95, offset
+-1.38/-2.26 na correctie teruggebracht tot <0.07) toonden AL bijna
+perfecte centrering volgens hun eigen wiskundige definitie — en toch
+zag de gebruiker het duidelijk scheef, omdat het menselijk oog bij een
+vlag-icoon op de paal-positie focust, niet op een gewogen gemiddelde
+van de hele vorm. Voor een inherent asymmetrisch icoon bestaat er geen
+enkele wiskundige "centrerings"-definitie die tegelijk (a) het icoon
+laat kloppen als herkenbare vlag én (b) oogt als gecentreerd — die twee
+eisen spreken elkaar hier tegen. Ditzelfde geldt in mindere mate voor de
+andere stop-type-iconen (trein, wijnglas, cocktailglas, etc.), die
+allemaal om herkenbaarheidsredenen een asymmetrische vorm hebben.
+
+**Definitieve, onomstotelijke oplossing** (op expliciet verzoek van de
+gebruiker, na drie mislukte wiskundige correctiepogingen — geen verdere
+meet- of correctiepoging meer op de icoon-geometrie zelf): de
+verschillende stop-type-iconen (trein/kano/koffie/vork/bal/bier/
+jeu-de-boules/cocktail/wijn/sandwich/vlag) worden niet langer getoond in
+de "todo"-rail-node. In plaats daarvan toont een niet-geactiveerd
+bolletje voortaan een simpel, inherent symmetrisch stipje via een
+CSS `::after`-pseudo-element (`border-radius:50%`) — exact dezelfde,
+al langer bewezen techniek als de "huidige stop"-indicator (die nooit
+enige centrerings-klacht heeft opgeleverd, precies omdat een cirkel
+triviaal symmetrisch is op elke renderer, altijd). De specifieke
+stop-iconen blijven gewoon zichtbaar op de stopkaart zelf (als
+foto-placeholder-icoon in `placePhotoHtml()`, ongewijzigd) — alleen het
+piepkleine 11px-rail-bolletje, waar precieze visuele centrering
+onmogelijk te garanderen bleek voor asymmetrische glyphs, is
+vereenvoudigd. `railHtml()`/`updateCheckinUi()` geven voor de
+"todo"-status nu lege inhoud terug (`''`) i.p.v. `svgIcon(...)`; het
+ongebruikt geworden `icon`-parameter is ook uit `railHtml()` verwijderd.
+`ICONP`/`svgIcon()`/`ICON_OPTICAL_OFFSET` blijven bestaan en ongewijzigd
+functioneren voor hun andere gebruiksplek (de foto-placeholder op de
+stopkaart, `placePhotoHtml()`), waar geen centrerings-klacht over is
+geweest.
+
+**Waarom dit ditmaal wél absoluut zeker werkt, op elk toestel**: een
+cirkel getekend met `border-radius:50%` op een vierkant element heeft
+per definitie geen enkele mogelijkheid om asymmetrisch te renderen —
+er is geen pad-geometrie, geen inkt-verdeling, geen paal-versus-vlag-
+afweging meer. Dit is geen wiskundige benadering meer die "dicht genoeg
+bij" het midden probeert te komen, maar een vorm die het simpelweg niet
+anders KAN zijn dan gecentreerd.
+
+**Test**: volledige `capture.js`-regressiereeks (11 stappen) op zowel
+Chromium als WebKit: geen fouten. Visueel gecontroleerd: het stipje
+staat zichtbaar, rustig en overduidelijk in het midden van de rail-node.
+
+Cache-buster: `app.js?v=138`, `app.css?v=129`,
+`SHELL_CACHE='utca-shell-v100'`.

@@ -1,17 +1,20 @@
 # OPLEVERING — DE RONDE UX-overhaul
 
-**Laatste functionele codewijziging:** iteratie 95 (commit `74fd8e4`,
-icoon-centrering overgezet van een `transform` naar een `viewBox`-
-verschuiving — zie hieronder). Achtergrond: iteratie 93 centreerde de
-tijdlijn-icoontjes optisch op basis van een echte pixel-gewogen meting;
-iteratie 94 verhielp een WebKit-specifieke bug daarin (een SVG-attribuut
-dat Safari/iOS stilzwijgend negeert); de gebruiker bevestigde daarna —
-na uitsluiting van cache, verkeerde versie en content-blockers — dat het
-op een echte iPhone/Safari ALSNOG niet klopte. Iteratie 95 verving de
-aanpak daarom door een fundamenteel andere, niet-optionele SVG-techniek
-(de `viewBox` zelf verschuiven i.p.v. een aanvullend `transform`
-toe te voegen), zodat dit niet afhankelijk is van of een specifieke
-renderengine een los attribuut wel/niet honoreert. Ook de repo zelf is
+**Laatste functionele codewijziging:** iteratie 96 (commit `dff39b7`,
+definitieve oplossing voor de tijdlijn-icoon-centrering — zie
+hieronder). Achtergrond: iteraties 93-95 probeerden de stop-type-
+icoontjes (trein, vlag, wijnglas, ...) steeds nauwkeuriger wiskundig te
+centreren (optische correctie, CSS-transform, viewBox-verschuiving),
+maar de gebruiker bleef het op een echte iPhone/Safari scheef zien —
+uiteindelijk bleek de kern van het probleem dat deze iconen **inherent
+asymmetrisch zijn by design** (een vlag heeft nu eenmaal de paal aan één
+kant), waardoor geen enkele wiskundige centreringstechniek zowel de
+herkenbare vorm kan behouden als gecentreerd kan ogen. Iteratie 96 lost
+dit definitief op door de "todo"-rail-nodes een simpel, inherent
+symmetrisch CSS-stipje te geven in plaats van het stop-specifieke
+icoontje — een cirkel kan per definitie niet scheef renderen. De
+specifieke iconen blijven gewoon zichtbaar op de stopkaart zelf. Ook de
+repo zelf is
 opgeschoond: `screenshots/`, `test-local.html` en `robots.txt` zijn
 verwijderd (op verzoek van de gebruiker; geen van drie hoort bij de
 daadwerkelijke productie-app). Dit alles is, net als iteratie 92
@@ -90,7 +93,17 @@ WebKit voordat die gecommit werd.
   van elk icoon-SVG zelf — een niet-optioneel basismechanisme van SVG
   dat elke renderer sowieso moet interpreteren om de afbeelding te
   tonen, in tegenstelling tot een aanvullende transform die een
-  renderengine kan negeren.
+  renderengine kan negeren. **Vervolg, definitief (iteratie 96)**: ook
+  ná de viewBox-fix zag de gebruiker het op een echte iPhone nog steeds
+  scheef — dit keer specifiek het vlag-icoon. De werkelijke oorzaak
+  bleek dieper te zitten dan een renderfout: stop-type-iconen zoals een
+  vlag zijn *inherent asymmetrisch by design* (de paal staat bewust aan
+  één kant, zoals in elke iconenset), waardoor geen wiskundige
+  centreringstechniek zowel de herkenbare vorm kan behouden als
+  gecentreerd kan ogen. Definitief opgelost door de todo-rail-nodes een
+  simpel CSS-stipje te geven i.p.v. het stop-specifieke icoontje — een
+  cirkel kan per definitie niet scheef renderen, op geen enkel toestel.
+  De iconen zelf blijven zichtbaar op de stopkaart.
 - **Kleurstijl blijft de eigen, donkere DE RONDE-identiteit** — de
   Polarsteps-richting (op gebruikersverzoek onderzocht) is toegepast op
   informatiehiërarchie/kaartpatronen, niet als volledige paletomkering
