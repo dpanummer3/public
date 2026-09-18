@@ -4239,3 +4239,56 @@ Cache-buster: `app.js?v=135`, `SHELL_CACHE='utca-shell-v97'`
 (`app.css` ongewijzigd, blijft `v=128`; `test-local.html` bestaat niet
 meer, dus vanaf nu hoeft de cache-buster alleen in `index.html`/`sw.js`
 bijgewerkt te worden).
+
+## Ontwerpbesluiten (vervolg 94) — correctie op iteratie 93: de centrerings-fix werkte niet in Safari/WebKit
+
+**Fout in iteratie 93, direct gemeld door de gebruiker**: "In de browser
+(Firefox macOS) is het wel goed, maar in Safari, en daarna een webapp,
+nog steeds net zo scheef." De claim in iteratie 93 dat de fix
+"platform-onafhankelijk" zou zijn, klopte dus NIET — puur code lezen
+en op één engine testen was hier onvoldoende; het verschil zat 'm
+precies in iets dat alleen zichtbaar wordt als je de daadwerkelijke
+CSS-toepassing per engine meet, niet de eindwaarde.
+
+**Root cause, gevonden door te meten i.p.v. aan te nemen**: de
+correctie uit iteratie 93 gebruikte het SVG-attribuut
+`transform="translate(x y)"` op een `<g>`-element, ingevoegd via
+`node.innerHTML=...` (net als de rest van deze app z'n markup opbouwt).
+`getComputedStyle(g).transform` liet zien dat Chromium dit attribuut
+keurig omzet naar `matrix(1,0,0,1,x,y)`, maar **WebKit gaf `"none"`
+terug — het `transform`-attribuut werd domweg genegeerd** wanneer de
+`<g>` op deze manier (via HTML-string-parsing van "foreign content",
+niet via `createElementNS`) in de pagina terechtkomt. De icoon-
+rasterisatie zelf bleek daarna, ter controle, wél identiek tussen
+Chromium en WebKit (apart gemeten met dezelfde pixel-gewogen
+zwaartepunt-methode als iteratie 93, op beide engines: verschillen in
+de duizendsten, verwaarloosbaar) — dus de eerdere aanname "iconen zelf
+renderen overal hetzelfde" klopte wél; alleen de manier waarop de
+correctie werd toegepast, faalde stilzwijgend op één engine.
+
+**Fix**: `transform="translate(x y)"` (SVG-attribuut) vervangen door
+`style="transform:translate(Xpx,Ypx)"` (CSS-property) op dezelfde
+`<g>`-elementen in `svgIcon()` en de `CHECK`-constante. CSS `transform`
+wordt, in tegenstelling tot het SVG-attribuut, door beide engines
+consistent toegepast — geverifieerd doordat `getComputedStyle(g)
+.transform` nu op zowel Chromium als WebKit exact dezelfde
+`matrix(1,0,0,1,x,y)` teruggeeft.
+
+**Test**: opnieuw expliciet gecontroleerd op de ECHTE, live pagina (niet
+alleen in isolatie) dat de `<g>`'s computed transform op beide engines
+identiek is, voor zowel de todo-iconen als het vinkje. Volledige
+`capture.js`-regressiereeks (11 stappen) opnieuw gedraaid op Chromium en
+WebKit: geen fouten.
+
+**Les voor mezelf**: "getest op Chromium en WebKit" betekende in
+iteratie 93 dat de EINDWAARDE (het pixel-gewogen zwaartepunt) op één
+engine (Chromium) gemeten was, en de code er in beide engines
+"hetzelfde uitziet" werd aangenomen zonder de daadwerkelijke CSS-
+toepassing ook op WebKit te controleren. Bij cross-browser-gevoelige
+technieken (SVG-attributen, transform-toepassing op via innerHTML
+ingevoegde foreign content) moet de VERIFICATIESTAP zelf op alle
+relevante engines draaien, niet alleen de uiteindelijke meting op één
+ervan.
+
+Cache-buster: `app.js?v=136`, `SHELL_CACHE='utca-shell-v98'`
+(`app.css` ongewijzigd, blijft `v=128`).
